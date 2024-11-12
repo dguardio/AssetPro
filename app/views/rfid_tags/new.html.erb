@@ -1,0 +1,24 @@
+<div class="container mt-4">
+  <h1>Assign RFID Tag to <%= @asset.name %></h1>
+
+  <%= form_with(model: [@asset, @rfid_tag], local: true) do |f| %>
+    <% if @rfid_tag.errors.any? %>
+      <div class="alert alert-danger">
+        <h2><%= pluralize(@rfid_tag.errors.count, "error") %> prohibited this RFID tag from being saved:</h2>
+        <ul>
+          <% @rfid_tag.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :rfid_number %>
+      <%= f.text_field :rfid_number, class: 'form-control' %>
+    </div>
+
+    <%= f.submit 'Assign RFID Tag', class: 'btn btn-primary' %>
+    <%= link_to 'Back', asset_path(@asset), class: 'btn btn-secondary' %>
+  <% end %>
+</div> 

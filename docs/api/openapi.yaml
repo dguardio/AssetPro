@@ -1,0 +1,89 @@
+openapi: 3.0.0
+info:
+  title: Asset Management System API
+  version: 1.0.0
+  description: API documentation for the Asset Management System
+
+servers:
+  - url: https://your-domain.com/api/v1
+    description: Production server
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Asset:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        category_id:
+          type: integer
+        location_id:
+          type: integer
+        status:
+          type: string
+          enum: [active, inactive, maintenance, retired]
+        rfid_enabled:
+          type: boolean
+        rfid_number:
+          type: string
+
+    Scan:
+      type: object
+      properties:
+        rfid_number:
+          type: string
+        location_id:
+          type: integer
+        event_type:
+          type: string
+          enum: [check_in, check_out, location_update, maintenance]
+
+paths:
+  /scans:
+    post:
+      summary: Record a new RFID scan
+      description: Records a new asset scan with location and event type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scan'
+      responses:
+        '201':
+          description: Scan recorded successfully
+        '404':
+          description: RFID tag not found
+        '422':
+          description: Invalid scan data
+
+  /assets:
+    get:
+      summary: List all assets
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: status
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of assets 

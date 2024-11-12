@@ -1,0 +1,107 @@
+<div class="scanner-container">
+  <div class="form-group">
+    <label for="location">Current Location</label>
+    <%= select_tag 'location', options_from_collection_for_select(@locations, 'id', 'name'), class: 'form-control' %>
+  </div>
+
+  <div id="scanStatus" class="scan-status" style="display: none;"></div>
+
+  <div class="scan-controls">
+    <button id="startScan" class="btn btn-primary btn-lg btn-block">
+      Start Scanning
+    </button>
+  </div>
+
+  <div class="recent-scans mt-4">
+    <h5>Recent Scans</h5>
+    <div id="recentScansList">
+      <%= render partial: 'scan_result', collection: @recent_scans, as: :scan %>
+    </div>
+  </div>
+</div>
+
+<%= javascript_tag do %>
+  document.addEventListener('DOMContentLoaded', function() {
+    const startScanButton = document.getElementById('startScan');
+    const scanStatus = document.getElementById('scanStatus');
+    const locationSelect = document.getElementById('location');
+    let scanning = false;
+
+    startScanButton.addEventListener('click', function() {
+      if (!scanning) {
+        startScanButton.textContent = 'Stop Scanning';
+        startScanButton.classList.replace('btn-primary', 'btn-danger');
+        scanning = true;
+        showStatus('Ready to scan...', 'info');
+      } else {
+        startScanButton.textContent = 'Start Scanning';
+        startScanButton.classList.replace('btn-danger', 'btn-primary');
+        scanning = false;
+        hideStatus();
+      }
+    });
+
+    function processRfidScan(rfidNumber) {
+      const locationId = locationSelect.value;
+      
+      fetch('/api/v1/scans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          scan: {
+            rfid_number: rfidNumber,
+            location_id: locationId,
+            event_type: 'location_update'
+          }
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          showStatus('Asset scanned: ' + data.data.asset.name, 'success');
+          updateRecentScans();
+        } else {
+          showStatus('Error: ' + data.message, 'error');
+        }
+      })
+      .catch(error => {
+        showStatus('Error processing scan', 'error');
+        console.error('Error:', error);
+      });
+    }
+
+    function showStatus(message, type) {
+      scanStatus.textContent = message;
+      scanStatus.className = 'scan-status ' + type;
+      scanStatus.style.display = 'block';
+    }
+
+    function hideStatus() {
+      scanStatus.style.display = 'none';
+    }
+
+    function updateRecentScans() {
+      fetch('/scanner_interface/recent_scans')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('recentScansList').innerHTML = html;
+        });
+    }
+
+    // This is a placeholder for the actual RFID scanner integration
+    // Replace this with actual scanner integration code once hardware is known
+    document.addEventListener('keypress', function(e) {
+      if (!scanning) return;
+      
+      if (e.key === 'Enter' && window.rfidBuffer) {
+        processRfidScan(window.rfidBuffer);
+        window.rfidBuffer = '';
+      } else {
+        window.rfidBuffer = (window.rfidBuffer || '') + e.key;
+      }
+    });
+  });
+<% end %> 

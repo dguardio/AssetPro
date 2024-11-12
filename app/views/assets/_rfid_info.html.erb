@@ -1,0 +1,41 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h3>RFID Information</h3>
+  </div>
+  <div class="card-body">
+    <% if @asset.rfid_tag.present? %>
+      <dl class="row">
+        <dt class="col-sm-3">RFID Number</dt>
+        <dd class="col-sm-9"><%= @asset.rfid_tag.rfid_number %></dd>
+
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9">
+          <%= @asset.rfid_tag.active? ? 
+              content_tag(:span, 'Active', class: 'badge badge-success') : 
+              content_tag(:span, 'Inactive', class: 'badge badge-danger') %>
+        </dd>
+
+        <dt class="col-sm-3">Last Scanned</dt>
+        <dd class="col-sm-9">
+          <%= @asset.rfid_tag.last_scanned_at&.strftime("%Y-%m-%d %H:%M:%S") || 'Never' %>
+        </dd>
+
+        <dt class="col-sm-3">Last Known Location</dt>
+        <dd class="col-sm-9">
+          <%= @asset.rfid_tag.last_known_location&.name || 'Unknown' %>
+        </dd>
+      </dl>
+
+      <%= link_to 'Remove RFID Tag', 
+          asset_rfid_tag_path(@asset), 
+          method: :delete,
+          data: { confirm: 'Are you sure?' },
+          class: 'btn btn-danger' if policy(@asset.rfid_tag).destroy? %>
+    <% else %>
+      <p>No RFID tag assigned.</p>
+      <%= link_to 'Assign RFID Tag', 
+          new_asset_rfid_tag_path(@asset), 
+          class: 'btn btn-primary' if policy(RfidTag.new(asset: @asset)).create? %>
+    <% end %>
+  </div>
+</div> 

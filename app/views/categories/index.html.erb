@@ -1,0 +1,53 @@
+<div class="container">
+  <h1>Categories</h1>
+
+  <%= search_form_for @q, class: 'mb-4' do |f| %>
+    <div class="row">
+      <div class="col-md-4">
+        <%= f.label :name_cont, "Name contains" %>
+        <%= f.search_field :name_cont, class: 'form-control' %>
+      </div>
+      <div class="col-md-4">
+        <%= f.label :description_cont, "Description contains" %>
+        <%= f.search_field :description_cont, class: 'form-control' %>
+      </div>
+      <div class="col-md-4">
+        <%= f.submit "Search", class: 'btn btn-primary mt-4' %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="text-end mb-3">
+    <%= link_to 'New Category', new_category_path, class: 'btn btn-success' %>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th><%= sort_link(@q, :name) %></th>
+          <th><%= sort_link(@q, :description) %></th>
+          <th>Assets Count</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @categories.each do |category| %>
+          <tr>
+            <td><%= category.name %></td>
+            <td><%= category.description %></td>
+            <td><%= category.assets.count %></td>
+            <td>
+              <%= link_to 'Show', category, class: 'btn btn-sm btn-info' %>
+              <%= link_to 'Edit', edit_category_path(category), class: 'btn btn-sm btn-primary' %>
+              <%= button_to 'Delete', category, method: :delete, 
+                  data: { confirm: 'Are you sure?' }, 
+                  class: 'btn btn-sm btn-danger' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div> 

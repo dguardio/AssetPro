@@ -1,0 +1,67 @@
+<div class="container">
+  <h1>Assets</h1>
+
+  <%= search_form_for @q, class: 'mb-4' do |f| %>
+    <div class="row">
+      <div class="col-md-3">
+        <%= f.label :name_cont, "Name contains" %>
+        <%= f.search_field :name_cont, class: 'form-control' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.label :category_id_eq, "Category" %>
+        <%= f.collection_select :category_id_eq, Category.all, :id, :name, 
+            { include_blank: true }, class: 'form-control' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.label :location_id_eq, "Location" %>
+        <%= f.collection_select :location_id_eq, Location.all, :id, :name, 
+            { include_blank: true }, class: 'form-control' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.label :status_eq, "Status" %>
+        <%= f.select :status_eq, Asset.statuses.keys.map { |s| [s.titleize, s] }, 
+            { include_blank: true }, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="mt-3">
+      <%= f.submit "Search", class: 'btn btn-primary' %>
+      <%= link_to "Clear", assets_path, class: 'btn btn-secondary' %>
+    </div>
+  <% end %>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th><%= sort_link(@q, :name, "Name") %></th>
+        <th><%= sort_link(@q, :category_name, "Category") %></th>
+        <th><%= sort_link(@q, :location_name, "Location") %></th>
+        <th><%= sort_link(@q, :status, "Status") %></th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @assets.each do |asset| %>
+        <tr>
+          <td><%= asset.name %></td>
+          <td><%= asset.category&.name %></td>
+          <td><%= asset.location&.name %></td>
+          <td><%= asset.status.titleize %></td>
+          <td>
+            <%= link_to 'Show', asset, class: 'btn btn-sm btn-info' if policy(asset).show? %>
+            <%= link_to 'Edit', edit_asset_path(asset), class: 'btn btn-sm btn-primary' if policy(asset).update? %>
+            <%= link_to 'Delete', asset, 
+                method: :delete, 
+                data: { confirm: 'Are you sure?' }, 
+                class: 'btn btn-sm btn-danger' if policy(asset).destroy? %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="d-flex justify-content-between align-items-center">
+    <%= paginate @assets %>
+    <%= link_to 'New Asset', new_asset_path, class: 'btn btn-success' if policy(Asset.new).create? %>
+  </div>
+</div> 

@@ -1,0 +1,34 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Dashboard Report") do |sheet|
+  # Title
+  sheet.add_row ["Asset Management Dashboard Report - #{Date.today}"]
+  sheet.add_row []
+
+  # Overall Statistics
+  sheet.add_row ["Overall Statistics"]
+  @dashboard_data.each do |key, value|
+    sheet.add_row [key.to_s.titleize, value]
+  end
+  sheet.add_row []
+
+  # Assets by Status
+  sheet.add_row ["Assets by Status"]
+  @assets_by_status.each do |status, count|
+    sheet.add_row [status.titleize, count]
+  end
+  sheet.add_row []
+
+  # Assets by Category
+  sheet.add_row ["Assets by Category"]
+  @assets_by_category.each do |category, count|
+    sheet.add_row [category, count]
+  end
+  sheet.add_row []
+
+  # Assets by Location
+  sheet.add_row ["Assets by Location"]
+  @assets_by_location.each do |location, count|
+    sheet.add_row [location, count]
+  end
+end 

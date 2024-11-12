@@ -1,0 +1,44 @@
+<%= form_with(model: [@asset, maintenance_record], local: true) do |f| %>
+  <% if maintenance_record.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(maintenance_record.errors.count, "error") %> prohibited this record from being saved:</h4>
+      <ul>
+        <% maintenance_record.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :maintenance_date %>
+    <%= f.date_field :maintenance_date, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :maintenance_type %>
+    <%= f.select :maintenance_type, 
+        MaintenanceRecord.maintenance_types.keys.map { |t| [t.titleize, t] },
+        {}, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_area :description, class: 'form-control', rows: 4 %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :cost %>
+    <%= f.number_field :cost, class: 'form-control', step: '0.01' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :status %>
+    <%= f.select :status, 
+        MaintenanceRecord.statuses.keys.map { |s| [s.titleize, s] },
+        {}, class: 'form-control' %>
+  </div>
+
+  <%= f.submit class: 'btn btn-primary' %>
+  <%= link_to 'Back', asset_maintenance_records_path(@asset), class: 'btn btn-secondary' %>
+<% end %> 

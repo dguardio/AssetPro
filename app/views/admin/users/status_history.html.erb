@@ -1,0 +1,48 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Account Status History</h1>
+    <%= link_to admin_users_path, class: 'btn btn-secondary' do %>
+      <i class="fas fa-arrow-left"></i> Back to Users
+    <% end %>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Status Changes for <%= @user.email %></h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Changed By</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @status_logs.each do |log| %>
+              <tr>
+                <td><%= log.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+                <td><%= log.changed_by.email %></td>
+                <td>
+                  <span class="badge <%= log.status_from ? 'bg-success' : 'bg-danger' %>">
+                    <%= log.status_from ? 'Active' : 'Inactive' %>
+                  </span>
+                </td>
+                <td>
+                  <span class="badge <%= log.status_to ? 'bg-success' : 'bg-danger' %>">
+                    <%= log.status_to ? 'Active' : 'Inactive' %>
+                  </span>
+                </td>
+                <td><%= log.reason %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div> 

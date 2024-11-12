@@ -1,0 +1,35 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h1><%= @asset.name %></h1>
+    </div>
+    <div class="card-body">
+      <dl class="row">
+        <dt class="col-sm-3">Description</dt>
+        <dd class="col-sm-9"><%= @asset.description %></dd>
+
+        <dt class="col-sm-3">Status</dt>
+        <dd class="col-sm-9"><%= @asset.status.humanize %></dd>
+
+        <dt class="col-sm-3">Category</dt>
+        <dd class="col-sm-9"><%= @asset.category&.name %></dd>
+
+        <dt class="col-sm-3">Location</dt>
+        <dd class="col-sm-9"><%= @asset.location&.name %></dd>
+
+        <dt class="col-sm-3">RFID Tag</dt>
+        <dd class="col-sm-9">
+          <% if @asset.rfid_tag %>
+            <%= @asset.rfid_tag.rfid_number %>
+          <% else %>
+            <%= link_to 'Assign RFID Tag', new_asset_rfid_tag_path(@asset), class: 'btn btn-sm btn-primary' %>
+          <% end %>
+        </dd>
+      </dl>
+    </div>
+    <div class="card-footer">
+      <%= link_to 'Edit', edit_asset_path(@asset), class: 'btn btn-primary' %>
+      <%= link_to 'Back', assets_path, class: 'btn btn-secondary' %>
+    </div>
+  </div>
+</div> 

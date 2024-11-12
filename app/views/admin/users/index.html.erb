@@ -1,0 +1,53 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Manage Users</h1>
+    <%= link_to new_admin_user_path, class: 'btn btn-primary' do %>
+      <i class="fas fa-plus"></i> New User
+    <% end %>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Last Sign In</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @users.each do |user| %>
+              <tr>
+                <td><%= user.email %></td>
+                <td><%= user.full_name %></td>
+                <td><%= user.role&.titleize %></td>
+                <td>
+                  <span class="badge <%= user.active? ? 'bg-success' : 'bg-danger' %>">
+                    <%= user.active? ? 'Active' : 'Inactive' %>
+                  </span>
+                </td>
+                <td><%= user.last_sign_in_at&.strftime("%Y-%m-%d %H:%M") %></td>
+                <td>
+                  <%= link_to edit_admin_user_path(user), class: 'btn btn-sm btn-info me-2' do %>
+                    <i class="fas fa-edit"></i>
+                  <% end %>
+                  <%= link_to admin_user_path(user), 
+                      method: :delete, 
+                      data: { turbo_confirm: 'Are you sure?' }, 
+                      class: 'btn btn-sm btn-danger' do %>
+                    <i class="fas fa-trash"></i>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div> 

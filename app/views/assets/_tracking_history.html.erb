@@ -1,0 +1,30 @@
+<div class="card">
+  <div class="card-header">
+    <h3>Tracking History</h3>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date/Time</th>
+            <th>Event Type</th>
+            <th>Location</th>
+            <th>Scanned By</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @asset.tracking_history.each do |event| %>
+            <tr>
+              <td><%= event.scanned_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+              <td><%= event.event_type.titleize %></td>
+              <td><%= event.location.name %></td>
+              <td><%= event.scanned_by.email %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= paginate @asset.tracking_history %>
+  </div>
+</div> 

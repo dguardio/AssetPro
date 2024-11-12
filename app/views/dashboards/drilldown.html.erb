@@ -1,0 +1,137 @@
+<div class="container-fluid py-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-transparent mb-4">
+      <li class="breadcrumb-item">
+        <%= link_to dashboard_path, class: "text-dark font-weight-bold" do %>
+          <i class="material-icons-round opacity-6 me-2">home</i> Dashboard
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active text-dark" aria-current="page">
+        <%= "#{@filter_type}: #{@filter_value}" %>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons-round opacity-10">inventory_2</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Total Assets</p>
+            <h4 class="mb-0"><%= @summary[:total] %></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons-round opacity-10">settings_remote</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">RFID Enabled</p>
+            <h4 class="mb-0"><%= @summary[:rfid_enabled] %></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assets Table -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header pb-0">
+          <div class="row">
+            <div class="col-6">
+              <h6>Filtered Assets</h6>
+              <p class="text-sm mb-0">
+                Showing assets filtered by <%= @filter_type.downcase %>: <strong><%= @filter_value %></strong>
+              </p>
+            </div>
+            <div class="col-6 text-end">
+              <%= link_to dashboard_path, class: "btn bg-gradient-dark mb-0" do %>
+                <i class="material-icons-round">arrow_back</i>&nbsp;&nbsp;Back to Dashboard
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Asset</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Category</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">RFID</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Last Updated</th>
+                  <th class="text-secondary opacity-7"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @assets.each do |asset| %>
+                  <tr>
+                    <td>
+                      <div class="d-flex px-3 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm"><%= asset.name %></h6>
+                          <p class="text-xs text-secondary mb-0"><%= asset.serial_number %></p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0"><%= asset.category&.name %></p>
+                    </td>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0"><%= asset.location&.name %></p>
+                    </td>
+                    <td>
+                      <span class="badge badge-sm bg-gradient-<%= status_color(asset.status) %>">
+                        <%= asset.status.titleize %>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge badge-sm bg-gradient-<%= asset.rfid_enabled? ? 'success' : 'secondary' %>">
+                        <%= asset.rfid_enabled? ? 'Enabled' : 'Disabled' %>
+                      </span>
+                    </td>
+                    <td>
+                      <span class="text-secondary text-xs font-weight-bold">
+                        <%= time_ago_in_words(asset.updated_at) %> ago
+                      </span>
+                    </td>
+                    <td class="align-middle">
+                      <%= link_to asset_path(asset), class: "text-secondary font-weight-bold text-xs", 
+                          data: { bs_toggle: "tooltip" }, title: "View details" do %>
+                        <i class="material-icons-round">visibility</i>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :page_scripts do %>
+  <script>
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
+<% end> 

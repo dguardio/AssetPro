@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  asset_code: MyString
+  status: MyString
+  purchase_date: 2024-10-31
+  purchase_price: 9.99
+  category: one
+  location: one
+
+two:
+  name: MyString
+  description: MyText
+  asset_code: MyString
+  status: MyString
+  purchase_date: 2024-10-31
+  purchase_price: 9.99
+  category: two
+  location: two

@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h2><%= @location.name %></h2>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p>
+            <strong>Address:</strong>
+            <%= @location.address %>
+          </p>
+          <p>
+            <strong>Building:</strong>
+            <%= @location.building %>
+          </p>
+          <p>
+            <strong>Floor:</strong>
+            <%= @location.floor %>
+          </p>
+          <p>
+            <strong>Room:</strong>
+            <%= @location.room %>
+          </p>
+        </div>
+      </div>
+
+      <h3 class="mt-4">Assets at this Location</h3>
+      <%= render 'assets/asset_list', assets: @assets %>
+      <%= paginate @assets %>
+
+      <div class="mt-4">
+        <%= link_to 'Edit', edit_location_path(@location), class: 'btn btn-primary' if policy(@location).update? %>
+        <%= link_to 'Back', locations_path, class: 'btn btn-secondary' %>
+      </div>
+    </div>
+  </div>
+</div> 

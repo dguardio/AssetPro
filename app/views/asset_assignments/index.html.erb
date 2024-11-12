@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Asset Assignments</h1>
+    <%= link_to 'New Assignment', new_asset_assignment_path, 
+        class: 'btn btn-success' if policy(AssetAssignment.new).create? %>
+  </div>
+
+  <%= search_form_for @q, class: 'mb-4' do |f| %>
+    <div class="row">
+      <div class="col-md-3">
+        <%= f.label :user_email_cont, "User Email contains" %>
+        <%= f.search_field :user_email_cont, class: 'form-control' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.label :asset_name_cont, "Asset Name contains" %>
+        <%= f.search_field :asset_name_cont, class: 'form-control' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.label :assigned_date_gteq, "Assigned After" %>
+        <%= f.date_field :assigned_date_gteq, class: 'form-control' %>
+      </div>
+      <div class="col-md-3">
+        <%= f.label :return_date_lteq, "Returned Before" %>
+        <%= f.date_field :return_date_lteq, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="mt-3">
+      <%= f.submit "Search", class: 'btn btn-primary' %>
+      <%= link_to "Clear", asset_assignments_path, class: 'btn btn-secondary' %>
+    </div>
+  <% end %>
+
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th><%= sort_link_with_icon(@q, :user_email, "User") %></th>
+          <th><%= sort_link_with_icon(@q, :asset_name, "Asset") %></th>
+          <th><%= sort_link_with_icon(@q, :assigned_date, "Assigned Date") %></th>
+          <th><%= sort_link_with_icon(@q, :return_date, "Return Date") %></th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @asset_assignments.each do |assignment| %>
+          <tr>
+            <td><%= assignment.user.email %></td>
+            <td><%= assignment.asset.name %></td>
+            <td><%= assignment.assigned_date&.strftime("%Y-%m-%d") %></td>
+            <td><%= assignment.return_date&.strftime("%Y-%m-%d") %></td>
+            <td>
+              <%= link_to 'Show', assignment, class: 'btn btn-sm btn-info' if policy(assignment).show? %>
+              <%= link_to 'Remove', assignment, 
+                  method: :delete, 
+                  data: { confirm: 'Are you sure?' }, 
+                  class: 'btn btn-sm btn-danger' if policy(assignment).destroy? %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%= paginate @asset_assignments %>
+</div> 

@@ -1,0 +1,470 @@
+<div class="container-fluid py-4">
+  <!-- Title -->
+
+
+  <!-- Filters Card -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header p-3 pb-0">
+          <h6 class="mb-0">Filter Assets</h6>
+        </div>
+        <div class="card-body p-3">
+          <%= search_form_for @q, url: dashboard_path, html: { method: :get, class: 'row g-3' } do |f| %>
+            <div class="col-md-3">
+              <div class="input-group input-group-static mb-4">
+                <%= f.label :category_id_eq, "Category", class: "ms-0" %>
+                <%= f.collection_select :category_id_eq, Category.all, :id, :name, 
+                    { include_blank: 'All Categories' }, 
+                    class: 'form-control' %>
+              </div>
+            </div>
+            
+            <div class="col-md-3">
+              <div class="input-group input-group-static mb-4">
+                <%= f.label :location_id_eq, "Location", class: "ms-0" %>
+                <%= f.collection_select :location_id_eq, Location.all, :id, :name, 
+                    { include_blank: 'All Locations' }, 
+                    class: 'form-control' %>
+              </div>
+            </div>
+            
+            <div class="col-md-3">
+              <div class="input-group input-group-static mb-4">
+                <%= f.label :status_eq, "Status", class: "ms-0" %>
+                <%= f.select :status_eq, Asset.statuses.keys.map { |s| [s.titleize, s] }, 
+                    { include_blank: 'All Statuses' }, 
+                    class: 'form-control' %>
+              </div>
+            </div>
+            
+            <div class="col-md-3">
+              <div class="input-group input-group-static mb-4">
+                <%= f.label :rfid_enabled_eq, "RFID Status", class: "ms-0" %>
+                <%= f.select :rfid_enabled_eq, [['Enabled', true], ['Disabled', false]], 
+                    { include_blank: 'All' }, 
+                    class: 'form-control' %>
+              </div>
+            </div>
+            
+            <div class="col-12">
+              <%= f.submit "Apply Filters", class: 'btn bg-gradient-primary mb-0' %>
+              <%= link_to "Clear Filters", dashboard_path, 
+                  class: 'btn bg-gradient-secondary mb-0' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Buttons -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body p-3">
+          <%= link_to dashboard_path(format: :xlsx, q: search_params), 
+              class: 'btn bg-gradient-success mb-0 me-2' do %>
+            <i class="material-icons-round">table_view</i> Export to Excel
+          <% end %>
+          
+          <%= link_to dashboard_path(format: :pdf, q: search_params), 
+              class: 'btn bg-gradient-danger mb-0 me-2' do %>
+            <i class="material-icons-round">picture_as_pdf</i> Export to PDF
+          <% end %>
+          
+          <%= link_to dashboard_path(format: :csv, q: search_params), 
+              class: 'btn bg-gradient-info mb-0' do %>
+            <i class="material-icons-round">download</i> Export to CSV
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons-round opacity-10">inventory_2</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Total Assets</p>
+            <h4 class="mb-0"><%= @dashboard_data[:total_assets] %></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons-round opacity-10">check_circle</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">Available Assets</p>
+            <h4 class="mb-0"><%= @dashboard_data[:available_assets] %></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-warning shadow-warning text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons-round opacity-10">hourglass_empty</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">In Use Assets</p>
+            <h4 class="mb-0"><%= @dashboard_data[:in_use_assets] %></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+      <div class="card">
+        <div class="card-header p-3 pt-2">
+          <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+            <i class="material-icons-round opacity-10">build</i>
+          </div>
+          <div class="text-end pt-1">
+            <p class="text-sm mb-0 text-capitalize">In Maintenance</p>
+            <h4 class="mb-0"><%= @dashboard_data[:maintenance_assets] %></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="row mb-4">
+    <div class="col-lg-4 col-md-6">
+      <div class="card z-index-2">
+        <div class="card-header p-3 pb-0">
+          <h6 class="mb-0">Assets by Status</h6>
+        </div>
+        <div class="card-body p-3">
+          <div class="chart">
+            <canvas id="statusChart" class="chart-canvas" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6">
+      <div class="card z-index-2">
+        <div class="card-header p-3 pb-0">
+          <h6 class="mb-0">Assets by Category</h6>
+        </div>
+        <div class="card-body p-3">
+          <div class="chart">
+            <canvas id="categoryChart" class="chart-canvas" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6">
+      <div class="card z-index-2">
+        <div class="card-header p-3 pb-0">
+          <h6 class="mb-0">Assets by Location</h6>
+        </div>
+        <div class="card-body p-3">
+          <div class="chart">
+            <canvas id="locationChart" class="chart-canvas" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tables Row -->
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header pb-0">
+          <h6 class="mb-0">Recent Asset Movements</h6>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Asset</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @recent_activities.each do |activity| %>
+                  <tr>
+                    <td>
+                      <div class="d-flex px-3 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm"><%= activity.asset&.name %></h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"><%= activity.location&.name %></p>
+                    </td>
+                    <td>
+                      <span class="text-xs font-weight-bold">
+                        <%= time_ago_in_words(activity.created_at) %> ago
+                      </span>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header pb-0">
+          <h6 class="mb-0">Filtered Assets</h6>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                    <%= sort_link(@q, :name, "Name") %>
+                  </th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                    <%= sort_link(@q, :category_name, "Category") %>
+                  </th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                    <%= sort_link(@q, :location_name, "Location") %>
+                  </th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                    <%= sort_link(@q, :status, "Status") %>
+                  </th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                    <%= sort_link(@q, :updated_at, "Last Updated") %>
+                  </th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @filtered_assets.each do |asset| %>
+                  <tr>
+                    <td>
+                      <div class="d-flex px-3 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm"><%= asset.name %></h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"><%= asset.category&.name %></p>
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"><%= asset.location&.name %></p>
+                    </td>
+                    <td>
+                      <span class="badge badge-sm bg-gradient-success"><%= asset.status.titleize %></span>
+                    </td>
+                    <td>
+                      <span class="text-xs font-weight-bold">
+                        <%= time_ago_in_words(asset.updated_at) %> ago
+                      </span>
+                    </td>
+                    <td>
+                      <%= link_to asset_path(asset), 
+                          class: 'btn btn-link text-secondary mb-0' do %>
+                        <i class="material-icons-round">visibility</i>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= javascript_tag do %>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Charts configuration
+    const chartConfigs = {
+      status: {
+        type: 'pie',
+        data: {
+          labels: <%= raw @assets_by_status.keys.map(&:titleize) %>,
+          datasets: [{
+            data: <%= raw @assets_by_status.values %>,
+            backgroundColor: [
+              'rgba(76, 175, 80, 0.8)',  // success
+              'rgba(244, 67, 54, 0.8)',  // danger
+              'rgba(255, 152, 0, 0.8)',  // warning
+              'rgba(3, 169, 244, 0.8)'   // info
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20,
+                font: {
+                  size: 11,
+                  family: "Roboto",
+                }
+              }
+            }
+          }
+        }
+      },
+      
+      category: {
+        type: 'bar',
+        data: {
+          labels: <%= raw @assets_by_category.keys %>,
+          datasets: [{
+            label: 'Number of Assets',
+            data: <%= raw @assets_by_category.values %>,
+            backgroundColor: 'rgba(33, 150, 243, 0.8)',
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1,
+                font: {
+                  size: 11,
+                  family: "Roboto",
+                }
+              },
+              grid: {
+                drawBorder: false,
+                display: true,
+                drawOnChartArea: true,
+                drawTicks: false,
+                borderDash: [5, 5]
+              }
+            },
+            x: {
+              ticks: {
+                font: {
+                  size: 11,
+                  family: "Roboto",
+                }
+              },
+              grid: {
+                drawBorder: false,
+                display: false,
+                drawOnChartArea: false,
+                drawTicks: false
+              }
+            }
+          }
+        }
+      },
+      
+      location: {
+        type: 'doughnut',
+        data: {
+          labels: <%= raw @assets_by_location.keys %>,
+          datasets: [{
+            data: <%= raw @assets_by_location.values %>,
+            backgroundColor: [
+              'rgba(76, 175, 80, 0.8)',
+              'rgba(244, 67, 54, 0.8)',
+              'rgba(255, 152, 0, 0.8)',
+              'rgba(3, 169, 244, 0.8)',
+              'rgba(156, 39, 176, 0.8)'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20,
+                font: {
+                  size: 11,
+                  family: "Roboto",
+                }
+              }
+            }
+          }
+        }
+      }
+    };
+
+    // Create charts
+    const statusChart = new Chart(
+      document.getElementById('statusChart').getContext('2d'),
+      chartConfigs.status
+    );
+
+    const categoryChart = new Chart(
+      document.getElementById('categoryChart').getContext('2d'),
+      chartConfigs.category
+    );
+
+    const locationChart = new Chart(
+      document.getElementById('locationChart').getContext('2d'),
+      chartConfigs.location
+    );
+
+    // Add click handlers for drilldown
+    statusChart.canvas.onclick = function(evt) {
+      const points = statusChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+      if (points.length) {
+        const firstPoint = points[0];
+        const status = statusChart.data.labels[firstPoint.index].toLowerCase();
+        window.location.href = '<%= drilldown_dashboard_path %>?status=' + status;
+      }
+    };
+
+    categoryChart.canvas.onclick = function(evt) {
+      const points = categoryChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+      if (points.length) {
+        const firstPoint = points[0];
+        const category = categoryChart.data.labels[firstPoint.index];
+        const categoryId = <%= raw Category.pluck(:name, :id).to_h.to_json %>[category];
+        window.location.href = '<%= drilldown_dashboard_path %>?category_id=' + categoryId;
+      }
+    };
+
+    locationChart.canvas.onclick = function(evt) {
+      const points = locationChart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, true);
+      if (points.length) {
+        const firstPoint = points[0];
+        const location = locationChart.data.labels[firstPoint.index];
+        const locationId = <%= raw Location.pluck(:name, :id).to_h.to_json %>[location];
+        window.location.href = '<%= drilldown_dashboard_path %>?location_id=' + locationId;
+      }
+    };
+  });
+<% end %> 
