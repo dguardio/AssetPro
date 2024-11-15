@@ -1,33 +1,51 @@
 <div class="container">
-  <h1>Assets</h1>
+  <h4>Assets</h4>
 
-  <%= search_form_for @q, class: 'mb-4' do |f| %>
-    <div class="row">
-      <div class="col-md-3">
-        <%= f.label :name_cont, "Name contains" %>
-        <%= f.search_field :name_cont, class: 'form-control' %>
+  <div>
+    <%= form_tag import_assets_path, multipart: true, class: 'd-inline', data: { controller: 'form-submit' } do %>
+      <%= file_field_tag :file, 
+          class: 'd-none', 
+          data: { 
+            'form-submit-target': 'fileInput',
+            action: 'change->form-submit#submit' 
+          } %>
+      <%= button_tag 'Import', 
+          type: 'button', 
+          class: 'btn btn-secondary', 
+          data: { action: 'click->form-submit#triggerFileInput' } %>
+    <% end %>
+    <%= link_to 'Export', export_assets_path(format: :csv), class: 'btn btn-secondary' %>
+    <%= link_to 'New Asset', new_asset_path, class: 'btn btn-primary' %>
+  </div>
+  <div>
+    <%= search_form_for @q, class: 'mb-4' do |f| %>
+      <div class="row">
+        <div class="col-md-3">
+          <%= f.label :name_cont, "Name contains" %>
+          <%= f.search_field :name_cont, class: 'form-control' %>
+        </div>
+        <div class="col-md-3">
+          <%= f.label :category_id_eq, "Category" %>
+          <%= f.collection_select :category_id_eq, Category.all, :id, :name, 
+              { include_blank: true }, class: 'form-control' %>
+        </div>
+        <div class="col-md-3">
+          <%= f.label :location_id_eq, "Location" %>
+          <%= f.collection_select :location_id_eq, Location.all, :id, :name, 
+              { include_blank: true }, class: 'form-control' %>
+        </div>
+        <div class="col-md-3">
+          <%= f.label :status_eq, "Status" %>
+          <%= f.select :status_eq, Asset.statuses.keys.map { |s| [s.titleize, s] }, 
+              { include_blank: true }, class: 'form-control' %>
+        </div>
       </div>
-      <div class="col-md-3">
-        <%= f.label :category_id_eq, "Category" %>
-        <%= f.collection_select :category_id_eq, Category.all, :id, :name, 
-            { include_blank: true }, class: 'form-control' %>
+      <div class="mt-3">
+        <%= f.submit "Search", class: 'btn btn-primary' %>
+        <%= link_to "Clear", assets_path, class: 'btn btn-secondary' %>
       </div>
-      <div class="col-md-3">
-        <%= f.label :location_id_eq, "Location" %>
-        <%= f.collection_select :location_id_eq, Location.all, :id, :name, 
-            { include_blank: true }, class: 'form-control' %>
-      </div>
-      <div class="col-md-3">
-        <%= f.label :status_eq, "Status" %>
-        <%= f.select :status_eq, Asset.statuses.keys.map { |s| [s.titleize, s] }, 
-            { include_blank: true }, class: 'form-control' %>
-      </div>
-    </div>
-    <div class="mt-3">
-      <%= f.submit "Search", class: 'btn btn-primary' %>
-      <%= link_to "Clear", assets_path, class: 'btn btn-secondary' %>
-    </div>
-  <% end %>
+    <% end %>      
+  </div>
 
   <table class="table">
     <thead>

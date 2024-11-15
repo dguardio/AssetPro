@@ -1,6 +1,7 @@
 class AssetAssignment < ApplicationRecord
   belongs_to :asset
   belongs_to :user
+  belongs_to :assigned_by, class_name: 'User'
 
   validates :checked_out_at, presence: true
   validate :check_in_after_check_out
@@ -8,6 +9,10 @@ class AssetAssignment < ApplicationRecord
 
   before_create :update_asset_status
   before_update :handle_check_in, if: :checking_in?
+  #validate :asset_available_for_checkout, on: :create
+
+  after_create :notify_assignment
+  after_create :update_asset_status
 
   private
 
@@ -26,7 +31,7 @@ class AssetAssignment < ApplicationRecord
   end
 
   def update_asset_status
-    asset.update(status: :checked_out)
+    asset.update!(status: 'in_use') if checked_in_at.nil?
   end
 
   def checking_in?
@@ -35,5 +40,11 @@ class AssetAssignment < ApplicationRecord
 
   def handle_check_in
     asset.update(status: :available)
+  end
+
+  def notify_assignment
+    AssetAssignmentNotifier.with(
+      asset_assignment: self
+    ).deliver(user)
   end
 end

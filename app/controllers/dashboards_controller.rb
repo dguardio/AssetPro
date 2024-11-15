@@ -8,6 +8,21 @@ class DashboardsController < ApplicationController
     @q = Asset.ransack(search_params)
     @filtered_assets = @q.result.includes(:category, :location, :rfid_tag)
     
+    @dashboard_data.merge!({
+      expiring_licenses: License.expiring_soon.count,
+      overdue_maintenance: MaintenanceSchedule.overdue.count,
+      total_license_cost: License.sum(:cost),
+      maintenance_due_this_week: MaintenanceSchedule.upcoming.where(scheduled_date: Time.current..1.week.from_now).count
+    })
+    
+    @upcoming_maintenance = MaintenanceSchedule.upcoming.includes(:asset, :assigned_to).limit(5)
+    @expiring_licenses = License.expiring_soon.includes(:asset).limit(5)
+    
+    @depreciation_data = {
+      labels: 6.months.ago.to_date.upto(Date.current).map(&:to_s),
+      values: @filtered_assets.map { |asset| asset.current_value }
+    }
+    
     respond_to do |format|
       format.html
       format.xlsx {

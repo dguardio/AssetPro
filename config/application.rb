@@ -20,5 +20,13 @@ module AssetPro
     # config.eager_load_paths << Rails.root.join("extras")
 
     config.assets.initialize_on_precompile = false
+
+    # Add this line to ensure concerns are autoloaded
+    config.autoload_paths += %W(#{config.root}/app/models/concerns)
+    config.eager_load_paths += %W(#{config.root}/app/models/concerns)
+
+    # config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :async  # Change from :sidekiq to :async
+
   end
 end

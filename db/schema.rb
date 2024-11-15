@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_02_220346) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_13_163008) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -34,7 +34,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_02_220346) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "assigned_by_id", null: false
     t.index ["asset_id"], name: "index_asset_assignments_on_asset_id"
+    t.index ["assigned_by_id"], name: "index_asset_assignments_on_assigned_by_id"
     t.index ["user_id"], name: "index_asset_assignments_on_user_id"
   end
 
@@ -66,9 +68,24 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_02_220346) do
     t.datetime "updated_at", null: false
     t.boolean "rfid_enabled"
     t.datetime "last_tracked_at"
+    t.decimal "depreciation_rate", precision: 5, scale: 2
+    t.integer "quantity", default: 1, null: false
+    t.integer "minimum_quantity", default: 1, null: false
     t.index ["asset_code"], name: "index_assets_on_asset_code", unique: true
     t.index ["category_id"], name: "index_assets_on_category_id"
     t.index ["location_id"], name: "index_assets_on_location_id"
+  end
+
+  create_table "audit_logs", force: :cascade do |t|
+    t.string "auditable_type"
+    t.bigint "auditable_id"
+    t.bigint "user_id"
+    t.string "action"
+    t.json "audit_changes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auditable_type", "auditable_id"], name: "index_audit_logs_on_auditable"
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -76,6 +93,25 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_02_220346) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "licenses", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.string "license_key"
+    t.integer "seats"
+    t.integer "seats_used", default: 0
+    t.bigint "asset_id"
+    t.bigint "assigned_to_id"
+    t.date "purchase_date"
+    t.date "expiration_date"
+    t.decimal "cost", precision: 10, scale: 2
+    t.string "supplier"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["asset_id"], name: "index_licenses_on_asset_id"
+    t.index ["assigned_to_id"], name: "index_licenses_on_assigned_to_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -100,6 +136,56 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_02_220346) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["asset_id"], name: "index_maintenance_records_on_asset_id"
+  end
+
+  create_table "maintenance_schedules", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.bigint "asset_id", null: false
+    t.bigint "assigned_to_id"
+    t.datetime "scheduled_date"
+    t.datetime "completed_date"
+    t.integer "status", default: 0
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["asset_id"], name: "index_maintenance_schedules_on_asset_id"
+    t.index ["assigned_to_id"], name: "index_maintenance_schedules_on_assigned_to_id"
+  end
+
+  create_table "noticed_events", force: :cascade do |t|
+    t.string "type"
+    t.string "record_type"
+    t.bigint "record_id"
+    t.jsonb "params"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "notifications_count"
+    t.index ["record_type", "record_id"], name: "index_noticed_events_on_record"
+  end
+
+  create_table "noticed_notifications", force: :cascade do |t|
+    t.string "type"
+    t.bigint "event_id", null: false
+    t.string "recipient_type", null: false
+    t.bigint "recipient_id", null: false
+    t.datetime "read_at", precision: nil
+    t.datetime "seen_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_noticed_notifications_on_event_id"
+    t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "recipient_type", null: false
+    t.bigint "recipient_id", null: false
+    t.string "type"
+    t.json "params"
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recipient_type", "recipient_id"], name: "index_notifications_on_recipient"
   end
 
   create_table "rfid_tags", force: :cascade do |t|
@@ -146,7 +232,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_02_220346) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "users_roles", id: false, force: :cascade do |t|
+  create_table "users_roles", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "role_id"
     t.index ["role_id"], name: "index_users_roles_on_role_id"
@@ -158,12 +244,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_02_220346) do
   add_foreign_key "account_status_logs", "users", column: "changed_by_id"
   add_foreign_key "asset_assignments", "assets"
   add_foreign_key "asset_assignments", "users"
+  add_foreign_key "asset_assignments", "users", column: "assigned_by_id"
   add_foreign_key "asset_tracking_events", "assets"
   add_foreign_key "asset_tracking_events", "locations"
   add_foreign_key "asset_tracking_events", "users", column: "scanned_by_id"
   add_foreign_key "assets", "categories"
   add_foreign_key "assets", "locations"
+  add_foreign_key "audit_logs", "users"
+  add_foreign_key "licenses", "assets"
+  add_foreign_key "licenses", "users", column: "assigned_to_id"
   add_foreign_key "maintenance_records", "assets"
+  add_foreign_key "maintenance_schedules", "assets"
+  add_foreign_key "maintenance_schedules", "users", column: "assigned_to_id"
   add_foreign_key "rfid_tags", "assets"
   add_foreign_key "rfid_tags", "locations"
 end

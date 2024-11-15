@@ -1,31 +1,34 @@
 class User < ApplicationRecord
   rolify
+  include Auditable
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :trackable
 
+  # Validations
+  validates :email, presence: true, uniqueness: true
+  validates :first_name, presence: true
+  validates :last_name, presence: true
+  validates :role, presence: true, inclusion: { in: %w[admin manager user security] }
+
+  # Associations
   has_many :asset_assignments
-  has_many :assets, through: :asset_assignments
+  has_many :assigned_assets, through: :asset_assignments, source: :asset
   has_many :account_status_logs
+  has_many :audit_logs
+  has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'
 
-  enum role: {
-    user: 'user',
-    admin: 'admin',
-    security: 'security',
-    manager: 'manager'
-  }
-
-  validates :role, presence: true
-
-  after_initialize :set_default_role, if: :new_record?
-
-  # Example roles you might want to add
+  # Callbacks
   after_create :assign_default_role
 
-  # Add callback to handle user deactivation
-  after_update :handle_deactivation, if: :saved_change_to_active?
+  # Instance methods
+  def name
+    "#{first_name} #{last_name}".strip
+  end
+  alias_method :full_name, :name
 
   def admin?
     role == 'admin'
@@ -39,61 +42,22 @@ class User < ApplicationRecord
     role == 'manager'
   end
 
-  def full_name
-    return email if first_name.blank? && last_name.blank?
-    [first_name, last_name].compact.join(' ')
+  def user?
+    role == 'user'
   end
 
-  def active_for_authentication?
-    super && active?
-  end
-
-  def inactive_message
-    active? ? super : :deactivated_account
-  end
-
-  def deactivate!(changed_by:, reason: nil)
-    return false unless active?
-    
-    User.transaction do
-      account_status_logs.create!(
-        changed_by: changed_by,
-        status_from: true,
-        status_to: false,
-        reason: reason
-      )
-      update!(active: false)
-    end
-  end
-
-  def activate!(changed_by:, reason: nil)
-    return false if active?
-    
-    User.transaction do
-      account_status_logs.create!(
-        changed_by: changed_by,
-        status_from: false,
-        status_to: true,
-        reason: reason
-      )
-      update!(active: true)
-    end
+  # Optional: A more dynamic approach if you need to check roles frequently
+  def has_role?(role_name)
+    role == role_name.to_s
   end
 
   private
 
   def assign_default_role
-    self.add_role(:employee) if self.roles.blank?
-  end
-
-  def set_default_role
-    self.role ||= :user
-  end
-
-  def handle_deactivation
-    if !active? && (Devise.sign_out_all_scopes ? Devise.sign_out_all_scopes : sign_out_all_scopes)
-      # Force logout all sessions for this user
-      Rails.application.config.session_store.new(Rails.application).destroy_session_by_user(self)
-    end
+    # Skip the callback during seeding
+    return if Rails.env.development? && caller.any? { |c| c.include?('seed.rb') }
+    
+    # Add default role if no roles exist
+    add_role(:user) if roles.blank?
   end
 end

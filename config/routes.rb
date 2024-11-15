@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   devise_for :users, controllers: {
     registrations: 'users/registrations',
@@ -31,6 +33,10 @@ Rails.application.routes.draw do
     resources :maintenance_records
     resources :rfid_tags, only: [:new, :create]
     resources :asset_tracking_events, only: [:index]
+    collection do
+      post :import
+      get :export
+    end
   end
   resources :asset_assignments
   resources :locations
@@ -50,4 +56,18 @@ Rails.application.routes.draw do
   
   # Add the export routes
   get 'dashboards/export', to: 'dashboards#export', as: :export_dashboard
+
+  resources :audit_logs, only: [:index, :show] do
+    get 'for_record/:auditable_type/:auditable_id', action: :for_record, on: :collection, as: :for_record
+  end
+
+  resources :notifications, only: [:index, :destroy] do
+    collection do
+      post :mark_as_read
+    end
+  end
+
+  authenticate :user, lambda { |u| u.admin? } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
 end

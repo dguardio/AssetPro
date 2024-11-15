@@ -84,6 +84,10 @@
           </li>
         <% end %>
 
+        <li class="nav-item">
+          <%= link_to 'Audit Logs', audit_logs_path, class: 'nav-link' %>
+        </li>
+
         <li class="nav-item-header">
           Account
         </li>
@@ -123,8 +127,68 @@
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
             <% if user_signed_in? %>
               <span class="nav-link text-body font-weight-bold px-0">
-                <%= current_user.email %> (<%= current_user.role %>)
+                <%= current_user.email %> (<%= current_user.role %>)               
               </span>
+              <div class="dropdown">
+                <a href="#" class="nav-link" data-bs-toggle="dropdown" aria-expanded="false">
+                  <div class="position-relative">
+                    <span class="material-icons-round">notifications</span>
+                    <% if current_user.notifications.unread.exists? %>
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <%= current_user.notifications.unread.count %>
+                      </span>
+                    <% end %>
+                  </div>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end px-2" style="width: 320px;">
+                  <div class="d-flex justify-content-between align-items-center py-2">
+                    <h6 class="dropdown-header ps-2 mb-0">Notifications</h6>
+                    <% if current_user.notifications.unread.exists? %>
+                      <%= button_to mark_all_as_read_notifications_path, 
+                          class: "btn btn-link btn-sm text-secondary p-0 me-2",
+                          method: :post do %>
+                        Mark all read
+                      <% end %>
+                    <% end %>
+                  </div>
+
+                  <% if current_user.notifications.exists? %>
+                    <% current_user.notifications.newest_first.limit(5).each do |notification| %>
+                      <li>
+                        <%= link_to notification.to_notification.url, 
+                            class: "dropdown-item rounded #{'bg-light' unless notification.read_at?}" do %>
+                          <div class="d-flex align-items-center py-2">
+                            <div class="flex-grow-1 pe-2">
+                              <p class="text-sm text-dark mb-0"><%= notification.to_notification.message %></p>
+                              <p class="text-xs text-secondary mb-0">
+                                <%= time_ago_in_words(notification.created_at) %> ago
+                              </p>
+                            </div>
+                            <% unless notification.read_at? %>
+                              <span class="badge bg-primary rounded-pill">New</span>
+                            <% end %>
+                          </div>
+                        <% end %>
+                      </li>
+                    <% end %>
+                    
+                    <li><hr class="dropdown-divider my-2"></li>
+                    <li>
+                      <%= link_to notifications_path, 
+                          class: "dropdown-item text-center py-2 text-primary" do %>
+                        View all notifications
+                      <% end %>
+                    </li>
+                  <% else %>
+                    <li>
+                      <div class="text-center py-4">
+                        <p class="text-secondary mb-0">No notifications</p>
+                      </div>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>            
             <% end %>
           </div>
         </div>

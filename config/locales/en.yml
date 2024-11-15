@@ -31,3 +31,7 @@
 
 en:
   hello: "Hello world"
+  notifiers:
+    asset_assignment_notifier:
+      notification:
+        message: "You have been assigned %{asset} by %{assigned_by}"

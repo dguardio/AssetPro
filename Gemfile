@@ -105,3 +105,22 @@ gem 'prawn'
 gem 'prawn-table'
 gem 'caxlsx'
 gem 'caxlsx_rails'
+
+# Add QR code generation gems
+gem 'rqrcode'
+gem 'chunky_png'
+gem 'roo'
+gem 'csv'
+
+# Add noticed gem
+gem 'noticed'
+
+# Install Sidekiq
+gem 'sidekiq'
+
+# Add Redis gem
+gem 'redis'
+
+gem 'faker'
+
+gem 'request_store'

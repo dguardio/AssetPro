@@ -50,6 +50,25 @@ class AssetsController < ApplicationController
     redirect_to assets_url, notice: 'Asset was successfully deleted.'
   end
 
+  def import
+    if params[:file].present?
+      begin
+        Asset.import(params[:file])
+        redirect_to assets_path, notice: 'Assets were successfully imported.'
+      rescue StandardError => e
+        redirect_to assets_path, alert: "Import failed: #{e.message}"
+      end
+    else
+      redirect_to assets_path, alert: 'Please select a file to import.'
+    end
+  end
+
+  def export
+    respond_to do |format|
+      format.csv { send_data Asset.to_csv, filename: "assets-#{Date.current}.csv" }
+    end
+  end
+
   private
 
   def set_asset

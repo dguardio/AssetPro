@@ -1,4 +1,8 @@
 class Asset < ApplicationRecord
+  include QrCodeable
+  include Auditable
+  include Importable
+  
   belongs_to :category
   belongs_to :location, optional: true
   has_many :asset_assignments, dependent: :destroy
@@ -6,6 +10,8 @@ class Asset < ApplicationRecord
   has_many :maintenance_records, dependent: :destroy
   has_one :rfid_tag, dependent: :destroy
   has_many :asset_tracking_events, dependent: :destroy
+  has_many :maintenance_schedules
+  has_many :licenses
 
   validates :name, presence: true
   validates :status, presence: true
@@ -59,5 +65,67 @@ class Asset < ApplicationRecord
 
   def self.ransackable_associations(auth_object = nil)
     ["category", "location", "rfid_tag", "asset_tracking_events"]
+  end
+
+  def current_value
+    return 0 if purchase_price.nil?
+    return purchase_price if purchase_date.nil? || depreciation_rate.nil?
+    
+    age_in_years = (Time.current.to_date - purchase_date).to_f / 365
+    depreciated_value = purchase_price * (1 - (depreciation_rate * age_in_years))
+    [depreciated_value, 0].max
+  end
+  
+  def next_maintenance
+    maintenance_schedules.upcoming.order(scheduled_date: :asc).first
+  end
+
+  def warranty_status
+    return 'No Warranty' if warranty_expiry.nil?
+    
+    if warranty_expiry < Date.current
+      'Expired'
+    elsif warranty_expiry < 30.days.from_now
+      'Expiring Soon'
+    else
+      'Active'
+    end
+  end
+
+  def warranty_status_color
+    case warranty_status
+    when 'Expired' then 'danger'
+    when 'Expiring Soon' then 'warning'
+    when 'Active' then 'success'
+    else 'secondary'
+    end
+  end
+
+  after_save :check_stock_level
+
+  def available_quantity
+    quantity - asset_assignments.where(checked_in_at: nil).count
+  end
+
+  def low_stock?
+    available_quantity <= minimum_quantity
+  end
+
+  private
+
+  def check_stock_level
+    return unless should_notify_stock_level?
+    
+    recipients = User.admins
+
+    LowStockNotification.with(
+      asset: self
+    ).deliver_later(recipients)
+  end
+
+  def should_notify_stock_level?
+    return false unless status_changed?
+    return false if status.nil?
+    ['retired', 'in_maintenance'].include?(status)
   end
 end

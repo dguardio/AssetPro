@@ -31,6 +31,43 @@
             </ul>
           </li>
         <% end %>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="material-icons">notifications</i>
+            <% if current_user.notifications.unread.any? %>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                <%= current_user.notifications.unread.count %>
+                <span class="visually-hidden">unread notifications</span>
+              </span>
+            <% end %>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+            <% current_user.notifications.unread.limit(5).each do |notification| %>
+              <li>
+                <%= link_to notification.to_notification.url, class: "dropdown-item" do %>
+                  <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                      <div class="small text-gray-500">
+                        <%= time_ago_in_words(notification.created_at) %> ago
+                      </div>
+                      <%= notification.to_notification.message %>
+                    </div>
+                  </div>
+                <% end %>
+              </li>
+            <% end %>
+            <% if current_user.notifications.unread.any? %>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <%= link_to "View all notifications", notifications_path, class: "dropdown-item text-center small text-gray-500" %>
+              </li>
+            <% else %>
+              <li>
+                <span class="dropdown-item text-center">No new notifications</span>
+              </li>
+            <% end %>
+          </ul>
+        </li>
       </ul>
     </div>
   </div>

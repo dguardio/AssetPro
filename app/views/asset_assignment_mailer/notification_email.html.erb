@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>New Asset Assignment</h1>
+    <p>
+      Hello <%= @recipient.full_name %>,
+    </p>
+    <p>
+      You have been assigned the following asset:
+      <strong><%= @assignment.asset.name %></strong>
+    </p>
+    <p>
+      Assigned by: <%= @assignment.assigned_by.full_name %>
+    </p>
+    
+    <%= link_to "View Asset", asset_url(@assignment.asset) %>
+  </body>
+</html> 
