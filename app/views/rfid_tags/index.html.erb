@@ -1,0 +1,80 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <h2 class="ps-3">RFID Tags</h2>
+
+    <div class="px-4 mb-3">
+        <%= search_form_for @q, class: 'px-4 mb-3' do |f| %>
+        <div class="row g-2">
+            <div class="col-md-3">
+            <%= f.label :rfid_number_cont, "RFID Number contains" %>
+            <%= f.search_field :rfid_number_cont, class: 'form-control' %>
+            </div>
+            <div class="col-md-3">
+            <%= f.label :asset_name_cont, "Asset Name contains" %>
+            <%= f.search_field :asset_name_cont, class: 'form-control' %>
+            </div>
+            <div class="col-md-2">
+            <%= f.label :active_eq, "Status" %>
+            <%= f.select :active_eq, [['Active', true], ['Inactive', false]], { include_blank: true }, class: 'form-select' %>
+            </div>
+            <div class="col-md-2 align-self-end">
+            <%= f.submit class: 'btn btn-primary' %>
+            </div>
+        </div>
+        <% end %>
+    </div>
+
+    <div class="col-12">
+      <div class="card my-4">
+        <%# <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">RFID Tags</h6>
+          </div>
+        </div> %>
+
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table table-striped align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th><%= sort_link_with_icon(@q, :rfid_number, "RFID Number") %></th>
+                  <th><%= sort_link_with_icon(@q, :asset_name, "Asset") %></th>
+                  <th><%= sort_link_with_icon(@q, :active, "Status") %></th>
+                  <th><%= sort_link_with_icon(@q, :last_scanned_at, "Last Scanned") %></th>
+                  <th><%= sort_link_with_icon(@q, :last_known_location.name, "Location") %></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @rfid_tags.each do |tag| %>
+                  <tr>
+                    <td><%= tag.rfid_number %></td>
+                    <td><%= tag.asset&.name %></td>
+                    <td><%= tag.active? ? 'Active' : 'Inactive' %></td>
+                    <td><%= tag.last_scanned_at&.strftime("%Y-%m-%d %H:%M") %></td>
+                    <td><%= tag.last_known_location&.name %></td>
+                    <td>
+                      <%= link_to rfid_tag_path(tag), class: 'btn btn-sm btn-info', title: 'Show' do %>
+                        <i class="material-icons">visibility</i>
+                      <% end %>
+                      <%= link_to edit_rfid_tag_path(tag), class: 'btn btn-sm btn-primary', title: 'Edit' do %>
+                        <i class="material-icons">edit</i>
+                      <% end %>
+                      <%= button_to rfid_tag_path(tag), 
+                          method: :delete,
+                          form: { data: { turbo_confirm: 'Are you sure?' } },
+                          class: 'btn btn-sm btn-danger d-inline',
+                          title: 'Delete' do %>
+                        <i class="material-icons">delete</i>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

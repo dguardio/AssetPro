@@ -16,12 +16,12 @@
         <%= f.search_field :asset_name_cont, class: 'form-control' %>
       </div>
       <div class="col-md-3">
-        <%= f.label :assigned_date_gteq, "Assigned After" %>
-        <%= f.date_field :assigned_date_gteq, class: 'form-control' %>
+        <%= f.label :checked_out_at_gteq, "Assigned After" %>
+        <%= f.date_field :checked_out_at_gteq, class: 'form-control' %>
       </div>
       <div class="col-md-3">
-        <%= f.label :return_date_lteq, "Returned Before" %>
-        <%= f.date_field :return_date_lteq, class: 'form-control' %>
+        <%= f.label :checked_in_at_lteq, "Returned Before" %>
+        <%= f.date_field :checked_in_at_lteq, class: 'form-control' %>
       </div>
     </div>
     <div class="mt-3">
@@ -36,8 +36,8 @@
         <tr>
           <th><%= sort_link_with_icon(@q, :user_email, "User") %></th>
           <th><%= sort_link_with_icon(@q, :asset_name, "Asset") %></th>
-          <th><%= sort_link_with_icon(@q, :assigned_date, "Assigned Date") %></th>
-          <th><%= sort_link_with_icon(@q, :return_date, "Return Date") %></th>
+          <th><%= sort_link_with_icon(@q, :checked_out_at, "Assigned Date") %></th>
+          <th><%= sort_link_with_icon(@q, :checked_in_at, "Return Date") %></th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -47,8 +47,8 @@
           <tr>
             <td><%= assignment.user.email %></td>
             <td><%= assignment.asset.name %></td>
-            <td><%= assignment.assigned_date&.strftime("%Y-%m-%d") %></td>
-            <td><%= assignment.return_date&.strftime("%Y-%m-%d") %></td>
+            <td><%= assignment.checked_out_at&.strftime("%Y-%m-%d") %></td>
+            <td><%= assignment.checked_in_at&.strftime("%Y-%m-%d") %></td>
             <td>
               <%= link_to 'Show', assignment, class: 'btn btn-sm btn-info' if policy(assignment).show? %>
               <%= link_to 'Remove', assignment, 

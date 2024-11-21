@@ -1,0 +1,66 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">License Details</h6>
+          </div>
+        </div>
+
+        <div class="card-body px-4">
+          <div class="row">
+            <div class="col-md-6">
+              <p>
+                <strong>Name:</strong>
+                <%= @license.name %>
+              </p>
+
+              <p>
+                <strong>License Key:</strong>
+                <%= @license.license_key %>
+              </p>
+
+              <p>
+                <strong>Seats:</strong>
+                <%= @license.seats %>
+              </p>
+
+              <p>
+                <strong>Expiration Date:</strong>
+                <%= @license.expiration_date&.strftime("%Y-%m-%d") %>
+              </p>
+            </div>
+
+            <div class="col-md-6">
+              <p>
+                <strong>Cost:</strong>
+                <%= number_to_currency(@license.cost) %>
+              </p>
+
+              <p>
+                <strong>Supplier:</strong>
+                <%= @license.supplier %>
+              </p>
+
+              <p>
+                <strong>Asset:</strong>
+                <%= @license.asset&.name %>
+              </p>
+
+              <p>
+                <strong>Notes:</strong>
+                <%= @license.notes %>
+              </p>
+            </div>
+          </div>
+
+          <div class="text-end mt-4">
+            <%= link_to 'Back', licenses_path, class: 'btn btn-light me-2' %>
+            <%= link_to 'Edit', edit_license_path(@license), class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

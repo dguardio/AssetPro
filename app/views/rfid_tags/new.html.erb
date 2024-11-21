@@ -1,24 +1,17 @@
-<div class="container mt-4">
-  <h1>Assign RFID Tag to <%= @asset.name %></h1>
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">New RFID Tag</h6>
+          </div>
+        </div>
 
-  <%= form_with(model: [@asset, @rfid_tag], local: true) do |f| %>
-    <% if @rfid_tag.errors.any? %>
-      <div class="alert alert-danger">
-        <h2><%= pluralize(@rfid_tag.errors.count, "error") %> prohibited this RFID tag from being saved:</h2>
-        <ul>
-          <% @rfid_tag.errors.full_messages.each do |msg| %>
-            <li><%= msg %></li>
-          <% end %>
-        </ul>
+        <div class="card-body px-4">
+          <%= render 'form', rfid_tag: @rfid_tag %>
+        </div>
       </div>
-    <% end %>
-
-    <div class="form-group">
-      <%= f.label :rfid_number %>
-      <%= f.text_field :rfid_number, class: 'form-control' %>
     </div>
-
-    <%= f.submit 'Assign RFID Tag', class: 'btn btn-primary' %>
-    <%= link_to 'Back', asset_path(@asset), class: 'btn btn-secondary' %>
-  <% end %>
+  </div>
 </div> 

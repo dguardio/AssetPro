@@ -1,44 +1,62 @@
-<%= form_with(model: [@asset, maintenance_record], local: true) do |f| %>
+<%= form_with(model: maintenance_record) do |f| %>
   <% if maintenance_record.errors.any? %>
     <div class="alert alert-danger">
-      <h4><%= pluralize(maintenance_record.errors.count, "error") %> prohibited this record from being saved:</h4>
+      <h4><%= pluralize(maintenance_record.errors.count, "error") %> prohibited this maintenance record from being saved:</h4>
       <ul>
-        <% maintenance_record.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
+        <% maintenance_record.errors.each do |error| %>
+          <li><%= error.full_message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= f.label :maintenance_date %>
-    <%= f.date_field :maintenance_date, class: 'form-control' %>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :asset_id %>
+        <%= f.collection_select :asset_id, Asset.all, :id, :name, { include_blank: true }, { class: 'form-select' } %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :maintenance_schedule_id %>
+        <%= f.collection_select :maintenance_schedule_id, MaintenanceSchedule.all, :id, :title, 
+            { include_blank: true }, { class: 'form-select' } %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :maintenance_date %>
+        <%= f.datetime_field :maintenance_date, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :cost %>
+        <%= f.number_field :cost, step: :any, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :performed_by_id %>
+        <%= f.collection_select :performed_by_id, User.all, :id, :email, { include_blank: true }, { class: 'form-select' } %>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :description %>
+        <%= f.text_area :description, class: 'form-control', rows: 4 %>
+      </div>
+    </div>
   </div>
 
-  <div class="form-group">
-    <%= f.label :maintenance_type %>
-    <%= f.select :maintenance_type, 
-        MaintenanceRecord.maintenance_types.keys.map { |t| [t.titleize, t] },
-        {}, class: 'form-control' %>
+  <div class="text-end mt-4">
+    <%= link_to 'Back', maintenance_records_path, class: 'btn btn-light me-2' %>
+    <%= f.submit class: 'btn btn-primary' %>
   </div>
-
-  <div class="form-group">
-    <%= f.label :description %>
-    <%= f.text_area :description, class: 'form-control', rows: 4 %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :cost %>
-    <%= f.number_field :cost, class: 'form-control', step: '0.01' %>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :status %>
-    <%= f.select :status, 
-        MaintenanceRecord.statuses.keys.map { |s| [s.titleize, s] },
-        {}, class: 'form-control' %>
-  </div>
-
-  <%= f.submit class: 'btn btn-primary' %>
-  <%= link_to 'Back', asset_maintenance_records_path(@asset), class: 'btn btn-secondary' %>
 <% end %> 

@@ -1,0 +1,51 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">RFID Tag Details</h6>
+          </div>
+        </div>
+
+        <div class="card-body px-4">
+          <div class="row">
+            <div class="col-md-6">
+              <p>
+                <strong>RFID Number:</strong>
+                <%= @rfid_tag.rfid_number %>
+              </p>
+
+              <p>
+                <strong>Asset:</strong>
+                <%= @rfid_tag.asset&.name %>
+              </p>
+            </div>
+
+            <div class="col-md-6">
+              <p>
+                <strong>Status:</strong>
+                <%= @rfid_tag.active? ? 'Active' : 'Inactive' %>
+              </p>
+
+              <p>
+                <strong>Last Scanned:</strong>
+                <%= @rfid_tag.last_scanned_at&.strftime("%Y-%m-%d %H:%M") %>
+              </p>
+
+              <p>
+                <strong>Location:</strong>
+                <%= @rfid_tag.asset&.location&.name %>
+              </p>
+            </div>
+          </div>
+
+          <div class="text-end mt-4">
+            <%= link_to 'Back', rfid_tags_path, class: 'btn btn-light me-2' %>
+            <%= link_to 'Edit', edit_rfid_tag_path(@rfid_tag), class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

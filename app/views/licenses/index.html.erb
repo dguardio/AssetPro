@@ -1,0 +1,78 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Software Licenses</h6>
+          </div>
+        </div>
+
+        <div class="card-body px-0 pb-2">
+          <%= search_form_for @q, class: 'px-4 mb-3' do |f| %>
+            <div class="row g-2">
+              <div class="col-md-3">
+                <%= f.label :name_cont, "Name contains" %>
+                <%= f.search_field :name_cont, class: 'form-control' %>
+              </div>
+              <div class="col-md-3">
+                <%= f.label :license_key_cont, "License Key contains" %>
+                <%= f.search_field :license_key_cont, class: 'form-control' %>
+              </div>
+              <div class="col-md-3">
+                <%= f.label :expiration_date_gteq, "Expires After" %>
+                <%= f.date_field :expiration_date_gteq, class: 'form-control' %>
+              </div>
+              <div class="col-md-2 align-self-end">
+                <%= f.submit class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th><%= sort_link_with_icon(@q, :name) %></th>
+                  <th><%= sort_link_with_icon(@q, :license_key) %></th>
+                  <th><%= sort_link_with_icon(@q, :seats) %></th>
+                  <th><%= sort_link_with_icon(@q, :seats_used) %></th>
+                  <th><%= sort_link_with_icon(@q, :expiration_date) %></th>
+                  <th><%= sort_link_with_icon(@q, :supplier) %></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @licenses.each do |license| %>
+                  <tr>
+                    <td><%= license.name %></td>
+                    <td><%= license.license_key %></td>
+                    <td><%= license.seats %></td>
+                    <td><%= license.seats_used %></td>
+                    <td><%= license.expiration_date&.strftime("%Y-%m-%d") %></td>
+                    <td><%= license.supplier %></td>
+                    <td>
+                      <%= link_to license_path(license), class: 'btn btn-sm btn-info', title: 'Show' do %>
+                        <i class="material-icons">visibility</i>
+                      <% end %>
+                      <%= link_to edit_license_path(license), class: 'btn btn-sm btn-primary', title: 'Edit' do %>
+                        <i class="material-icons">edit</i>
+                      <% end %>
+                      <%= button_to license_path(license), 
+                          method: :delete,
+                          form: { data: { turbo_confirm: 'Are you sure?' } },
+                          class: 'btn btn-sm btn-danger d-inline',
+                          title: 'Delete' do %>
+                        <i class="material-icons">delete</i>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

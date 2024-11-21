@@ -1,0 +1,173 @@
+                                  Prefix Verb   URI Pattern                                                                                       Controller#Action
+                        new_user_session GET    /users/sign_in(.:format)                                                                          users/sessions#new
+                            user_session POST   /users/sign_in(.:format)                                                                          users/sessions#create
+                    destroy_user_session DELETE /users/sign_out(.:format)                                                                         users/sessions#destroy
+                       new_user_password GET    /users/password/new(.:format)                                                                     devise/passwords#new
+                      edit_user_password GET    /users/password/edit(.:format)                                                                    devise/passwords#edit
+                           user_password PATCH  /users/password(.:format)                                                                         devise/passwords#update
+                                         PUT    /users/password(.:format)                                                                         devise/passwords#update
+                                         POST   /users/password(.:format)                                                                         devise/passwords#create
+                cancel_user_registration GET    /users/cancel(.:format)                                                                           users/registrations#cancel
+                   new_user_registration GET    /users/sign_up(.:format)                                                                          users/registrations#new
+                  edit_user_registration GET    /users/edit(.:format)                                                                             users/registrations#edit
+                       user_registration PATCH  /users(.:format)                                                                                  users/registrations#update
+                                         PUT    /users(.:format)                                                                                  users/registrations#update
+                                         DELETE /users(.:format)                                                                                  users/registrations#destroy
+                                         POST   /users(.:format)                                                                                  users/registrations#create
+                             admin_users GET    /admin/users(.:format)                                                                            admin/users#index
+                                         POST   /admin/users(.:format)                                                                            admin/users#create
+                          new_admin_user GET    /admin/users/new(.:format)                                                                        admin/users#new
+                         edit_admin_user GET    /admin/users/:id/edit(.:format)                                                                   admin/users#edit
+                              admin_user GET    /admin/users/:id(.:format)                                                                        admin/users#show
+                                         PATCH  /admin/users/:id(.:format)                                                                        admin/users#update
+                                         PUT    /admin/users/:id(.:format)                                                                        admin/users#update
+                                         DELETE /admin/users/:id(.:format)                                                                        admin/users#destroy
+                  check_out_api_v1_asset POST   /api/v1/assets/:id/check_out(.:format)                                                            api/v1/assets#check_out
+                   check_in_api_v1_asset POST   /api/v1/assets/:id/check_in(.:format)                                                             api/v1/assets#check_in
+                    history_api_v1_asset GET    /api/v1/assets/:id/history(.:format)                                                              api/v1/assets#history
+                           api_v1_assets GET    /api/v1/assets(.:format)                                                                          api/v1/assets#index
+                                         POST   /api/v1/assets(.:format)                                                                          api/v1/assets#create
+                        new_api_v1_asset GET    /api/v1/assets/new(.:format)                                                                      api/v1/assets#new
+                       edit_api_v1_asset GET    /api/v1/assets/:id/edit(.:format)                                                                 api/v1/assets#edit
+                            api_v1_asset GET    /api/v1/assets/:id(.:format)                                                                      api/v1/assets#show
+                                         PATCH  /api/v1/assets/:id(.:format)                                                                      api/v1/assets#update
+                                         PUT    /api/v1/assets/:id(.:format)                                                                      api/v1/assets#update
+                                         DELETE /api/v1/assets/:id(.:format)                                                                      api/v1/assets#destroy
+                       api_v1_categories GET    /api/v1/categories(.:format)                                                                      api/v1/categories#index
+                                         POST   /api/v1/categories(.:format)                                                                      api/v1/categories#create
+                     new_api_v1_category GET    /api/v1/categories/new(.:format)                                                                  api/v1/categories#new
+                    edit_api_v1_category GET    /api/v1/categories/:id/edit(.:format)                                                             api/v1/categories#edit
+                         api_v1_category GET    /api/v1/categories/:id(.:format)                                                                  api/v1/categories#show
+                                         PATCH  /api/v1/categories/:id(.:format)                                                                  api/v1/categories#update
+                                         PUT    /api/v1/categories/:id(.:format)                                                                  api/v1/categories#update
+                                         DELETE /api/v1/categories/:id(.:format)                                                                  api/v1/categories#destroy
+                        api_v1_locations GET    /api/v1/locations(.:format)                                                                       api/v1/locations#index
+                                         POST   /api/v1/locations(.:format)                                                                       api/v1/locations#create
+                     new_api_v1_location GET    /api/v1/locations/new(.:format)                                                                   api/v1/locations#new
+                    edit_api_v1_location GET    /api/v1/locations/:id/edit(.:format)                                                              api/v1/locations#edit
+                         api_v1_location GET    /api/v1/locations/:id(.:format)                                                                   api/v1/locations#show
+                                         PATCH  /api/v1/locations/:id(.:format)                                                                   api/v1/locations#update
+                                         PUT    /api/v1/locations/:id(.:format)                                                                   api/v1/locations#update
+                                         DELETE /api/v1/locations/:id(.:format)                                                                   api/v1/locations#destroy
+                api_v1_asset_assignments GET    /api/v1/asset_assignments(.:format)                                                               api/v1/asset_assignments#index
+                                         POST   /api/v1/asset_assignments(.:format)                                                               api/v1/asset_assignments#create
+             new_api_v1_asset_assignment GET    /api/v1/asset_assignments/new(.:format)                                                           api/v1/asset_assignments#new
+            edit_api_v1_asset_assignment GET    /api/v1/asset_assignments/:id/edit(.:format)                                                      api/v1/asset_assignments#edit
+                 api_v1_asset_assignment GET    /api/v1/asset_assignments/:id(.:format)                                                           api/v1/asset_assignments#show
+                                         PATCH  /api/v1/asset_assignments/:id(.:format)                                                           api/v1/asset_assignments#update
+                                         PUT    /api/v1/asset_assignments/:id(.:format)                                                           api/v1/asset_assignments#update
+                                         DELETE /api/v1/asset_assignments/:id(.:format)                                                           api/v1/asset_assignments#destroy
+              api_v1_maintenance_records GET    /api/v1/maintenance_records(.:format)                                                             api/v1/maintenance_records#index
+                                         POST   /api/v1/maintenance_records(.:format)                                                             api/v1/maintenance_records#create
+           new_api_v1_maintenance_record GET    /api/v1/maintenance_records/new(.:format)                                                         api/v1/maintenance_records#new
+          edit_api_v1_maintenance_record GET    /api/v1/maintenance_records/:id/edit(.:format)                                                    api/v1/maintenance_records#edit
+               api_v1_maintenance_record GET    /api/v1/maintenance_records/:id(.:format)                                                         api/v1/maintenance_records#show
+                                         PATCH  /api/v1/maintenance_records/:id(.:format)                                                         api/v1/maintenance_records#update
+                                         PUT    /api/v1/maintenance_records/:id(.:format)                                                         api/v1/maintenance_records#update
+                                         DELETE /api/v1/maintenance_records/:id(.:format)                                                         api/v1/maintenance_records#destroy
+                            api_v1_scans POST   /api/v1/scans(.:format)                                                                           api/v1/scans#create
+                                   users GET    /users(.:format)                                                                                  users#index
+                                         POST   /users(.:format)                                                                                  users#create
+                                new_user GET    /users/new(.:format)                                                                              users#new
+                               edit_user GET    /users/:id/edit(.:format)                                                                         users#edit
+                                    user GET    /users/:id(.:format)                                                                              users#show
+                                         PATCH  /users/:id(.:format)                                                                              users#update
+                                         PUT    /users/:id(.:format)                                                                              users#update
+                                         DELETE /users/:id(.:format)                                                                              users#destroy
+                                   roles GET    /roles(.:format)                                                                                  roles#index
+                                         POST   /roles(.:format)                                                                                  roles#create
+                                new_role GET    /roles/new(.:format)                                                                              roles#new
+                               edit_role GET    /roles/:id/edit(.:format)                                                                         roles#edit
+                                    role GET    /roles/:id(.:format)                                                                              roles#show
+                                         PATCH  /roles/:id(.:format)                                                                              roles#update
+                                         PUT    /roles/:id(.:format)                                                                              roles#update
+                                         DELETE /roles/:id(.:format)                                                                              roles#destroy
+               asset_maintenance_records GET    /assets/:asset_id/maintenance_records(.:format)                                                   maintenance_records#index
+                                         POST   /assets/:asset_id/maintenance_records(.:format)                                                   maintenance_records#create
+            new_asset_maintenance_record GET    /assets/:asset_id/maintenance_records/new(.:format)                                               maintenance_records#new
+           edit_asset_maintenance_record GET    /assets/:asset_id/maintenance_records/:id/edit(.:format)                                          maintenance_records#edit
+                asset_maintenance_record GET    /assets/:asset_id/maintenance_records/:id(.:format)                                               maintenance_records#show
+                                         PATCH  /assets/:asset_id/maintenance_records/:id(.:format)                                               maintenance_records#update
+                                         PUT    /assets/:asset_id/maintenance_records/:id(.:format)                                               maintenance_records#update
+                                         DELETE /assets/:asset_id/maintenance_records/:id(.:format)                                               maintenance_records#destroy
+                         asset_rfid_tags POST   /assets/:asset_id/rfid_tags(.:format)                                                             rfid_tags#create
+                      new_asset_rfid_tag GET    /assets/:asset_id/rfid_tags/new(.:format)                                                         rfid_tags#new
+             asset_asset_tracking_events GET    /assets/:asset_id/asset_tracking_events(.:format)                                                 asset_tracking_events#index
+                           import_assets POST   /assets/import(.:format)                                                                          assets#import
+                           export_assets GET    /assets/export(.:format)                                                                          assets#export
+                                  assets GET    /assets(.:format)                                                                                 assets#index
+                                         POST   /assets(.:format)                                                                                 assets#create
+                               new_asset GET    /assets/new(.:format)                                                                             assets#new
+                              edit_asset GET    /assets/:id/edit(.:format)                                                                        assets#edit
+                                   asset GET    /assets/:id(.:format)                                                                             assets#show
+                                         PATCH  /assets/:id(.:format)                                                                             assets#update
+                                         PUT    /assets/:id(.:format)                                                                             assets#update
+                                         DELETE /assets/:id(.:format)                                                                             assets#destroy
+                       asset_assignments GET    /asset_assignments(.:format)                                                                      asset_assignments#index
+                                         POST   /asset_assignments(.:format)                                                                      asset_assignments#create
+                    new_asset_assignment GET    /asset_assignments/new(.:format)                                                                  asset_assignments#new
+                   edit_asset_assignment GET    /asset_assignments/:id/edit(.:format)                                                             asset_assignments#edit
+                        asset_assignment GET    /asset_assignments/:id(.:format)                                                                  asset_assignments#show
+                                         PATCH  /asset_assignments/:id(.:format)                                                                  asset_assignments#update
+                                         PUT    /asset_assignments/:id(.:format)                                                                  asset_assignments#update
+                                         DELETE /asset_assignments/:id(.:format)                                                                  asset_assignments#destroy
+                               locations GET    /locations(.:format)                                                                              locations#index
+                                         POST   /locations(.:format)                                                                              locations#create
+                            new_location GET    /locations/new(.:format)                                                                          locations#new
+                           edit_location GET    /locations/:id/edit(.:format)                                                                     locations#edit
+                                location GET    /locations/:id(.:format)                                                                          locations#show
+                                         PATCH  /locations/:id(.:format)                                                                          locations#update
+                                         PUT    /locations/:id(.:format)                                                                          locations#update
+                                         DELETE /locations/:id(.:format)                                                                          locations#destroy
+                              categories GET    /categories(.:format)                                                                             categories#index
+                                         POST   /categories(.:format)                                                                             categories#create
+                            new_category GET    /categories/new(.:format)                                                                         categories#new
+                           edit_category GET    /categories/:id/edit(.:format)                                                                    categories#edit
+                                category GET    /categories/:id(.:format)                                                                         categories#show
+                                         PATCH  /categories/:id(.:format)                                                                         categories#update
+                                         PUT    /categories/:id(.:format)                                                                         categories#update
+                                         DELETE /categories/:id(.:format)                                                                         categories#destroy
+                                    root GET    /                                                                                                 dashboards#index
+                                    scan POST   /scan(.:format)                                                                                   asset_tracking_events#create
+                                 scanner GET    /scanner(.:format)                                                                                scanner_interface#scan
+          scanner_interface_recent_scans GET    /scanner_interface/recent_scans(.:format)                                                         scanner_interface#recent_scans
+                               dashboard GET    /dashboard(.:format)                                                                              dashboards#index
+                     drilldown_dashboard GET    /dashboard/drilldown(.:format)                                                                    dashboards#drilldown
+                        export_dashboard GET    /dashboards/export(.:format)                                                                      dashboards#export
+                   for_record_audit_logs GET    /audit_logs/for_record/:auditable_type/:auditable_id(.:format)                                    audit_logs#for_record
+                              audit_logs GET    /audit_logs(.:format)                                                                             audit_logs#index
+                               audit_log GET    /audit_logs/:id(.:format)                                                                         audit_logs#show
+              mark_as_read_notifications POST   /notifications/mark_as_read(.:format)                                                             notifications#mark_as_read
+                           notifications GET    /notifications(.:format)                                                                          notifications#index
+                            notification DELETE /notifications/:id(.:format)                                                                      notifications#destroy
+                             sidekiq_web        /sidekiq                                                                                          Sidekiq::Web
+        turbo_recede_historical_location GET    /recede_historical_location(.:format)                                                             turbo/native/navigation#recede
+        turbo_resume_historical_location GET    /resume_historical_location(.:format)                                                             turbo/native/navigation#resume
+       turbo_refresh_historical_location GET    /refresh_historical_location(.:format)                                                            turbo/native/navigation#refresh
+           rails_postmark_inbound_emails POST   /rails/action_mailbox/postmark/inbound_emails(.:format)                                           action_mailbox/ingresses/postmark/inbound_emails#create
+              rails_relay_inbound_emails POST   /rails/action_mailbox/relay/inbound_emails(.:format)                                              action_mailbox/ingresses/relay/inbound_emails#create
+           rails_sendgrid_inbound_emails POST   /rails/action_mailbox/sendgrid/inbound_emails(.:format)                                           action_mailbox/ingresses/sendgrid/inbound_emails#create
+     rails_mandrill_inbound_health_check GET    /rails/action_mailbox/mandrill/inbound_emails(.:format)                                           action_mailbox/ingresses/mandrill/inbound_emails#health_check
+           rails_mandrill_inbound_emails POST   /rails/action_mailbox/mandrill/inbound_emails(.:format)                                           action_mailbox/ingresses/mandrill/inbound_emails#create
+            rails_mailgun_inbound_emails POST   /rails/action_mailbox/mailgun/inbound_emails/mime(.:format)                                       action_mailbox/ingresses/mailgun/inbound_emails#create
+          rails_conductor_inbound_emails GET    /rails/conductor/action_mailbox/inbound_emails(.:format)                                          rails/conductor/action_mailbox/inbound_emails#index
+                                         POST   /rails/conductor/action_mailbox/inbound_emails(.:format)                                          rails/conductor/action_mailbox/inbound_emails#create
+       new_rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/new(.:format)                                      rails/conductor/action_mailbox/inbound_emails#new
+      edit_rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/:id/edit(.:format)                                 rails/conductor/action_mailbox/inbound_emails#edit
+           rails_conductor_inbound_email GET    /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                                      rails/conductor/action_mailbox/inbound_emails#show
+                                         PATCH  /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                                      rails/conductor/action_mailbox/inbound_emails#update
+                                         PUT    /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                                      rails/conductor/action_mailbox/inbound_emails#update
+                                         DELETE /rails/conductor/action_mailbox/inbound_emails/:id(.:format)                                      rails/conductor/action_mailbox/inbound_emails#destroy
+new_rails_conductor_inbound_email_source GET    /rails/conductor/action_mailbox/inbound_emails/sources/new(.:format)                              rails/conductor/action_mailbox/inbound_emails/sources#new
+   rails_conductor_inbound_email_sources POST   /rails/conductor/action_mailbox/inbound_emails/sources(.:format)                                  rails/conductor/action_mailbox/inbound_emails/sources#create
+   rails_conductor_inbound_email_reroute POST   /rails/conductor/action_mailbox/:inbound_email_id/reroute(.:format)                               rails/conductor/action_mailbox/reroutes#create
+rails_conductor_inbound_email_incinerate POST   /rails/conductor/action_mailbox/:inbound_email_id/incinerate(.:format)                            rails/conductor/action_mailbox/incinerates#create
+                      rails_service_blob GET    /rails/active_storage/blobs/redirect/:signed_id/*filename(.:format)                               active_storage/blobs/redirect#show
+                rails_service_blob_proxy GET    /rails/active_storage/blobs/proxy/:signed_id/*filename(.:format)                                  active_storage/blobs/proxy#show
+                                         GET    /rails/active_storage/blobs/:signed_id/*filename(.:format)                                        active_storage/blobs/redirect#show
+               rails_blob_representation GET    /rails/active_storage/representations/redirect/:signed_blob_id/:variation_key/*filename(.:format) active_storage/representations/redirect#show
+         rails_blob_representation_proxy GET    /rails/active_storage/representations/proxy/:signed_blob_id/:variation_key/*filename(.:format)    active_storage/representations/proxy#show
+                                         GET    /rails/active_storage/representations/:signed_blob_id/:variation_key/*filename(.:format)          active_storage/representations/redirect#show
+                      rails_disk_service GET    /rails/active_storage/disk/:encoded_key/*filename(.:format)                                       active_storage/disk#show
+               update_rails_disk_service PUT    /rails/active_storage/disk/:encoded_token(.:format)                                               active_storage/disk#update
+                    rails_direct_uploads POST   /rails/active_storage/direct_uploads(.:format)                                                    active_storage/direct_uploads#create

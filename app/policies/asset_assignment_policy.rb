@@ -4,9 +4,13 @@ class AssetAssignmentPolicy < ApplicationPolicy
       if user.admin?
         scope.all
       else
-        scope.where(user_id: user.id)
+        scope.where(user: user)
       end
     end
+  end
+
+  def index?
+    true
   end
 
   def show?
@@ -14,6 +18,10 @@ class AssetAssignmentPolicy < ApplicationPolicy
   end
 
   def create?
+    user.admin?
+  end
+
+  def update?
     user.admin?
   end
 

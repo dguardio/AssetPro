@@ -1,0 +1,71 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Asset Tracking Events</h6>
+          </div>
+        </div>
+
+        <div class="card-body px-0 pb-2">
+          <%= search_form_for @q, class: 'px-4 mb-3' do |f| %>
+            <div class="row g-2">
+              <div class="col-md-3">
+                <%= f.label :asset_name_cont, "Asset Name contains" %>
+                <%= f.search_field :asset_name_cont, class: 'form-control' %>
+              </div>
+              <div class="col-md-3">
+                <%= f.label :location_name_cont, "Location contains" %>
+                <%= f.search_field :location_name_cont, class: 'form-control' %>
+              </div>
+              <div class="col-md-2">
+                <%= f.label :event_type_eq, "Event Type" %>
+                <%= f.select :event_type_eq, AssetTrackingEvent.event_types.map { |k, v| [k.titleize, k] }, 
+                    { include_blank: true }, class: 'form-select' %>
+              </div>
+              <div class="col-md-2 align-self-end">
+                <%= f.submit class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th><%= sort_link_with_icon(@q, :asset_name, "Asset") %></th>
+                  <th><%= sort_link_with_icon(@q, :location_name, "Location") %></th>
+                  <th><%= sort_link_with_icon(@q, :event_type) %></th>
+                  <th><%= sort_link_with_icon(@q, :scanned_at) %></th>
+                  <th><%= sort_link_with_icon(@q, :scanned_by_email, "Scanned By") %></th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @asset_tracking_events.each do |event| %>
+                  <tr>
+                    <td><%= event.asset&.name %></td>
+                    <td><%= event.location&.name %></td>
+                    <td><%= event.event_type&.titleize %></td>
+                    <td><%= event.scanned_at&.strftime("%Y-%m-%d %H:%M") %></td>
+                    <td><%= event.scanned_by&.email %></td>
+                    <td>
+                      <%= link_to asset_tracking_event_path(event), class: 'btn btn-sm btn-info', title: 'Show' do %>
+                        <i class="material-icons">visibility</i>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="px-3 py-3">
+            <%= paginate @asset_tracking_events %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

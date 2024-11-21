@@ -12,6 +12,8 @@ class Asset < ApplicationRecord
   has_many :asset_tracking_events, dependent: :destroy
   has_many :maintenance_schedules
   has_many :licenses
+  has_many :audit_logs, as: :auditable, dependent: :destroy
+
 
   validates :name, presence: true
   validates :status, presence: true
@@ -64,7 +66,10 @@ class Asset < ApplicationRecord
   end
 
   def self.ransackable_associations(auth_object = nil)
-    ["category", "location", "rfid_tag", "asset_tracking_events"]
+    ["category", "location", "rfid_tag", 
+    "asset_tracking_events", "asset_assignments", 
+    "licenses", "location", "maintenance_records", 
+    "maintenance_schedules"]
   end
 
   def current_value

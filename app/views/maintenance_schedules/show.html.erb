@@ -1,0 +1,61 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Maintenance Schedule Details</h6>
+          </div>
+        </div>
+
+        <div class="card-body px-4">
+          <div class="row">
+            <div class="col-md-6">
+              <p>
+                <strong>Title:</strong>
+                <%= @maintenance_schedule.title %>
+              </p>
+
+              <p>
+                <strong>Asset:</strong>
+                <%= @maintenance_schedule.asset&.name %>
+              </p>
+
+              <p>
+                <strong>Frequency:</strong>
+                <%= @maintenance_schedule.frequency&.titleize %>
+              </p>
+
+              <p>
+                <strong>Last Performed:</strong>
+                <%= @maintenance_schedule.last_performed_at&.strftime("%Y-%m-%d %H:%M") %>
+              </p>
+            </div>
+
+            <div class="col-md-6">
+              <p>
+                <strong>Next Due:</strong>
+                <%= @maintenance_schedule.next_due_at&.strftime("%Y-%m-%d %H:%M") %>
+              </p>
+
+              <p>
+                <strong>Assigned To:</strong>
+                <%= @maintenance_schedule.assigned_to&.email %>
+              </p>
+
+              <p>
+                <strong>Description:</strong>
+                <%= @maintenance_schedule.description %>
+              </p>
+            </div>
+          </div>
+
+          <div class="text-end mt-4">
+            <%= link_to 'Back', maintenance_schedules_path, class: 'btn btn-light me-2' %>
+            <%= link_to 'Edit', edit_maintenance_schedule_path(@maintenance_schedule), class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

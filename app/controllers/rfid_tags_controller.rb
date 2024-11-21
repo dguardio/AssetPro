@@ -1,33 +1,57 @@
 class RfidTagsController < ApplicationController
-  before_action :set_asset
-  before_action :authorize_asset
+  before_action :set_rfid_tag, only: [:show, :edit, :update, :destroy]
+
+  def index
+    @q = policy_scope(RfidTag).ransack(params[:q])
+    @rfid_tags = @q.result.includes(asset: :location).page(params[:page])
+  end
+
+  def show
+    authorize @rfid_tag
+  end
 
   def new
-    @rfid_tag = @asset.build_rfid_tag
+    @rfid_tag = RfidTag.new
+    authorize @rfid_tag
+  end
+
+  def edit
+    authorize @rfid_tag
   end
 
   def create
-    @rfid_tag = @asset.build_rfid_tag(rfid_tag_params)
-    @rfid_tag.last_known_location = @asset.location
+    @rfid_tag = RfidTag.new(rfid_tag_params)
+    authorize @rfid_tag
 
-    if @asset.assign_rfid_tag!(@rfid_tag.rfid_number)
-      redirect_to @asset, notice: 'RFID tag was successfully assigned.'
+    if @rfid_tag.save
+      redirect_to @rfid_tag, notice: 'RFID tag was successfully created.'
     else
-      render :new
+      render :new, status: :unprocessable_entity
     end
+  end
+
+  def update
+    authorize @rfid_tag
+    if @rfid_tag.update(rfid_tag_params)
+      redirect_to @rfid_tag, notice: 'RFID tag was successfully updated.'
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    authorize @rfid_tag
+    @rfid_tag.destroy
+    redirect_to rfid_tags_url, notice: 'RFID tag was successfully deleted.'
   end
 
   private
 
-  def set_asset
-    @asset = Asset.find(params[:asset_id])
-  end
-
-  def authorize_asset
-    authorize @asset, :update?
+  def set_rfid_tag
+    @rfid_tag = RfidTag.find(params[:id])
   end
 
   def rfid_tag_params
-    params.require(:rfid_tag).permit(:rfid_number)
+    params.require(:rfid_tag).permit(:rfid_number, :asset_id, :active, :last_scanned_at)
   end
 end 

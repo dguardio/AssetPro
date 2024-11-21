@@ -2,9 +2,10 @@ class AssetTrackingEventsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @asset = Asset.find(params[:asset_id])
-    authorize @asset, :show?
-    @tracking_events = @asset.asset_tracking_events.includes(:location, :scanned_by).recent.page(params[:page])
+    @q = AssetTrackingEvent.ransack(params[:q])
+    @asset_tracking_events = @q.result.includes(:asset, :location, :scanned_by)
+                              .page(params[:page])
+                              .per(25)
   end
 
   # API endpoint for RFID scanner

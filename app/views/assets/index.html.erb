@@ -46,7 +46,7 @@
       </div>
     <% end %>      
   </div>
-
+  
   <table class="table">
     <thead>
       <tr>
@@ -66,12 +66,22 @@
           <td><%= asset.location&.name %></td>
           <td><%= asset.status.titleize %></td>
           <td>
-            <%= link_to 'Show', asset, class: 'btn btn-sm btn-info' if policy(asset).show? %>
-            <%= link_to 'Edit', edit_asset_path(asset), class: 'btn btn-sm btn-primary' if policy(asset).update? %>
-            <%= link_to 'Delete', asset, 
+            <%= link_to asset_path(asset), 
+                class: 'btn btn-link text-secondary mb-0' do %>
+              <i class="material-icons-round">visibility</i>
+            <% end %>
+
+            <%= link_to edit_asset_path(asset), 
+                class: 'btn btn-link text-secondary mb-0' do %>
+              <i class="material-icons-round">edit</i>
+            <% end %>
+
+            <%= link_to asset_path(asset), 
                 method: :delete, 
                 data: { confirm: 'Are you sure?' }, 
-                class: 'btn btn-sm btn-danger' if policy(asset).destroy? %>
+                class: 'btn btn-link btn-danger text-secondary mb-0' do %>
+              <i class="material-icons-round">delete</i>
+            <% end %>
           </td>
         </tr>
       <% end %>
@@ -80,6 +90,6 @@
 
   <div class="d-flex justify-content-between align-items-center">
     <%= paginate @assets %>
-    <%= link_to 'New Asset', new_asset_path, class: 'btn btn-success' if policy(Asset.new).create? %>
+    <%= link_to 'New Asset', new_asset_path, class: 'btn btn-primary' if policy(Asset.new).create? %>
   </div>
 </div> 

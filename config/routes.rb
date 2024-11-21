@@ -47,9 +47,14 @@ Rails.application.routes.draw do
   # API endpoint for RFID scanning
   post '/scan', to: 'asset_tracking_events#create'
   
-  get 'scanner', to: 'scanner_interface#scan'
-  get 'scanner_interface/recent_scans', to: 'scanner_interface#recent_scans'
+  # get 'scanner', to: 'scanner_interface#index'
+  # post 'scanner/scan', to: 'scanner_interface#scan'
+  # post 'scanner/bulk_scan', to: 'scanner_interface#bulk_scan'
+  # patch 'scanner/update_location', to: 'scanner_interface#update_location'
   
+  get 'scanner', to: 'scanner_interface#scan'
+  get 'scanner/recent_scans', to: 'scanner_interface#recent_scans'
+
   # Keep the existing dashboard route
   get 'dashboard', to: 'dashboards#index'
   get 'dashboard/drilldown', to: 'dashboards#drilldown', as: :drilldown_dashboard
@@ -70,4 +75,9 @@ Rails.application.routes.draw do
   authenticate :user, lambda { |u| u.admin? } do
     mount Sidekiq::Web => '/sidekiq'
   end
+
+  resources :rfid_tags
+  resources :maintenance_schedules
+  resources :licenses
+  resources :asset_tracking_events, only: [:index, :show]
 end

@@ -1,5 +1,7 @@
 class MaintenanceRecord < ApplicationRecord
   belongs_to :asset
+  belongs_to :performed_by, class_name: 'User'
+  belongs_to :maintenance_schedule, optional: true
 
   validates :maintenance_type, presence: true
   validates :description, presence: true
@@ -13,6 +15,15 @@ class MaintenanceRecord < ApplicationRecord
     corrective: 'corrective',
     inspection: 'inspection'
   }
+
+  def self.ransackable_attributes(auth_object = nil)
+    ["asset_id", "cost", "created_at", "description", "id", "maintenance_date", 
+     "maintenance_schedule_id", "performed_by_id", "updated_at"]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    ["asset", "maintenance_schedule", "performed_by"]
+  end
 
   private
 

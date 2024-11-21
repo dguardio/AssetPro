@@ -74,7 +74,56 @@
               <span class="material-icons-round">place</span>
               <span>Locations</span>
             <% end %>
+          </li>         
+
+
+          <!-- Asset Assignments -->
+          <li class="nav-item">
+            <%= link_to asset_assignments_path, class: "nav-link #{current_page?(asset_assignments_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">assignment</span>
+              <span class="nav-link-text ms-1">Asset Assignments</span>
+            <% end %>
           </li>
+
+      <!-- RFID Tags -->
+          <li class="nav-item">
+            <%= link_to rfid_tags_path, class: "nav-link #{current_page?(rfid_tags_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">nfc</span>
+              <span class="nav-link-text ms-1">RFID Tags</span>
+            <% end %>
+          </li>
+
+          <!-- Maintenance Schedules -->
+          <li class="nav-item">
+            <%= link_to maintenance_schedules_path, class: "nav-link #{current_page?(maintenance_schedules_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">build</span>
+              <span class="nav-link-text ms-1">Maintenance</span>
+            <% end %>
+          </li>
+
+          <!-- Licenses -->
+          <li class="nav-item">
+            <%= link_to licenses_path, class: "nav-link #{current_page?(licenses_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">key</span>
+              <span class="nav-link-text ms-1">Licenses</span>
+            <% end %>
+          </li>
+
+          <!-- Asset Tracking Events -->
+          <li class="nav-item">
+            <%= link_to asset_tracking_events_path, class: "nav-link #{current_page?(asset_tracking_events_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">history</span>
+              <span class="nav-link-text ms-1">Tracking Events</span>
+            <% end %>
+          </li>
+
+          <!-- Audit Logs -->
+          <li class="nav-item">
+            <%= link_to audit_logs_path, class: "nav-link #{current_page?(audit_logs_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">history</span>
+              <span class="nav-link-text ms-1">Audit Logs</span>
+            <% end %>
+          </li>          
 
           <li class="nav-item">
             <%= link_to admin_users_path, class: "nav-link #{current_page?(admin_users_path) ? 'active' : ''}" do %>
@@ -83,10 +132,6 @@
             <% end %>
           </li>
         <% end %>
-
-        <li class="nav-item">
-          <%= link_to 'Audit Logs', audit_logs_path, class: 'nav-link' %>
-        </li>
 
         <li class="nav-item-header">
           Account

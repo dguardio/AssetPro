@@ -156,81 +156,6 @@
     </div>
   </div>
 
-  <!-- Add new maintenance schedule table -->
-  <div class="row mt-4">
-    <div class="col-lg-6">
-      <div class="card">
-        <div class="card-header pb-0">
-          <h6>Upcoming Maintenance</h6>
-        </div>
-        <div class="card-body px-0 pt-0 pb-2">
-          <div class="table-responsive p-0">
-            <table class="table align-items-center mb-0">
-              <thead>
-                <tr>
-                  <th>Asset</th>
-                  <th>Schedule Date</th>
-                  <th>Assigned To</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @upcoming_maintenance.each do |maintenance| %>
-                  <tr>
-                    <td><%= maintenance.asset.name %></td>
-                    <td><%= maintenance.scheduled_date.strftime("%B %d, %Y") %></td>
-                    <td><%= maintenance.assigned_to&.name || "Unassigned" %></td>
-                    <td>
-                      <span class="badge badge-sm bg-gradient-<%= maintenance_status_color(maintenance.status) %>">
-                        <%= maintenance.status.titleize %>
-                      </span>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-6">
-      <div class="card">
-        <div class="card-header pb-0">
-          <h6>Expiring Licenses</h6>
-        </div>
-        <div class="card-body px-0 pt-0 pb-2">
-          <div class="table-responsive p-0">
-            <table class="table align-items-center mb-0">
-              <thead>
-                <tr>
-                  <th>License</th>
-                  <th>Expires</th>
-                  <th>Seats Used</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% @expiring_licenses.each do |license| %>
-                  <tr>
-                    <td><%= license.name %></td>
-                    <td><%= license.expiration_date.strftime("%B %d, %Y") %></td>
-                    <td><%= "#{license.seats_used}/#{license.seats}" %></td>
-                    <td>
-                      <span class="badge badge-sm bg-gradient-<%= license_status_color(license) %>">
-                        <%= license_status(license) %>
-                      </span>
-                    </td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Charts Row -->
   <div class="row mb-4">
     <div class="col-lg-4 col-md-6">
@@ -384,6 +309,81 @@
       </div>
     </div>
   </div>
+
+  <!-- Add new maintenance schedule and license expiration tables -->
+  <div class="row mt-4">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header pb-0">
+          <h6>Upcoming Maintenance</h6>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Schedule Date</th>
+                  <th>Assigned To</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @upcoming_maintenance.each do |maintenance| %>
+                  <tr>
+                    <td><%= maintenance.asset.name %></td>
+                    <td><%= maintenance.scheduled_date.strftime("%B %d, %Y") %></td>
+                    <td><%= maintenance.assigned_to&.name || "Unassigned" %></td>
+                    <td>
+                      <span class="badge badge-sm bg-gradient-<%= maintenance_status_color(maintenance.status) %>">
+                        <%= maintenance.status.titleize %>
+                      </span>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header pb-0">
+          <h6>Expiring Licenses</h6>
+        </div>
+        <div class="card-body px-0 pt-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th>License</th>
+                  <th>Expires</th>
+                  <th>Seats Used</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @expiring_licenses.each do |license| %>
+                  <tr>
+                    <td><%= license.name %></td>
+                    <td><%= license.expiration_date.strftime("%B %d, %Y") %></td>
+                    <td><%= "#{license.seats_used}/#{license.seats}" %></td>
+                    <td>
+                      <span class="badge badge-sm bg-gradient-<%= license_status_color(license) %>">
+                        <%= license_status(license) %>
+                      </span>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
 </div>
 
 <%= javascript_tag do %>

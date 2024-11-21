@@ -1,0 +1,30 @@
+<tr>
+  <td>
+    <div class="d-flex px-2 py-1">
+      <div class="d-flex flex-column justify-content-center">
+        <h6 class="mb-0 text-sm"><%= rfid_tag.rfid_number %></h6>
+      </div>
+    </div>
+  </td>
+  <td>
+    <p class="text-xs font-weight-bold mb-0">
+      <%= rfid_tag.asset&.name %>
+    </p>
+  </td>
+  <td>
+    <p class="text-xs font-weight-bold mb-0" id="asset_<%= rfid_tag.asset&.id %>_location">
+      <%= render 'location_display', asset: rfid_tag.asset if rfid_tag.asset %>
+    </p>
+  </td>
+  <td>
+    <p class="text-xs font-weight-bold mb-0">
+      <%= rfid_tag.last_scanned_at&.strftime("%Y-%m-%d %H:%M:%S") %>
+    </p>
+  </td>
+  <td>
+    <% if rfid_tag.asset %>
+      <%= link_to 'View Asset', asset_path(rfid_tag.asset), 
+          class: 'btn btn-sm btn-info' %>
+    <% end %>
+  </td>
+</tr> 

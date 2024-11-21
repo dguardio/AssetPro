@@ -1,0 +1,75 @@
+<%= form_with(model: license) do |f| %>
+  <% if license.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(license.errors.count, "error") %> prohibited this license from being saved:</h4>
+      <ul>
+        <% license.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :name %>
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :license_key %>
+        <%= f.text_field :license_key, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :seats %>
+        <%= f.number_field :seats, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :expiration_date %>
+        <%= f.date_field :expiration_date, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :cost %>
+        <%= f.number_field :cost, step: :any, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :supplier %>
+        <%= f.text_field :supplier, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :asset_id %>
+        <%= f.collection_select :asset_id, Asset.all, :id, :name, { include_blank: true }, { class: 'form-select' } %>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :notes %>
+        <%= f.text_area :notes, class: 'form-control', rows: 4 %>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-end mt-4">
+    <%= link_to 'Back', licenses_path, class: 'btn btn-light me-2' %>
+    <%= f.submit class: 'btn btn-primary' %>
+  </div>
+<% end %> 

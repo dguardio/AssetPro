@@ -23,45 +23,65 @@
     </div>
   <% end %>
 
-  <div class="table-responsive">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th><%= sort_link_with_icon(@q, :name, "Name") %></th>
-          <th><%= sort_link_with_icon(@q, :address, "Address") %></th>
-          <th><%= sort_link_with_icon(@q, :assets_count, "Assets") %></th>
-          <th><%= sort_link_with_icon(@q, :building, "Building") %></th>
-          <th><%= sort_link_with_icon(@q, :floor, "Floor") %></th>
-          <th><%= sort_link_with_icon(@q, :room, "Room") %></th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+  <div class="card">
+    <div class="card-body">
+          
+      <div class="table-responsive">
+        <table class="table table-hover table-striped">
+          <thead>
+            <tr>
+              <th><%= sort_link_with_icon(@q, :name, "Name") %></th>
+              <th><%= sort_link_with_icon(@q, :address, "Address") %></th>
+              <th><%= sort_link_with_icon(@q, :assets_count, "Assets") %></th>
+              <th><%= sort_link_with_icon(@q, :building, "Building") %></th>
+              <th><%= sort_link_with_icon(@q, :floor, "Floor") %></th>
+              <th><%= sort_link_with_icon(@q, :room, "Room") %></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
 
-      <tbody>
-        <% @locations.each do |location| %>
-          <tr>
-            <td><%= location.name %></td>
-            <td><%= location.address %></td>
-            <td><%= location.assets.count %></td>
-            <td><%= location.building %></td>
-            <td><%= location.floor %></td>
-            <td><%= location.room %></td>
-            <td>
-              <%= link_to 'Show', location, class: 'btn btn-sm btn-info' if policy(location).show? %>
-              <%= link_to 'Edit', edit_location_path(location), class: 'btn btn-sm btn-primary' if policy(location).update? %>
-              <%= link_to 'Delete', location, 
-                  method: :delete, 
-                  data: { confirm: 'Are you sure?' }, 
-                  class: 'btn btn-sm btn-danger' if policy(location).destroy? %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+          <tbody>
+            <% @locations.each do |location| %>
+              <tr>
+                <td><%= location.name %></td>
+                <% if location.address.present? %>
+                  <td><%= location.address[0, 15] %></td>
+                <% else %>
+                  <td>N/A</td>
+                <% end %>
+                <td><%= location.assets.count %></td>
+                <td><%= location.building %></td>
+                <td><%= location.floor %></td>
+                <td><%= location.room %></td>
+                <td>
 
-  <div class="d-flex justify-content-between align-items-center">
-    <%= paginate @locations %>
-    <%= link_to 'New Location', new_location_path, class: 'btn btn-success' if policy(Location.new).create? %>
-  </div>
+                  <%= link_to location_path(location), 
+                      class: 'btn btn-link text-secondary mb-0' do %>
+                    <i class="material-icons-round">visibility</i>
+                  <% end %>
+
+                  <%= link_to edit_location_path(location), 
+                      class: 'btn btn-link text-secondary mb-0' do %>
+                    <i class="material-icons-round">edit</i>
+                  <% end %>
+
+                  <%= link_to location_path(location), 
+                      method: :delete, 
+                      data: { confirm: 'Are you sure?' }, 
+                      class: 'btn btn-link btn-danger text-secondary mb-0' do %>
+                    <i class="material-icons-round">delete</i>
+                  <% end %>                  
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <%= paginate @locations %>
+        <%= link_to 'New Location', new_location_path, class: 'btn btn-success' if policy(Location.new).create? %>
+      </div>
+    </div>
+  </div> 
 </div> 

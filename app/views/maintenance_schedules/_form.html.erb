@@ -1,0 +1,68 @@
+<%= form_with(model: maintenance_schedule) do |f| %>
+  <% if maintenance_schedule.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(maintenance_schedule.errors.count, "error") %> prohibited this maintenance schedule from being saved:</h4>
+      <ul>
+        <% maintenance_schedule.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :title %>
+        <%= f.text_field :title, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :asset_id %>
+        <%= f.collection_select :asset_id, Asset.all, :id, :name, { include_blank: true }, { class: 'form-select' } %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :frequency %>
+        <%= f.select :frequency, MaintenanceSchedule.frequencies.keys.map { |k| [k.titleize, k] }, {}, { class: 'form-select' } %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :last_performed_at %>
+        <%= f.datetime_field :last_performed_at, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :next_due_at %>
+        <%= f.datetime_field :next_due_at, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :assigned_to_id %>
+        <%= f.collection_select :assigned_to_id, User.all, :id, :email, { include_blank: true }, { class: 'form-select' } %>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :description %>
+        <%= f.text_area :description, class: 'form-control', rows: 4 %>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-end mt-4">
+    <%= link_to 'Back', maintenance_schedules_path, class: 'btn btn-light me-2' %>
+    <%= f.submit class: 'btn btn-primary' %>
+  </div>
+<% end %> 

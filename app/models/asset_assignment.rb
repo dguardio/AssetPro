@@ -14,6 +14,14 @@ class AssetAssignment < ApplicationRecord
   after_create :notify_assignment
   after_create :update_asset_status
 
+  def self.ransackable_attributes(auth_object = nil)
+    ["asset_id", "assigned_by_id", "checked_in_at", "checked_out_at", "created_at", "id", "notes", "updated_at", "user_id"]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    ["asset", "assigned_by", "user"]
+  end
+
   private
 
   def check_in_after_check_out

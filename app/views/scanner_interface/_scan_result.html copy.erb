@@ -1,0 +1,9 @@
+<div class="scan-result">
+  <div class="d-flex justify-content-between">
+    <strong><%= scan.asset.name %></strong>
+    <small><%= time_ago_in_words(scan.scanned_at) %> ago</small>
+  </div>
+  <div>
+    Location: <%= scan.location.name %>
+  </div>
+</div> 

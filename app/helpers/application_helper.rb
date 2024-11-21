@@ -1,11 +1,12 @@
 module ApplicationHelper
-  def sort_link_with_icon(query_obj, attribute, label)
-    sort_link(query_obj, attribute, label) do |sorted_label|
-      direction = query_obj.sorts.find { |s| s.name == attribute.to_s }&.dir
+  def sort_link_with_icon(search_object, attribute, *args)
+    label = args.first || attribute.to_s.titleize
+    sort_link(search_object, attribute, label) do |sorted_label|
+      direction = search_object.sorts.find { |s| s.name == attribute.to_s }&.dir
       icon = case direction
              when 'asc' then '↑'
              when 'desc' then '↓'
-             else ''
+             else '↕'
              end
       "#{sorted_label} #{icon}".html_safe
     end

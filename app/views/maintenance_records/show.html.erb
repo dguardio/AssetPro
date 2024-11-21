@@ -1,0 +1,56 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Maintenance Record Details</h6>
+          </div>
+        </div>
+
+        <div class="card-body px-4">
+          <div class="row">
+            <div class="col-md-6">
+              <p>
+                <strong>Asset:</strong>
+                <%= @maintenance_record.asset&.name %>
+              </p>
+
+              <p>
+                <strong>Schedule:</strong>
+                <%= @maintenance_record.maintenance_schedule&.title %>
+              </p>
+
+              <p>
+                <strong>Maintenance Date:</strong>
+                <%= @maintenance_record.maintenance_date&.strftime("%Y-%m-%d %H:%M") %>
+              </p>
+            </div>
+
+            <div class="col-md-6">
+              <p>
+                <strong>Cost:</strong>
+                <%= number_to_currency(@maintenance_record.cost) %>
+              </p>
+
+              <p>
+                <strong>Performed By:</strong>
+                <%= @maintenance_record.performed_by&.email %>
+              </p>
+
+              <p>
+                <strong>Description:</strong>
+                <%= @maintenance_record.description %>
+              </p>
+            </div>
+          </div>
+
+          <div class="text-end mt-4">
+            <%= link_to 'Back', maintenance_records_path, class: 'btn btn-light me-2' %>
+            <%= link_to 'Edit', edit_maintenance_record_path(@maintenance_record), class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

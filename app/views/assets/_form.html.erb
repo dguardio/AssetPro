@@ -1,0 +1,41 @@
+<%= form_with(model: @asset, local: true) do |f| %>
+  <% if @asset.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(@asset.errors.count, "error") %> prohibited this asset from being saved:</h2>
+      <ul>
+        <% @asset.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description %>
+    <%= f.text_area :description, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :category_id %>
+    <%= f.collection_select :category_id, Category.all, :id, :name, { prompt: 'Select a Category' }, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :location_id %>
+    <%= f.collection_select :location_id, Location.all, :id, :name, { prompt: 'Select a Location' }, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :status %>
+    <%= f.select :status, Asset.statuses.keys.map { |status| [status.humanize, status] }, { prompt: 'Select Status' }, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.submit @asset.new_record? ? 'Create Asset' : 'Update Asset', class: 'btn btn-primary' %>
+  </div>
+<% end %>

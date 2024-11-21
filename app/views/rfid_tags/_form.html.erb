@@ -1,0 +1,46 @@
+<%= form_with(model: rfid_tag) do |f| %>
+  <% if rfid_tag.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(rfid_tag.errors.count, "error") %> prohibited this RFID tag from being saved:</h4>
+      <ul>
+        <% rfid_tag.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :rfid_number %>
+        <%= f.text_field :rfid_number, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :asset_id %>
+        <%= f.collection_select :asset_id, Asset.all, :id, :name, { include_blank: true }, { class: 'form-select' } %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :active %>
+        <%= f.check_box :active, class: 'form-check-input ms-2' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :last_scanned_at %>
+        <%= f.datetime_field :last_scanned_at, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-end mt-4">
+    <%= link_to 'Back', rfid_tags_path %>
+  </div>
+<% end %> 

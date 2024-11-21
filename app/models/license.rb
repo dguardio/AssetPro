@@ -11,6 +11,15 @@ class License < ApplicationRecord
 
   after_save :check_expiration
   
+  def self.ransackable_attributes(auth_object = nil)
+    ["asset_id", "cost", "created_at", "expiration_date", "id", "license_key", 
+     "name", "notes", "seats", "supplier", "updated_at"]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    ["asset"]
+  end
+  
   private
 
   def check_expiration

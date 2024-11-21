@@ -11,8 +11,12 @@ class MaintenanceRecordPolicy < ApplicationPolicy
     end
   end
 
+  def index?
+    true
+  end
+
   def show?
-    user.admin? || record.asset.users.include?(user)
+    user.admin? || record.performed_by_id == user.id || record.asset&.location_id == user.location_id
   end
 
   def create?

@@ -51,6 +51,10 @@ class User < ApplicationRecord
     role == role_name.to_s
   end
 
+  def self.ransackable_attributes(auth_object = nil)
+    ["email", "id", "created_at", "updated_at"]
+  end
+
   private
 
   def assign_default_role

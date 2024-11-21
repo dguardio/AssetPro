@@ -1,0 +1,56 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Asset Assignment Details</h6>
+          </div>
+        </div>
+
+        <div class="card-body px-4">
+          <div class="row">
+            <div class="col-md-6">
+              <p>
+                <strong>Asset:</strong>
+                <%= @asset_assignment.asset&.name %>
+              </p>
+
+              <p>
+                <strong>Assigned To:</strong>
+                <%= @asset_assignment.user&.email %>
+              </p>
+
+              <p>
+                <strong>Assigned By:</strong>
+                <%= @asset_assignment.assigned_by&.email %>
+              </p>
+            </div>
+
+            <div class="col-md-6">
+              <p>
+                <strong>Checked Out:</strong>
+                <%= @asset_assignment.checked_out_at&.strftime("%Y-%m-%d %H:%M") %>
+              </p>
+
+              <p>
+                <strong>Checked In:</strong>
+                <%= @asset_assignment.checked_in_at&.strftime("%Y-%m-%d %H:%M") %>
+              </p>
+
+              <p>
+                <strong>Notes:</strong>
+                <%= @asset_assignment.notes %>
+              </p>
+            </div>
+          </div>
+
+          <div class="text-end mt-4">
+            <%= link_to 'Back', asset_assignments_path, class: 'btn btn-light me-2' %>
+            <%= link_to 'Edit', edit_asset_assignment_path(@asset_assignment), class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

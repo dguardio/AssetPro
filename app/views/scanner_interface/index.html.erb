@@ -1,0 +1,136 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">RFID Scanner Interface</h6>
+          </div>
+        </div>
+
+        <div class="card-body px-4">
+          <div class="scanner-container">
+            <div class="form-group mb-4">
+              <label for="location" class="form-label">Current Location</label>
+              <%= select_tag 'location', 
+                  options_from_collection_for_select(@locations, 'id', 'name'), 
+                  class: 'form-select' %>
+            </div>
+
+            <div id="scanStatus" class="alert" style="display: none;"></div>
+
+            <div class="scan-controls mb-4">
+              <button id="startScan" class="btn btn-primary btn-lg w-100">
+                Start Scanning
+              </button>
+            </div>
+
+            <div class="recent-scans">
+              <h5>Recent Scans</h5>
+              <div id="recentScansList" class="table-responsive">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">RFID</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Asset</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%= render partial: 'scan_result', collection: @recent_scans, as: :scan %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= javascript_tag do %>
+  document.addEventListener('DOMContentLoaded', function() {
+    const startScanButton = document.getElementById('startScan');
+    const scanStatus = document.getElementById('scanStatus');
+    const locationSelect = document.getElementById('location');
+    let scanning = false;
+
+    startScanButton.addEventListener('click', function() {
+      if (!scanning) {
+        startScanButton.textContent = 'Stop Scanning';
+        startScanButton.classList.replace('btn-primary', 'btn-danger');
+        scanning = true;
+        showStatus('Ready to scan...', 'info');
+      } else {
+        startScanButton.textContent = 'Start Scanning';
+        startScanButton.classList.replace('btn-danger', 'btn-primary');
+        scanning = false;
+        hideStatus();
+      }
+    });
+
+    function processRfidScan(rfidNumber) {
+      const locationId = locationSelect.value;
+      
+      fetch('/api/v1/scans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          scan: {
+            rfid_number: rfidNumber,
+            location_id: locationId,
+            event_type: 'location_update'
+          }
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          showStatus('Asset scanned: ' + data.data.asset.name, 'success');
+          updateRecentScans();
+        } else {
+          showStatus('Error: ' + data.message, 'error');
+        }
+      })
+      .catch(error => {
+        showStatus('Error processing scan', 'error');
+        console.error('Error:', error);
+      });
+    }
+
+    function showStatus(message, type) {
+      scanStatus.textContent = message;
+      scanStatus.className = 'alert alert-' + type;
+      scanStatus.style.display = 'block';
+    }
+
+    function hideStatus() {
+      scanStatus.style.display = 'none';
+    }
+
+    function updateRecentScans() {
+      fetch('/scanner_interface/recent_scans')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('recentScansList').innerHTML = html;
+        });
+    }
+
+    // RFID scanner integration
+    document.addEventListener('keypress', function(e) {
+      if (!scanning) return;
+      
+      if (e.key === 'Enter' && window.rfidBuffer) {
+        processRfidScan(window.rfidBuffer);
+        window.rfidBuffer = '';
+      } else {
+        window.rfidBuffer = (window.rfidBuffer || '') + e.key;
+      }
+    });
+  });
+<% end %> 
