@@ -77,7 +77,11 @@ Rails.application.routes.draw do
   end
 
   resources :rfid_tags
-  resources :maintenance_schedules
+  resources :maintenance_schedules do
+    member do
+      post :complete
+    end
+  end
   resources :licenses
   resources :asset_tracking_events, only: [:index, :show]
 end

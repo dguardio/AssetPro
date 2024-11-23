@@ -1,5 +1,5 @@
 class MaintenanceSchedulesController < ApplicationController
-  before_action :set_maintenance_schedule, only: [:show, :edit, :update, :destroy]
+  before_action :set_maintenance_schedule, only: [:show, :edit, :update, :destroy, :complete]
 
   def index
     @q = policy_scope(MaintenanceSchedule).ransack(params[:q])
@@ -43,6 +43,16 @@ class MaintenanceSchedulesController < ApplicationController
     authorize @maintenance_schedule
     @maintenance_schedule.destroy
     redirect_to maintenance_schedules_url, notice: 'Maintenance schedule was successfully deleted.'
+  end
+
+  def complete
+    authorize @maintenance_schedule
+    
+    if @maintenance_schedule.update(completed_date: Time.current, status: 'completed')
+      redirect_to maintenance_schedules_path, notice: 'Maintenance schedule marked as completed.'
+    else
+      redirect_to maintenance_schedules_path, alert: 'Unable to complete maintenance schedule.'
+    end
   end
 
   private

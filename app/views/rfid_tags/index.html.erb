@@ -41,32 +41,33 @@
                   <th><%= sort_link_with_icon(@q, :asset_name, "Asset") %></th>
                   <th><%= sort_link_with_icon(@q, :active, "Status") %></th>
                   <th><%= sort_link_with_icon(@q, :last_scanned_at, "Last Scanned") %></th>
-                  <th><%= sort_link_with_icon(@q, :last_known_location.name, "Location") %></th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <% @rfid_tags.each do |tag| %>
                   <tr>
-                    <td><%= tag.rfid_number %></td>
-                    <td><%= tag.asset&.name %></td>
+                    <td><%= truncate(tag.rfid_number) %></td>
+                    <td><%= truncate(tag.asset&.name) %></td>
                     <td><%= tag.active? ? 'Active' : 'Inactive' %></td>
                     <td><%= tag.last_scanned_at&.strftime("%Y-%m-%d %H:%M") %></td>
-                    <td><%= tag.last_known_location&.name %></td>
                     <td>
-                      <%= link_to rfid_tag_path(tag), class: 'btn btn-sm btn-info', title: 'Show' do %>
-                        <i class="material-icons">visibility</i>
+                      <%= link_to rfid_tag_path(tag), 
+                          class: 'btn btn-link text-secondary mb-0' do %>
+                        <i class="material-icons-round">visibility</i>
                       <% end %>
-                      <%= link_to edit_rfid_tag_path(tag), class: 'btn btn-sm btn-primary', title: 'Edit' do %>
-                        <i class="material-icons">edit</i>
+
+                      <%= link_to edit_rfid_tag_path(tag), 
+                          class: 'btn btn-link text-secondary mb-0' do %>
+                        <i class="material-icons-round">edit</i>
                       <% end %>
-                      <%= button_to rfid_tag_path(tag), 
-                          method: :delete,
-                          form: { data: { turbo_confirm: 'Are you sure?' } },
-                          class: 'btn btn-sm btn-danger d-inline',
-                          title: 'Delete' do %>
-                        <i class="material-icons">delete</i>
-                      <% end %>
+
+                      <%= link_to rfid_tag_path(tag), 
+                            method: :delete, 
+                            data: { confirm: 'Are you sure?' }, 
+                          class: 'btn btn-link btn-danger text-secondary mb-0' do %>
+                        <i class="material-icons-round">delete</i>
+                      <% end %>                      
                     </td>
                   </tr>
                 <% end %>

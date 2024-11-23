@@ -1,25 +1,70 @@
-<%= form_with(model: category, local: true) do |f| %>
+<%= form_with(model: category) do |form| %>
   <% if category.errors.any? %>
     <div class="alert alert-danger">
-      <h2><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h2>
+      <h4><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h4>
       <ul>
-        <% category.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
+        <% category.errors.each do |error| %>
+          <li><%= error.full_message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= f.label :name %>
-    <%= f.text_field :name, class: 'form-control' %>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group input-group-outline mb-4">
+        <%= form.label :name, class: category.name.present? ? 'form-label' : 'form-label' %>
+        <%= form.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-outline mb-4">
+        <%= form.label :description, class: category.description.present? ? 'form-label' : 'form-label' %>
+        <%= form.text_area :description, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group input-group-outline mb-4">
+        <%= form.label :parent_id, 'Parent Category', class: 'form-label' %>
+        <%= form.collection_select :parent_id, 
+            Category.where.not(id: category.id), 
+            :id, 
+            :name, 
+            { include_blank: true }, 
+            class: 'form-select' %>
+      </div>
+    </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :description %>
-    <%= f.text_area :description, class: 'form-control' %>
+    <%= form.submit class: 'btn btn-primary' %>
   </div>
+<% end %>
 
-  <%= f.submit class: 'btn btn-primary' %>
-  <%= link_to 'Back', categories_path, class: 'btn btn-secondary' %>
-<% end> 
+<% content_for :page_scripts do %>
+  <script>
+    // Initialize Material Dashboard form inputs
+    document.querySelectorAll('.input-group-outline').forEach(function(formField) {
+      if (formField.querySelector('.form-control').value !== '') {
+        formField.classList.add('is-filled');
+      }
+      
+      formField.querySelector('.form-control').addEventListener('focus', function() {
+        formField.classList.add('is-focused');
+      });
+      
+      formField.querySelector('.form-control').addEventListener('blur', function() {
+        formField.classList.remove('is-focused');
+        if (this.value !== '') {
+          formField.classList.add('is-filled');
+        } else {
+          formField.classList.remove('is-filled');
+        }
+      });
+    });
+  </script>
+<% end %> 

@@ -39,7 +39,7 @@
             <% @categories.each do |category| %>
               <tr>
                 <td><%= category.name %></td>
-                <td><%= category.description %></td>
+                <td><%= truncate(category.description, length: 50) %></td>
                 <td><%= category.assets.count %></td>
                 <td>
 

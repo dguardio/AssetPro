@@ -50,11 +50,18 @@
             <td><%= assignment.checked_out_at&.strftime("%Y-%m-%d") %></td>
             <td><%= assignment.checked_in_at&.strftime("%Y-%m-%d") %></td>
             <td>
-              <%= link_to 'Show', assignment, class: 'btn btn-sm btn-info' if policy(assignment).show? %>
-              <%= link_to 'Remove', assignment, 
+            <div class="btn-group">
+              <%= link_to asset_assignment_path(assignment), 
+                  class: 'btn btn-link text-secondary mb-0' do %>
+                <i class="material-icons-round">visibility</i>
+              <% end %>
+
+              <%= link_to asset_assignment_path(assignment), 
                   method: :delete, 
                   data: { confirm: 'Are you sure?' }, 
-                  class: 'btn btn-sm btn-danger' if policy(assignment).destroy? %>
+                  class: 'btn btn-link btn-danger text-secondary mb-0' do %>
+                <i class="material-icons-round">delete</i>
+              <% end %>
             </td>
           </tr>
         <% end %>
