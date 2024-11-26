@@ -4,7 +4,8 @@ class Admin::UsersController < ApplicationController
   before_action :set_user, only: [:edit, :update, :destroy]
 
   def index
-    @users = User.all
+    authorize :admin_user, :index?
+    @users = policy_scope([:admin, User]).order(created_at: :desc).page(params[:page])
   end
 
   def new
@@ -12,27 +13,42 @@ class Admin::UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
-    if @user.save
-      redirect_to admin_users_path, notice: 'User was successfully created.'
-    else
-      render :new
+    @user = User.new(user_params_without_role)
+    authorize @user
+
+    User.transaction do
+      if @user.save
+        # Handle role assignment
+        new_role = params[:user][:role]
+        @user.add_role(new_role) if new_role.present? && User.available_roles.include?(new_role)
+        
+        redirect_to admin_users_path, notice: 'User was successfully created.'
+      else
+        render :new
+      end
     end
   end
 
   def edit
+    authorize [:admin, @user]
   end
 
   def update
-    if params[:user][:password].blank?
-      params[:user].delete(:password)
-      params[:user].delete(:password_confirmation)
-    end
+    authorize [:admin, @user]
 
-    if @user.update(user_params)
-      redirect_to admin_users_path, notice: 'User was successfully updated.'
-    else
-      render :edit, status: :unprocessable_entity
+    User.transaction do
+      if @user.update(user_params_without_role)
+        # Handle role assignment
+        new_role = params[:user][:role]
+        if new_role.present? && User.available_roles.include?(new_role)
+          @user.roles.destroy_all # Remove existing roles
+          @user.add_role new_role
+        end
+
+        redirect_to admin_users_path, notice: 'User was successfully updated.'
+      else
+        render :edit
+      end
     end
   end
 
@@ -58,6 +74,17 @@ class Admin::UsersController < ApplicationController
       :password,
       :password_confirmation,
       :role,
+      :first_name,
+      :last_name,
+      :active
+    )
+  end
+
+  def user_params_without_role
+    params.require(:user).permit(
+      :email,
+      :password,
+      :password_confirmation,
       :first_name,
       :last_name,
       :active

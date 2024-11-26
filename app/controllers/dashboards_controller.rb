@@ -3,8 +3,10 @@ require 'csv'
 class DashboardsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_dashboard_data
-  
+  after_action :verify_policy_scoped, except: :index
+
   def index
+    authorize :dashboard, :index? 
     @q = Asset.ransack(search_params)
     @filtered_assets = @q.result.includes(:category, :location, :rfid_tag)
     
@@ -12,7 +14,9 @@ class DashboardsController < ApplicationController
       expiring_licenses: License.expiring_soon.count,
       overdue_maintenance: MaintenanceSchedule.overdue.count,
       total_license_cost: License.sum(:cost),
-      maintenance_due_this_week: MaintenanceSchedule.upcoming.where(scheduled_date: Time.current..1.week.from_now).count
+      maintenance_due_this_week: MaintenanceSchedule.upcoming
+                                                  .where(next_due_at: Time.current..1.week.from_now)
+                                                  .count
     })
     
     @upcoming_maintenance = MaintenanceSchedule.upcoming.includes(:asset, :assigned_to).limit(5)

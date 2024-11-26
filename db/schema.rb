@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_21_060951) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_23_025300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -145,14 +145,19 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_21_060951) do
     t.text "description"
     t.bigint "asset_id", null: false
     t.bigint "assigned_to_id"
-    t.datetime "scheduled_date"
     t.datetime "completed_date"
     t.integer "status", default: 0
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "frequency"
+    t.datetime "next_due_at"
+    t.datetime "last_performed_at"
+    t.index ["asset_id", "next_due_at"], name: "index_maintenance_schedules_on_asset_id_and_next_due_at"
     t.index ["asset_id"], name: "index_maintenance_schedules_on_asset_id"
     t.index ["assigned_to_id"], name: "index_maintenance_schedules_on_assigned_to_id"
+    t.index ["next_due_at"], name: "index_maintenance_schedules_on_next_due_at"
+    t.index ["status"], name: "index_maintenance_schedules_on_status"
   end
 
   create_table "noticed_events", force: :cascade do |t|

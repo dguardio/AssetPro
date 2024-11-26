@@ -28,7 +28,11 @@
 
           <div class="col-md-6 mb-3">
             <%= f.label :role, class: 'form-label' %>
-            <%= f.select :role, User.roles.keys.map { |r| [r.titleize, r] }, {}, class: 'form-select' %>
+            <%= f.select :role, 
+                User.available_roles.map { |r| [r.titleize, r] }, 
+                { selected: @user.current_role }, 
+                class: 'form-select' 
+            %>
           </div>
 
           <div class="col-md-6 mb-3">

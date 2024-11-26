@@ -55,6 +55,14 @@ class User < ApplicationRecord
     ["email", "id", "created_at", "updated_at"]
   end
 
+  def self.available_roles
+    %w[admin manager user security]  # Define available roles
+  end
+
+  def current_role
+    roles.first&.name || 'user'
+  end
+
   private
 
   def assign_default_role
