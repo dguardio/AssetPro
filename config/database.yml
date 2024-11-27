@@ -81,6 +81,7 @@ test:
 #
 production:
   <<: *default
-  database: asset_pro_production
-  username: asset_pro
-  password: <%= ENV["ASSET_PRO_DATABASE_PASSWORD"] %>
+  # database: asset_pro_production
+  # username: asset_pro
+  # password: <%= ENV["ASSET_PRO_DATABASE_PASSWORD"] %>
+  url: <%= ENV['DATABASE_URL'] %>

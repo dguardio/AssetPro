@@ -29,13 +29,15 @@ Rails.application.routes.draw do
   end
   resources :users
   resources :roles
-  resources :assets do
-    resources :maintenance_records
-    resources :rfid_tags, only: [:new, :create]
-    resources :asset_tracking_events, only: [:index]
-    collection do
-      post :import
-      get :export
+  namespace :inventory do
+    resources :assets do
+      resources :maintenance_records
+      resources :rfid_tags, only: [:new, :create]
+      resources :asset_tracking_events, only: [:index]
+      collection do
+        post :import
+        get :export
+      end
     end
   end
   resources :asset_assignments

@@ -82,27 +82,27 @@
                                          PATCH  /roles/:id(.:format)                                                                              roles#update
                                          PUT    /roles/:id(.:format)                                                                              roles#update
                                          DELETE /roles/:id(.:format)                                                                              roles#destroy
-               asset_maintenance_records GET    /assets/:asset_id/maintenance_records(.:format)                                                   maintenance_records#index
-                                         POST   /assets/:asset_id/maintenance_records(.:format)                                                   maintenance_records#create
-            new_asset_maintenance_record GET    /assets/:asset_id/maintenance_records/new(.:format)                                               maintenance_records#new
-           edit_asset_maintenance_record GET    /assets/:asset_id/maintenance_records/:id/edit(.:format)                                          maintenance_records#edit
-                asset_maintenance_record GET    /assets/:asset_id/maintenance_records/:id(.:format)                                               maintenance_records#show
-                                         PATCH  /assets/:asset_id/maintenance_records/:id(.:format)                                               maintenance_records#update
-                                         PUT    /assets/:asset_id/maintenance_records/:id(.:format)                                               maintenance_records#update
-                                         DELETE /assets/:asset_id/maintenance_records/:id(.:format)                                               maintenance_records#destroy
-                         asset_rfid_tags POST   /assets/:asset_id/rfid_tags(.:format)                                                             rfid_tags#create
-                      new_asset_rfid_tag GET    /assets/:asset_id/rfid_tags/new(.:format)                                                         rfid_tags#new
-             asset_asset_tracking_events GET    /assets/:asset_id/asset_tracking_events(.:format)                                                 asset_tracking_events#index
-                           import_assets POST   /assets/import(.:format)                                                                          assets#import
-                           export_assets GET    /assets/export(.:format)                                                                          assets#export
-                                  assets GET    /assets(.:format)                                                                                 assets#index
-                                         POST   /assets(.:format)                                                                                 assets#create
-                               new_asset GET    /assets/new(.:format)                                                                             assets#new
-                              edit_asset GET    /assets/:id/edit(.:format)                                                                        assets#edit
-                                   asset GET    /assets/:id(.:format)                                                                             assets#show
-                                         PATCH  /assets/:id(.:format)                                                                             assets#update
-                                         PUT    /assets/:id(.:format)                                                                             assets#update
-                                         DELETE /assets/:id(.:format)                                                                             assets#destroy
+     inventory_asset_maintenance_records GET    /inventory/assets/:asset_id/maintenance_records(.:format)                                         inventory/maintenance_records#index
+                                         POST   /inventory/assets/:asset_id/maintenance_records(.:format)                                         inventory/maintenance_records#create
+  new_inventory_asset_maintenance_record GET    /inventory/assets/:asset_id/maintenance_records/new(.:format)                                     inventory/maintenance_records#new
+ edit_inventory_asset_maintenance_record GET    /inventory/assets/:asset_id/maintenance_records/:id/edit(.:format)                                inventory/maintenance_records#edit
+      inventory_asset_maintenance_record GET    /inventory/assets/:asset_id/maintenance_records/:id(.:format)                                     inventory/maintenance_records#show
+                                         PATCH  /inventory/assets/:asset_id/maintenance_records/:id(.:format)                                     inventory/maintenance_records#update
+                                         PUT    /inventory/assets/:asset_id/maintenance_records/:id(.:format)                                     inventory/maintenance_records#update
+                                         DELETE /inventory/assets/:asset_id/maintenance_records/:id(.:format)                                     inventory/maintenance_records#destroy
+               inventory_asset_rfid_tags POST   /inventory/assets/:asset_id/rfid_tags(.:format)                                                   inventory/rfid_tags#create
+            new_inventory_asset_rfid_tag GET    /inventory/assets/:asset_id/rfid_tags/new(.:format)                                               inventory/rfid_tags#new
+   inventory_asset_asset_tracking_events GET    /inventory/assets/:asset_id/asset_tracking_events(.:format)                                       inventory/asset_tracking_events#index
+                 import_inventory_assets POST   /inventory/assets/import(.:format)                                                                inventory/assets#import
+                 export_inventory_assets GET    /inventory/assets/export(.:format)                                                                inventory/assets#export
+                        inventory_assets GET    /inventory/assets(.:format)                                                                       inventory/assets#index
+                                         POST   /inventory/assets(.:format)                                                                       inventory/assets#create
+                     new_inventory_asset GET    /inventory/assets/new(.:format)                                                                   inventory/assets#new
+                    edit_inventory_asset GET    /inventory/assets/:id/edit(.:format)                                                              inventory/assets#edit
+                         inventory_asset GET    /inventory/assets/:id(.:format)                                                                   inventory/assets#show
+                                         PATCH  /inventory/assets/:id(.:format)                                                                   inventory/assets#update
+                                         PUT    /inventory/assets/:id(.:format)                                                                   inventory/assets#update
+                                         DELETE /inventory/assets/:id(.:format)                                                                   inventory/assets#destroy
                        asset_assignments GET    /asset_assignments(.:format)                                                                      asset_assignments#index
                                          POST   /asset_assignments(.:format)                                                                      asset_assignments#create
                     new_asset_assignment GET    /asset_assignments/new(.:format)                                                                  asset_assignments#new
@@ -130,7 +130,7 @@
                                     root GET    /                                                                                                 dashboards#index
                                     scan POST   /scan(.:format)                                                                                   asset_tracking_events#create
                                  scanner GET    /scanner(.:format)                                                                                scanner_interface#scan
-          scanner_interface_recent_scans GET    /scanner_interface/recent_scans(.:format)                                                         scanner_interface#recent_scans
+                    scanner_recent_scans GET    /scanner/recent_scans(.:format)                                                                   scanner_interface#recent_scans
                                dashboard GET    /dashboard(.:format)                                                                              dashboards#index
                      drilldown_dashboard GET    /dashboard/drilldown(.:format)                                                                    dashboards#drilldown
                         export_dashboard GET    /dashboards/export(.:format)                                                                      dashboards#export
@@ -141,6 +141,33 @@
                            notifications GET    /notifications(.:format)                                                                          notifications#index
                             notification DELETE /notifications/:id(.:format)                                                                      notifications#destroy
                              sidekiq_web        /sidekiq                                                                                          Sidekiq::Web
+                               rfid_tags GET    /rfid_tags(.:format)                                                                              rfid_tags#index
+                                         POST   /rfid_tags(.:format)                                                                              rfid_tags#create
+                            new_rfid_tag GET    /rfid_tags/new(.:format)                                                                          rfid_tags#new
+                           edit_rfid_tag GET    /rfid_tags/:id/edit(.:format)                                                                     rfid_tags#edit
+                                rfid_tag GET    /rfid_tags/:id(.:format)                                                                          rfid_tags#show
+                                         PATCH  /rfid_tags/:id(.:format)                                                                          rfid_tags#update
+                                         PUT    /rfid_tags/:id(.:format)                                                                          rfid_tags#update
+                                         DELETE /rfid_tags/:id(.:format)                                                                          rfid_tags#destroy
+           complete_maintenance_schedule POST   /maintenance_schedules/:id/complete(.:format)                                                     maintenance_schedules#complete
+                   maintenance_schedules GET    /maintenance_schedules(.:format)                                                                  maintenance_schedules#index
+                                         POST   /maintenance_schedules(.:format)                                                                  maintenance_schedules#create
+                new_maintenance_schedule GET    /maintenance_schedules/new(.:format)                                                              maintenance_schedules#new
+               edit_maintenance_schedule GET    /maintenance_schedules/:id/edit(.:format)                                                         maintenance_schedules#edit
+                    maintenance_schedule GET    /maintenance_schedules/:id(.:format)                                                              maintenance_schedules#show
+                                         PATCH  /maintenance_schedules/:id(.:format)                                                              maintenance_schedules#update
+                                         PUT    /maintenance_schedules/:id(.:format)                                                              maintenance_schedules#update
+                                         DELETE /maintenance_schedules/:id(.:format)                                                              maintenance_schedules#destroy
+                                licenses GET    /licenses(.:format)                                                                               licenses#index
+                                         POST   /licenses(.:format)                                                                               licenses#create
+                             new_license GET    /licenses/new(.:format)                                                                           licenses#new
+                            edit_license GET    /licenses/:id/edit(.:format)                                                                      licenses#edit
+                                 license GET    /licenses/:id(.:format)                                                                           licenses#show
+                                         PATCH  /licenses/:id(.:format)                                                                           licenses#update
+                                         PUT    /licenses/:id(.:format)                                                                           licenses#update
+                                         DELETE /licenses/:id(.:format)                                                                           licenses#destroy
+                   asset_tracking_events GET    /asset_tracking_events(.:format)                                                                  asset_tracking_events#index
+                    asset_tracking_event GET    /asset_tracking_events/:id(.:format)                                                              asset_tracking_events#show
         turbo_recede_historical_location GET    /recede_historical_location(.:format)                                                             turbo/native/navigation#recede
         turbo_resume_historical_location GET    /resume_historical_location(.:format)                                                             turbo/native/navigation#resume
        turbo_refresh_historical_location GET    /refresh_historical_location(.:format)                                                            turbo/native/navigation#refresh

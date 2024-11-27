@@ -121,6 +121,8 @@ gem 'sidekiq'
 # Add Redis gem
 gem 'redis'
 
-gem 'faker'
-
 gem 'request_store'
+
+# Asset processing
+gem 'sassc-rails'
+gem 'terser'

@@ -21,6 +21,14 @@ class AssetPolicy < ApplicationPolicy
     user.admin?
   end
 
+  def export
+    user.admin?
+  end
+
+  def import
+    user.admin?
+  end
+
   def destroy?
     user.admin?
   end

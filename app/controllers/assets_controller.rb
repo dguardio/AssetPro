@@ -29,7 +29,7 @@ class AssetsController < ApplicationController
     authorize @asset
 
     if @asset.save
-      redirect_to @asset, notice: 'Asset was successfully created.'
+      redirect_to inventory_asset_path(@asset), notice: 'Asset was successfully created.'
     else
       render :new
     end
@@ -38,7 +38,7 @@ class AssetsController < ApplicationController
   def update
     authorize @asset
     if @asset.update(asset_params)
-      redirect_to @asset, notice: 'Asset was successfully updated.'
+      redirect_to inventory_asset_path(@asset), notice: 'Asset was successfully updated.'
     else
       render :edit
     end
@@ -47,23 +47,25 @@ class AssetsController < ApplicationController
   def destroy
     authorize @asset
     @asset.destroy
-    redirect_to assets_url, notice: 'Asset was successfully deleted.'
+    redirect_to inventory_assets_url, notice: 'Asset was successfully deleted.'
   end
 
   def import
+    authorize Asset, :import?
     if params[:file].present?
       begin
         Asset.import(params[:file])
-        redirect_to assets_path, notice: 'Assets were successfully imported.'
+        redirect_to inventory_assets_path, notice: 'Assets were successfully imported.'
       rescue StandardError => e
-        redirect_to assets_path, alert: "Import failed: #{e.message}"
+        redirect_to inventory_assets_path, alert: "Import failed: #{e.message}"
       end
     else
-      redirect_to assets_path, alert: 'Please select a file to import.'
+      redirect_to inventory_assets_path, alert: 'Please select a file to import.'
     end
   end
 
   def export
+    authorize Asset, :export?
     respond_to do |format|
       format.csv { send_data Asset.to_csv, filename: "assets-#{Date.current}.csv" }
     end

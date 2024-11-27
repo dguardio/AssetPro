@@ -22,14 +22,14 @@
           <% if @asset.rfid_tag %>
             <%= @asset.rfid_tag.rfid_number %>
           <% else %>
-            <%= link_to 'Assign RFID Tag', new_asset_rfid_tag_path(@asset), class: 'btn btn-sm btn-primary' %>
+            <%= link_to 'Assign RFID Tag', new_rfid_tag_path(@asset), class: 'btn btn-sm btn-primary' %>
           <% end %>
         </dd>
       </dl>
     </div>
     <div class="card-footer">
-      <%= link_to 'Edit', edit_asset_path(@asset), class: 'btn btn-primary' %>
-      <%= link_to 'Back', assets_path, class: 'btn btn-secondary' %>
+      <%= link_to 'Edit', edit_inventory_asset_path(@asset), class: 'btn btn-primary' %>
+      <%= link_to 'Back', inventory_assets_path, class: 'btn btn-secondary' %>
       <div class="mt-4">
         <%= link_to 'View Audit Logs', for_record_audit_logs_path(auditable_type: 'Asset', auditable_id: @asset.id), class: 'btn btn-info' %>
       </div>

@@ -1,0 +1,10 @@
+<div class="container mt-4">
+  <h1>Edit Asset</h1>
+
+  <%= render 'form' %>
+
+  <div class="mt-3">
+    <%= link_to 'Show', inventory_asset_path(@asset), class: 'btn btn-info' %> |
+    <%= link_to 'Back', inventory_assets_path, class: 'btn btn-secondary' %>
+  </div>
+</div>
