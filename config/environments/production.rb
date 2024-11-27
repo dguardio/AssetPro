@@ -91,13 +91,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # Asset handling
-  config.assets.compile = false
-
-  config.assets.digest = true
-  config.assets.version = '1.0'
-  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
-
+ 
   # Compress CSS using a preprocessor
   config.assets.css_compressor = :sass
   
