@@ -124,5 +124,5 @@ gem 'redis'
 gem 'request_store'
 
 # Asset processing
-gem 'sassc-rails'
+# gem 'sassc-rails'
 gem 'terser'
