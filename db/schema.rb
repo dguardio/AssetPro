@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_23_025300) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_28_044512) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -134,10 +134,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_23_025300) do
     t.date "scheduled_date"
     t.date "completed_date"
     t.decimal "cost"
-    t.string "performed_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "performed_by_id"
     t.index ["asset_id"], name: "index_maintenance_records_on_asset_id"
+    t.index ["performed_by_id"], name: "index_maintenance_records_on_performed_by_id"
   end
 
   create_table "maintenance_schedules", force: :cascade do |t|
@@ -262,6 +263,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_23_025300) do
   add_foreign_key "licenses", "assets"
   add_foreign_key "licenses", "users", column: "assigned_to_id"
   add_foreign_key "maintenance_records", "assets"
+  add_foreign_key "maintenance_records", "users", column: "performed_by_id"
   add_foreign_key "maintenance_schedules", "assets"
   add_foreign_key "maintenance_schedules", "users", column: "assigned_to_id"
   add_foreign_key "rfid_tags", "assets"

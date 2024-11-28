@@ -24,8 +24,7 @@ $skip_auditing = true
 [
   AssetAssignment, MaintenanceSchedule, MaintenanceRecord, 
   License, RfidTag, AssetTrackingEvent, AccountStatusLog, 
-  AuditLog, Asset, Category, Location, User, Role,
-  NoticedEvent, NoticedNotification
+  AuditLog, Asset, Category, Location, User, Role
 ].each do |model|
   puts "Deleting #{model.name.pluralize}..."
   model.unscoped.delete_all
@@ -115,7 +114,7 @@ end
 puts "Creating assets..."
 assets = 50.times.map do |i|
   quantity = rand(1..10)
-  Asset.create!(
+  asset = Asset.create!(
     name: Faker::Computer.stack,
     description: Faker::Lorem.paragraph,
     asset_code: "AST-#{format('%04d', i+1)}",
@@ -180,13 +179,14 @@ puts "Creating maintenance schedules..."
   asset = assets.sample
   frequency = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly'].sample
   next_due_at = Faker::Time.between(from: Time.current, to: 6.months.from_now)
-  
+  status = ['pending', 'in_progress', 'completed', 'overdue', 'cancelled'].sample
+
   MaintenanceSchedule.create!(
     title: "Maintenance for #{asset.name}",
     description: Faker::Lorem.paragraph,
     asset: asset,
     assigned_to: users.sample,
-    status: rand(0..2),
+    status: status,
     notes: Faker::Lorem.paragraph,
     frequency: frequency,
     next_due_at: next_due_at,
@@ -259,7 +259,7 @@ rfid_assets = assets.select(&:rfid_enabled?)
     asset: asset,
     location: locations.sample,
     scanned_by: users.sample,
-    event_type: ['check_in', 'check_out', 'movement'].sample,
+    event_type: ['check_in', 'check_out', 'transfer', 'inventory', 'maintenance'].sample,
     rfid_number: asset.rfid_tag.rfid_number,
     scanned_at: Faker::Time.between(from: 6.months.ago, to: Time.current)
   )
