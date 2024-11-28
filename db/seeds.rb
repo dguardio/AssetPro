@@ -24,7 +24,8 @@ $skip_auditing = true
 [
   AssetAssignment, MaintenanceSchedule, MaintenanceRecord, 
   License, RfidTag, AssetTrackingEvent, AccountStatusLog, 
-  AuditLog, Asset, Category, Location, User, Role
+  AuditLog, Asset, Category, Location, User, Role,
+  NoticedEvent, NoticedNotification
 ].each do |model|
   puts "Deleting #{model.name.pluralize}..."
   model.unscoped.delete_all
@@ -113,7 +114,8 @@ end
 # Create assets (50 assets)
 puts "Creating assets..."
 assets = 50.times.map do |i|
-  asset = Asset.create!(
+  quantity = rand(1..10)
+  Asset.create!(
     name: Faker::Computer.stack,
     description: Faker::Lorem.paragraph,
     asset_code: "AST-#{format('%04d', i+1)}",
@@ -124,7 +126,9 @@ assets = 50.times.map do |i|
     location: locations.sample,
     rfid_enabled: Faker::Boolean.boolean(true_ratio: 0.7),
     last_tracked_at: Faker::Time.between(from: 6.months.ago, to: Time.current),
-    depreciation_rate: rand(10.0..30.0).round(2)
+    depreciation_rate: rand(10.0..30.0).round(2),
+    quantity: quantity,
+    minimum_quantity: [1, quantity - rand(1..3)].max
   )
 
   # Create RFID tag for enabled assets
@@ -174,17 +178,22 @@ end
 puts "Creating maintenance schedules..."
 30.times do
   asset = assets.sample
-  scheduled_date = Faker::Time.between(from: Time.current, to: 6.months.from_now)
+  frequency = ['daily', 'weekly', 'monthly', 'quarterly', 'yearly'].sample
+  next_due_at = Faker::Time.between(from: Time.current, to: 6.months.from_now)
   
   MaintenanceSchedule.create!(
     title: "Maintenance for #{asset.name}",
     description: Faker::Lorem.paragraph,
     asset: asset,
     assigned_to: users.sample,
-    scheduled_date: scheduled_date,
-    completed_date: Faker::Boolean.boolean(true_ratio: 0.3) ? Faker::Time.between(from: Time.current, to: scheduled_date) : nil,
     status: rand(0..2),
-    notes: Faker::Lorem.paragraph
+    notes: Faker::Lorem.paragraph,
+    frequency: frequency,
+    next_due_at: next_due_at,
+    last_performed_at: Faker::Boolean.boolean(true_ratio: 0.3) ? 
+      Faker::Time.between(from: 6.months.ago, to: next_due_at) : nil,
+    completed_date: Faker::Boolean.boolean(true_ratio: 0.3) ? 
+      Faker::Time.between(from: 6.months.ago, to: next_due_at) : nil
   )
 end
 
