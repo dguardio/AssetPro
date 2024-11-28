@@ -1,4 +1,8 @@
 class Users::SessionsController < Devise::SessionsController
+  # Skip Pundit authorization for Devise actions
+  skip_after_action :verify_authorized
+  skip_after_action :verify_policy_scoped
+  
   def create
     self.resource = warden.authenticate!(auth_options)
     if resource.active?
