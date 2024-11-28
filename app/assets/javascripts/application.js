@@ -2,7 +2,6 @@
 // listed below.
 
 //= require rails-ujs
-//= require turbolinks
 //= require_tree .
 
 // Add any additional JavaScript libraries or custom scripts here 
