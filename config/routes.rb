@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       collection do
         post :import
         get :export
+        get :download_template
       end
     end
   end

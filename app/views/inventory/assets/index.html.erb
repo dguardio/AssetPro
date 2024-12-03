@@ -1,22 +1,127 @@
 <div class="container">
   <h4>Assets</h4>
 
-  <div>
-    <%= form_tag import_inventory_assets_path, multipart: true, class: 'd-inline', data: { controller: 'form-submit' } do %>
-      <%= file_field_tag :file, 
-          class: 'd-none', 
-          data: { 
-            'form-submit-target': 'fileInput',
-            action: 'change->form-submit#submit' 
-          } %>
-      <%= button_tag 'Import', 
-          type: 'button', 
-          class: 'btn btn-secondary', 
-          data: { action: 'click->form-submit#triggerFileInput' } %>
-    <% end %>
-    <%= link_to 'Export', export_inventory_assets_path(format: :csv), class: 'btn btn-secondary' %>
-    <%= link_to 'New Asset', new_inventory_asset_path, class: 'btn btn-primary' %>
+  <!-- Import/Export buttons -->
+  <div class="mb-4">
+    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
+      Import Assets
+    </button>
+    <%= link_to 'Export CSV', export_inventory_assets_path(format: :csv), class: 'btn btn-secondary' %>
   </div>
+
+  <!-- Import Modal -->
+  <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="importModalLabel">Import Assets</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row align-items-center mb-4">
+            <div class="col">
+              <p class="text-sm mb-0">
+                <i class="fa fa-info-circle text-info"></i>
+                Upload a CSV or Excel file with the following columns
+              </p>
+            </div>
+            <div class="col text-end">
+              <div class="btn-group">
+                <%= link_to 'Download Template', 
+                    download_template_inventory_assets_path(format: :csv), 
+                    class: 'btn btn-info btn-sm' %>
+                <button type="button" class="btn btn-info btn-sm dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <%= link_to 'CSV Template', 
+                        download_template_inventory_assets_path(format: :csv), 
+                        class: 'dropdown-item' %>
+                  </li>
+                  <li>
+                    <%= link_to 'Excel Template', 
+                        download_template_inventory_assets_path(format: :xlsx), 
+                        class: 'dropdown-item' %>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th class="text-xs text-uppercase">Column</th>
+                  <th class="text-xs text-uppercase">Required</th>
+                  <th class="text-xs text-uppercase">Example</th>
+                  <th class="text-xs text-uppercase">Notes</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr>
+                  <td>name</td>
+                  <td><span class="badge bg-danger">Required</span></td>
+                  <td>Dell Laptop XPS 15</td>
+                  <td>Asset name/title</td>
+                </tr>
+                <tr>
+                  <td>asset_code</td>
+                  <td><span class="badge bg-danger">Required</span></td>
+                  <td>AST-001</td>
+                  <td>Unique identifier</td>
+                </tr>
+                <tr>
+                  <td>category_id</td>
+                  <td><span class="badge bg-danger">Required</span></td>
+                  <td>1</td>
+                  <td>ID from categories table</td>
+                </tr>
+                <tr>
+                  <td>location_id</td>
+                  <td><span class="badge bg-danger">Required</span></td>
+                  <td>1</td>
+                  <td>ID from locations table</td>
+                </tr>
+                <tr>
+                  <td>status</td>
+                  <td><span class="badge bg-warning">Optional</span></td>
+                  <td>available</td>
+                  <td>One of: available, in_use, maintenance, retired</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <%= form_tag import_inventory_assets_path, multipart: true, id: 'importForm' do %>
+            <div class="text-center p-4 border rounded mt-3">
+              <%= file_field_tag :file, 
+                  accept: '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
+                  class: 'd-none', 
+                  id: 'fileInput' %>
+              <div id="dropZone" class="p-4 text-center">
+                <i class="material-icons text-secondary mb-2" style="font-size: 48px;">cloud_upload</i>
+                <p class="mb-0">Drag and drop your file here or</p>
+                <button type="button" class="btn btn-secondary btn-sm mt-2" id="importButton">
+                  Choose File
+                </button>
+                <p class="text-muted mt-2 mb-0" id="selectedFileName"></p>
+                <small class="text-muted">Accepted formats: .csv, .xlsx, .xls</small>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="submitImport" disabled>
+            Import
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div>
     <%= search_form_for @q, url: inventory_assets_path, class: 'mb-4' do |f| %>
       <div class="row">
@@ -93,3 +198,110 @@
     <%= link_to 'New Asset', new_inventory_asset_path, class: 'btn btn-primary' if policy(Asset.new).create? %>
   </div>
 </div> 
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('fileInput');
+    const importButton = document.getElementById('importButton');
+    const importForm = document.getElementById('importForm');
+    const submitImport = document.getElementById('submitImport');
+    const selectedFileName = document.getElementById('selectedFileName');
+    const dropZone = document.getElementById('dropZone');
+    const importModal = new bootstrap.Modal(document.getElementById('importModal'));
+
+    const allowedTypes = [
+      'text/csv',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+      'application/csv',
+      'application/x-csv',
+      'text/x-csv',
+      'text/comma-separated-values',
+      'text/x-comma-separated-values'
+    ];
+
+    function isValidFileType(file) {
+      return allowedTypes.includes(file.type) || 
+             /\.(csv|xlsx|xls)$/.test(file.name.toLowerCase());
+    }
+
+    importButton.addEventListener('click', function() {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function() {
+      handleFileSelection(this.files[0]);
+    });
+
+    dropZone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      dropZone.classList.add('border', 'border-primary');
+    });
+
+    dropZone.addEventListener('dragleave', function(e) {
+      e.preventDefault();
+      dropZone.classList.remove('border', 'border-primary');
+    });
+
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dropZone.classList.remove('border', 'border-primary');
+      
+      const file = e.dataTransfer.files[0];
+      if (file && isValidFileType(file)) {
+        fileInput.files = e.dataTransfer.files;
+        handleFileSelection(file);
+      } else {
+        alert('Please upload a CSV or Excel file');
+      }
+    });
+
+    submitImport.addEventListener('click', function() {
+      submitImport.disabled = true;
+      submitImport.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Importing...';
+      importForm.submit();
+    });
+
+    function handleFileSelection(file) {
+      if (file && isValidFileType(file)) {
+        selectedFileName.textContent = file.name;
+        submitImport.disabled = false;
+      } else {
+        selectedFileName.textContent = '';
+        submitImport.disabled = true;
+        if (file) {
+          alert('Please upload a CSV or Excel file');
+        }
+      }
+    }
+
+    // Reset form when modal is closed
+    document.getElementById('importModal').addEventListener('hidden.bs.modal', function () {
+      importForm.reset();
+      selectedFileName.textContent = '';
+      submitImport.disabled = true;
+      submitImport.innerHTML = 'Import';
+    });
+  });
+</script>
+
+<style>
+  #dropZone {
+    border: 2px dashed #dee2e6;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+
+  #dropZone:hover {
+    border-color: #adb5bd;
+  }
+
+  #dropZone.border-primary {
+    border-style: solid;
+  }
+
+  .modal-lg {
+    max-width: 900px;
+  }
+</style> 

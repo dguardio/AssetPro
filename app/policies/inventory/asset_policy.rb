@@ -18,6 +18,10 @@ module Inventory
       user.has_role?(:admin) || user.has_role?(:manager)
     end
 
+    def download_template?
+      user.has_role?(:admin) || user.has_role?(:manager)
+    end
+
     def index?
       true
     end

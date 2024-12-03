@@ -84,6 +84,37 @@ module Inventory
         end
       end
     end
+
+    def download_template
+      authorize([:inventory, Asset], :download_template?)
+      headers = [
+        'name', 'asset_code', 'category_id', 'location_id', 
+        'status', 'purchase_date', 'purchase_price', 
+        'description', 'quantity', 'minimum_quantity'
+      ]
+      
+      example_row = [
+        'Dell Laptop XPS 15',    # name
+        'AST-001',               # asset_code
+        '1',                     # category_id
+        '1',                     # location_id
+        'available',             # status
+        '2024-03-20',           # purchase_date
+        '1299.99',              # purchase_price
+        'High-performance laptop', # description
+        '1',                     # quantity
+        '1'                      # minimum_quantity
+      ]
+      
+      csv_data = CSV.generate(headers: true) do |csv|
+        csv << headers
+        csv << example_row
+      end
+    
+      send_data csv_data, 
+                filename: "assets_import_template.csv", 
+                type: 'text/csv'
+    end    
   
     private
   
