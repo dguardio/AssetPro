@@ -1,73 +1,125 @@
 <div class="container">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Asset Assignments</h1>
-    <%= link_to 'New Assignment', new_asset_assignment_path, 
-        class: 'btn btn-success' if policy(AssetAssignment.new).create? %>
-  </div>
-
-  <%= search_form_for @q, class: 'mb-4' do |f| %>
-    <div class="row">
-      <div class="col-md-3">
-        <%= f.label :user_email_cont, "User Email contains" %>
-        <%= f.search_field :user_email_cont, class: 'form-control' %>
-      </div>
-      <div class="col-md-3">
-        <%= f.label :asset_name_cont, "Asset Name contains" %>
-        <%= f.search_field :asset_name_cont, class: 'form-control' %>
-      </div>
-      <div class="col-md-3">
-        <%= f.label :checked_out_at_gteq, "Assigned After" %>
-        <%= f.date_field :checked_out_at_gteq, class: 'form-control' %>
-      </div>
-      <div class="col-md-3">
-        <%= f.label :checked_in_at_lteq, "Returned Before" %>
-        <%= f.date_field :checked_in_at_lteq, class: 'form-control' %>
-      </div>
-    </div>
-    <div class="mt-3">
-      <%= f.submit "Search", class: 'btn btn-primary' %>
-      <%= link_to "Clear", asset_assignments_path, class: 'btn btn-secondary' %>
-    </div>
-  <% end %>
-
-  <div class="table-responsive">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th><%= sort_link_with_icon(@q, :user_email, "User") %></th>
-          <th><%= sort_link_with_icon(@q, :asset_name, "Asset") %></th>
-          <th><%= sort_link_with_icon(@q, :checked_out_at, "Assigned Date") %></th>
-          <th><%= sort_link_with_icon(@q, :checked_in_at, "Return Date") %></th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% @asset_assignments.each do |assignment| %>
-          <tr>
-            <td><%= assignment.user.email %></td>
-            <td><%= assignment.asset.name %></td>
-            <td><%= assignment.checked_out_at&.strftime("%Y-%m-%d") %></td>
-            <td><%= assignment.checked_in_at&.strftime("%Y-%m-%d") %></td>
-            <td>
-            <div class="btn-group">
-              <%= link_to asset_assignment_path(assignment), 
-                  class: 'btn btn-link text-secondary mb-0' do %>
-                <i class="material-icons-round">visibility</i>
-              <% end %>
-
-              <%= link_to asset_assignment_path(assignment), 
-                  method: :delete, 
-                  data: { confirm: 'Are you sure?' }, 
-                  class: 'btn btn-link btn-danger text-secondary mb-0' do %>
-                <i class="material-icons-round">delete</i>
-              <% end %>
-            </td>
-          </tr>
+    <h4 class="mb-0">Asset Assignments</h4>
+    <div class="d-flex gap-2">  
+      <% if policy(AssetAssignment.new).create? %>
+        <%= link_to new_asset_assignment_path, class: 'btn bg-gradient-dark' do %>
+          <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New Asset Assignment
         <% end %>
-      </tbody>
-    </table>
+      <% end %>
+    </div>
+  </div>  
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= search_form_for @q, url: asset_assignments_path do |f| %>
+        <div class="row g-4">
+          <div class="col-md-3">
+            <div class="input-group input-group-dynamic">
+              <%= f.search_field :user_email_cont, placeholder: 'Search by Email', class: 'form-control' %>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group input-group-dynamic">
+              <%= f.search_field :asset_name_cont, placeholder: 'Search by Asset Name', class: 'form-control' %>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group input-group-static">
+              <%= f.label "Assigned After", class: 'form-label' %>
+              <%= f.date_field :checked_out_at_gteq, class: 'form-control' %>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group input-group-static">
+              <%= f.label "Returned Before", class: 'form-label' %>
+              <%= f.date_field :checked_in_at_lteq, class: 'form-control' %>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <%= f.submit "Search", class: 'btn bg-gradient-info' %>
+          <%= link_to "Clear", asset_assignments_path, class: 'btn bg-gradient-secondary' %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
-  <%= paginate @asset_assignments %>
+  <div class="card">
+    <div class="table-responsive p-0">
+      <table class="table align-items-center mb-0">
+        <thead>
+          <tr>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              Asset
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+              Assigned To
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+              <%= sort_link(@q, :checked_out_at, "Checked Out") %>
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+              <%= sort_link(@q, :status, "Status") %>
+            </th>
+            <% if current_user.admin? %>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Actions</th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @asset_assignments.each do |assignment| %>
+            <tr>
+              <td>
+                <div class="d-flex px-2 py-1">
+                  <div class="d-flex flex-column justify-content-center">
+                    <h6 class="mb-0 text-sm"><%= assignment.asset&.name %></h6>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <p class="text-xs font-weight-bold mb-0"><%= assignment.user&.name %></p>
+              </td>
+              <td>
+                <p class="text-xs font-weight-bold mb-0">
+                  <%= assignment.checked_out_at&.strftime("%B %d, %Y") %>
+                </p>
+              </td>
+              <td>
+                <span class="badge badge-sm bg-gradient-<%= assignment.checked_in_at.nil? ? 'success' : 'secondary' %>">
+                  <%= assignment.checked_in_at.nil? ? 'Active' : 'Returned' %>
+                </span>
+              </td>
+              <% if current_user.admin? %>
+                <td class="align-middle px-3">
+                  <div class="d-flex">
+                    <%= link_to asset_assignment_path(assignment), class: "btn btn-link text-secondary mb-0", title: "View details" do %>
+                      <i class="material-icons-round">visibility</i>
+                    <% end %>
+                    <%= link_to edit_asset_assignment_path(assignment), class: "btn btn-link text-secondary mb-0", title: "Edit assignment" do %>
+                      <i class="material-icons-round">edit</i>
+                    <% end %>
+                    <%= button_to asset_assignment_path(assignment), method: :delete, class: "btn btn-link text-secondary mb-0", title: "Delete assignment", data: { confirm: "Are you sure?" } do %>
+                      <i class="material-icons-round">delete</i>
+                    <% end %>
+                  </div>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div> 
+
+    <div class="card-footer px-3 border-0">
+      <div class="d-flex justify-content-between align-items-center">
+        <%= paginate @asset_assignments %>
+        <% if policy(AssetAssignment.new).create? %>
+          <%= link_to new_asset_assignment_path, class: 'btn bg-gradient-dark mb-0' do %>
+            <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New Asset Assignment
+          <% end %>
+        <% end %>
+      </div>
+    </div>     
+  </div> 
 </div> 

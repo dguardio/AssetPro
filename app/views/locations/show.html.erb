@@ -1,38 +1,59 @@
 <div class="container">
-  <div class="card">
-    <div class="card-header">
-      <h2><%= @location.name %></h2>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Location Details</h4>
+    <div class="d-flex gap-3">
+      <%= link_to edit_location_path(@location), class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">edit</i>&nbsp;Edit Location
+      <% end %>
+      <%= link_to locations_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Locations
+      <% end %>
     </div>
+  </div>
+
+  <div class="card">
     <div class="card-body">
-      <div class="row">
+      <div class="row g-4">
         <div class="col-md-6">
-          <p>
-            <strong>Address:</strong>
-            <%= @location.address %>
-          </p>
-          <p>
-            <strong>Building:</strong>
-            <%= @location.building %>
-          </p>
-          <p>
-            <strong>Floor:</strong>
-            <%= @location.floor %>
-          </p>
-          <p>
-            <strong>Room:</strong>
-            <%= @location.room %>
-          </p>
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Location Name</h6>
+            <p class="text-lg mb-0"><%= @location.name %></p>
+          </div>
+          
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Address</h6>
+            <p class="text-lg mb-0"><%= @location.address %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Status</h6>
+            <span class="badge badge-lg bg-gradient-<%= @location.active? ? 'success' : 'secondary' %>">
+              <%= @location.active? ? 'Active' : 'Inactive' %>
+            </span>
+          </div>
         </div>
-      </div>
 
-      <h3 class="mt-4">Assets at this Location</h3>
-      <%= render 'assets/asset_list', assets: @assets %>
-      <%= paginate @assets %>
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Building</h6>
+            <p class="text-lg mb-0"><%= @location.building.presence || "Not specified" %></p>
+          </div>
 
-      <div class="mt-4">
-        <%= link_to 'Edit', edit_location_path(@location), class: 'btn btn-primary' if policy(@location).update? %>
-        <%= link_to 'Back', locations_path, class: 'btn btn-secondary' %>
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Floor</h6>
+            <p class="text-lg mb-0"><%= @location.floor.presence || "Not specified" %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Room</h6>
+            <p class="text-lg mb-0"><%= @location.room.presence || "Not specified" %></p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <h3 class="mt-4">Assets at this Location</h3>
+  <%= render 'inventory/assets/asset_list', assets: @assets %>
+  <%= paginate @assets %>
 </div> 

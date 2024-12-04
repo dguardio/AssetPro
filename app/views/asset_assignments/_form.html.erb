@@ -1,27 +1,31 @@
-<%= form_with(model: asset_assignment) do |f| %>
-  <% if asset_assignment.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= pluralize(asset_assignment.errors.count, "error") %> prohibited this asset assignment from being saved:</h4>
-      <ul>
-        <% asset_assignment.errors.each do |error| %>
+<%= form_with(model: @asset_assignment) do |f| %>
+  <% if @asset_assignment.errors.any? %>
+    <div class="alert alert-danger text-white" role="alert">
+      <h6 class="text-white mb-1">
+        <%= pluralize(@asset_assignment.errors.count, "error") %> prohibited this asset assignment from being saved:
+      </h6>
+      <ul class="mb-0">
+        <% @asset_assignment.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div class="row">
+  <div class="row g-4">
     <div class="col-md-6">
-      <div class="input-group input-group-static mb-4">
-        <%= f.label :asset_id %>
-        <%= f.collection_select :asset_id, Asset.all, :id, :name, { include_blank: true }, { class: 'form-select' } %>
+      <div class="input-group input-group-dynamic mb-4">
+        <%= f.collection_select :asset_id, Asset.all, :id, :name, 
+            { prompt: 'Select an asset' }, 
+            { class: 'form-select' } %>
       </div>
     </div>
 
     <div class="col-md-6">
-      <div class="input-group input-group-static mb-4">
-        <%= f.label :user_id %>
-        <%= f.collection_select :user_id, User.all, :id, :email, { include_blank: true }, { class: 'form-select' } %>
+      <div class="input-group input-group-dynamic mb-4">
+        <%= f.collection_select :user_id, User.all, :id, :email, 
+            { prompt: 'Select a user' }, 
+            { class: 'form-select' } %>
       </div>
     </div>
 
@@ -40,15 +44,14 @@
     </div>
 
     <div class="col-12">
-      <div class="input-group input-group-static mb-4">
-        <%= f.label :notes %>
-        <%= f.text_area :notes, class: 'form-control', rows: 4 %>
+      <div class="input-group input-group-dynamic">
+        <%= f.text_area :notes, class: 'form-control', placeholder: 'Notes about this Asset Assignment', rows: 4 %>
       </div>
     </div>
   </div>
 
-  <div class="text-end mt-4">
-    <%= link_to 'Back', asset_assignments_path, class: 'btn btn-light me-2' %>
-    <%= f.submit class: 'btn btn-primary' %>
+  <div class="d-flex justify-content-end gap-3 mt-4">
+    <%= link_to 'Cancel', asset_assignments_path, class: 'btn btn-dark-gray' %>
+    <%= f.submit class: 'btn btn-dark' %>
   </div>
 <% end %> 

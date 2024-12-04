@@ -3,7 +3,12 @@ class AssetAssignmentsController < ApplicationController
 
   def index
     @q = policy_scope(AssetAssignment).ransack(params[:q])
-    @asset_assignments = @q.result.includes(:asset, :user, :assigned_by).page(params[:page])
+    @q.sorts = ['created_at desc'] if @q.sorts.empty?
+    
+    @asset_assignments = @q.result
+      .includes(:asset, :user, :assigned_by)
+      .references(:asset, :user)
+      .page(params[:page])
   end
 
   def show

@@ -1,55 +1,86 @@
-<div class="table-responsive">
-  <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th>Asset Tag</th>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Status</th>
-        <th>Last Updated</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% assets.each do |asset| %>
-        <tr>
-          <td><%= asset.asset_code %></td>
-          <td><%= asset.name %></td>
-          <td><%= asset.category&.name %></td>
-          <td>
-            <span class="badge <%= status_badge_class(asset.status) %>">
-              <%= asset.status&.titleize %>
-            </span>
-          </td>
-          <td><%= asset.updated_at.strftime("%Y-%m-%d %H:%M") %></td>
-          <td>
-            <div class="btn-group">
-              <%= link_to asset_path(asset), 
-                  class: 'btn btn-link text-secondary mb-0' do %>
-                <i class="material-icons-round">visibility</i>
-              <% end %>
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-flush table-striped table-hover align-items-center mb-0">
+        <thead>
+          <tr>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              Name
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              Category
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              Status
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              Actions
+            </th>
+          </tr>
+        </thead>
 
-              <%= link_to edit_asset_path(asset), 
-                  class: 'btn btn-link text-secondary mb-0' do %>
-                <i class="material-icons-round">edit</i>
-              <% end %>
+        <tbody>
+          <% @assets.each do |asset| %>
+            <tr>
+              <td>
+                <div class="d-flex px-3 py-1">
+                  <div class="d-flex flex-column justify-content-center">
+                    <h6 class="mb-0 text-sm"><%= asset.name %></h6>
+                    <p class="text-xs text-secondary mb-0"><%= asset.asset_code %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="align-middle text-sm px-3">
+                <span class="text-secondary text-xs font-weight-bold">
+                  <%= asset.category&.name %>
+                </span>
+              </td>
+              <td class="align-middle text-sm px-3">
+                <span class="badge badge-sm bg-gradient-<%= status_color(asset.status) %>">
+                  <%= asset.status.titleize %>
+                </span>
+              </td>
+              <td class="align-middle px-3">
+                <div class="d-flex">
+                  <%= link_to inventory_asset_path(asset), 
+                      class: 'btn btn-link text-secondary mb-0',
+                      data: { bs_toggle: "tooltip" },
+                      title: "View Details" do %>
+                    <i class="material-icons-round">visibility</i>
+                  <% end %>
 
-              <%= link_to asset_path(asset), 
-                  method: :delete, 
-                  data: { confirm: 'Are you sure?' }, 
-                  class: 'btn btn-link btn-danger text-secondary mb-0' do %>
-                <i class="material-icons-round">delete</i>
-              <% end %>
-            </div>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+                  <%= link_to edit_inventory_asset_path(asset), 
+                      class: 'btn btn-link text-secondary mb-0',
+                      data: { bs_toggle: "tooltip" },
+                      title: "Edit Asset" do %>
+                    <i class="material-icons-round">edit</i>
+                  <% end %>
 
-<% if assets.empty? %>
-  <div class="alert alert-info">
-    No assets found at this location.
+                  <%= link_to inventory_asset_path(asset), 
+                      method: :delete, 
+                      data: { 
+                        confirm: 'Are you sure?',
+                        bs_toggle: "tooltip"
+                      }, 
+                      title: "Delete Asset",
+                      class: 'btn btn-link text-danger mb-0' do %>
+                    <i class="material-icons-round">delete</i>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-footer px-3 border-0">
+      <div class="d-flex justify-content-between align-items-center">
+        <%= paginate @assets %>
+        <% if policy(Asset.new).create? %>
+          <%= link_to new_inventory_asset_path, class: 'btn bg-gradient-dark mb-0' do %>
+            <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New Asset
+          <% end %>
+        <% end %>
+      </div>
+    </div>
   </div>
-<% end %>

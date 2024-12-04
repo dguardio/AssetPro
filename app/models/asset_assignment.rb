@@ -15,11 +15,15 @@ class AssetAssignment < ApplicationRecord
   after_create :update_asset_status
 
   def self.ransackable_attributes(auth_object = nil)
-    ["asset_id", "assigned_by_id", "checked_in_at", "checked_out_at", "created_at", "id", "notes", "updated_at", "user_id"]
+    ["asset_id", "checked_in_at", "checked_out_at", "created_at", "id", "notes", "updated_at", "user_id"]
   end
 
   def self.ransackable_associations(auth_object = nil)
-    ["asset", "assigned_by", "user"]
+    ["asset", "user", "assigned_by"]
+  end
+
+  def self.ransortable_attributes(auth_object = nil)
+    ransackable_attributes(auth_object) + ['asset_name', 'user_email']
   end
 
   private
