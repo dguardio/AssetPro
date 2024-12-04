@@ -1,12 +1,17 @@
 <div class="container">
-  <h4>Assets</h4>
-
-  <!-- Import/Export buttons -->
-  <div class="mb-4">
-    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
-      Import Assets
-    </button>
-    <%= link_to 'Export CSV', export_inventory_assets_path(format: :csv), class: 'btn btn-secondary' %>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Assets</h4>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
+        Import Assets
+      </button>
+      <%= link_to 'Export CSV', export_inventory_assets_path(format: :csv), class: 'btn btn-secondary' %>
+      <% if policy(Asset.new).create? %>
+        <%= link_to new_inventory_asset_path, class: 'btn bg-gradient-dark' do %>
+          <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New Asset
+        <% end %>
+      <% end %>
+    </div>
   </div>
 
   <!-- Import Modal -->
@@ -122,80 +127,150 @@
     </div>
   </div>
 
-  <div>
-    <%= search_form_for @q, url: inventory_assets_path, class: 'mb-4' do |f| %>
-      <div class="row">
-        <div class="col-md-3">
-          <%= f.label :name_cont, "Name contains" %>
-          <%= f.search_field :name_cont, class: 'form-control' %>
-        </div>
-        <div class="col-md-3">
-          <%= f.label :category_id_eq, "Category" %>
-          <%= f.collection_select :category_id_eq, Category.all, :id, :name, 
-              { include_blank: true }, class: 'form-control' %>
-        </div>
-        <div class="col-md-3">
-          <%= f.label :location_id_eq, "Location" %>
-          <%= f.collection_select :location_id_eq, Location.all, :id, :name, 
-              { include_blank: true }, class: 'form-control' %>
-        </div>
-        <div class="col-md-3">
-          <%= f.label :status_eq, "Status" %>
-          <%= f.select :status_eq, Asset.statuses.keys.map { |s| [s.titleize, s] }, 
-              { include_blank: true }, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="mt-3">
-        <%= f.submit "Search", class: 'btn btn-primary' %>
-        <%= link_to "Clear", inventory_assets_path, class: 'btn btn-secondary' %>
-      </div>
-    <% end %>      
-  </div>
-  
-  <table class="table">
-    <thead>
-      <tr>
-        <th><%= sort_link(@q, :name, "Name") %></th>
-        <th><%= sort_link(@q, :category_name, "Category") %></th>
-        <th><%= sort_link(@q, :location_name, "Location") %></th>
-        <th><%= sort_link(@q, :status, "Status") %></th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+  <!-- Search Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= search_form_for @q, url: inventory_assets_path do |f| %>
+        <div class="row g-4">
+          <div class="col-md-3">
+            <div class="input-group input-group-dynamic <%= 'is-filled' if @q.name_cont.present? %>">
+              <%= f.search_field :name_cont, class: 'form-control', placeholder: 'Search by Asset Name' %>
+            </div>
+          </div>
 
-    <tbody>
-      <% @assets.each do |asset| %>
-        <tr>
-          <td><%= asset.name %></td>
-          <td><%= asset.category&.name %></td>
-          <td><%= asset.location&.name %></td>
-          <td><%= asset.status.titleize %></td>
-          <td>
-            <%= link_to inventory_asset_path(asset), 
-                class: 'btn btn-link text-secondary mb-0' do %>
-              <i class="material-icons-round">visibility</i>
-            <% end %>
+          <div class="col-md-3">
+            <div class="input-group input-group-static mb-4">
+              <%= f.collection_select :category_id_eq, 
+                  Category.all, 
+                  :id, 
+                  :name, 
+                  { include_blank: 'Select a Category' }, 
+                  { class: 'form-control' } %>
+            </div>
+          </div>
 
-            <%= link_to edit_inventory_asset_path(asset), 
-                class: 'btn btn-link text-secondary mb-0' do %>
-              <i class="material-icons-round">edit</i>
-            <% end %>
+          <div class="col-md-3">
+            <div class="input-group input-group-static mb-4">
+              <%= f.collection_select :location_id_eq, 
+                  Location.all, 
+                  :id, 
+                  :name, 
+                  { include_blank: 'Select a Location' }, 
+                  { class: 'form-control' } %>
+            </div>
+          </div>
 
-            <%= link_to inventory_asset_path(asset), 
-                method: :delete, 
-                data: { confirm: 'Are you sure?' }, 
-                class: 'btn btn-link btn-danger text-secondary mb-0' do %>
-              <i class="material-icons-round">delete</i>
-            <% end %>
-          </td>
-        </tr>
+          <div class="col-md-3">
+            <div class="input-group input-group-static mb-4">
+              <%= f.select :status_eq, 
+                  Asset.statuses.keys.map { |s| [s.titleize, s] }, 
+                  { include_blank: 'Select a Status' }, 
+                  { class: 'form-control' } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= f.submit "Search", class: 'btn bg-gradient-info' %>
+          <%= link_to "Clear", inventory_assets_path, class: 'btn bg-gradient-secondary' %>
+        </div>
       <% end %>
-    </tbody>
-  </table>
+    </div>
+  </div>
 
-  <div class="d-flex justify-content-between align-items-center">
-    <%= paginate @assets %>
-    <%= link_to 'New Asset', new_inventory_asset_path, class: 'btn btn-primary' if policy(Asset.new).create? %>
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-flush table-striped table-hover align-items-center mb-0">
+        <thead>
+          <tr>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              <%= sort_link(@q, :name, "Name") %>
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              <%= sort_link(@q, :category_name, "Category") %>
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              <%= sort_link(@q, :location_name, "Location") %>
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              <%= sort_link(@q, :status, "Status") %>
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+              Actions
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @assets.each do |asset| %>
+            <tr>
+              <td>
+                <div class="d-flex px-3 py-1">
+                  <div class="d-flex flex-column justify-content-center">
+                    <h6 class="mb-0 text-sm"><%= asset.name %></h6>
+                    <p class="text-xs text-secondary mb-0"><%= asset.asset_code %></p>
+                  </div>
+                </div>
+              </td>
+              <td class="align-middle text-sm px-3">
+                <span class="text-secondary text-xs font-weight-bold">
+                  <%= asset.category&.name %>
+                </span>
+              </td>
+              <td class="align-middle text-sm px-3">
+                <span class="text-secondary text-xs font-weight-bold">
+                  <%= asset.location&.name %>
+                </span>
+              </td>
+              <td class="align-middle text-sm px-3">
+                <span class="badge badge-sm bg-gradient-<%= status_color(asset.status) %>">
+                  <%= asset.status.titleize %>
+                </span>
+              </td>
+              <td class="align-middle px-3">
+                <div class="d-flex">
+                  <%= link_to inventory_asset_path(asset), 
+                      class: 'btn btn-link text-secondary mb-0',
+                      data: { bs_toggle: "tooltip" },
+                      title: "View Details" do %>
+                    <i class="material-icons-round">visibility</i>
+                  <% end %>
+
+                  <%= link_to edit_inventory_asset_path(asset), 
+                      class: 'btn btn-link text-secondary mb-0',
+                      data: { bs_toggle: "tooltip" },
+                      title: "Edit Asset" do %>
+                    <i class="material-icons-round">edit</i>
+                  <% end %>
+
+                  <%= link_to inventory_asset_path(asset), 
+                      method: :delete, 
+                      data: { 
+                        confirm: 'Are you sure?',
+                        bs_toggle: "tooltip"
+                      }, 
+                      title: "Delete Asset",
+                      class: 'btn btn-link text-danger mb-0' do %>
+                    <i class="material-icons-round">delete</i>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-footer px-3 border-0">
+      <div class="d-flex justify-content-between align-items-center">
+        <%= paginate @assets %>
+        <% if policy(Asset.new).create? %>
+          <%= link_to new_inventory_asset_path, class: 'btn bg-gradient-dark mb-0' do %>
+            <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New Asset
+          <% end %>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div> 
 

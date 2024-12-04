@@ -274,4 +274,28 @@ body {
   }
 }
 
+
+
+
+// Dynamic input group styles for form fields
+.input-group-dynamic .form-label {
+  position: absolute;
+  top: -8px;
+  left: 10px;
+  font-size: 0.85rem;
+  transition: 0.2s ease all;
+}
+.input-group-dynamic.is-filled .form-label,
+.input-group-dynamic .form-control:focus + .form-label {
+  top: -20px;
+  left: 5px;
+  font-size: 0.75rem;
+  color: #3f51b5; /* Adjust based on Material UI theme */
+}
+.input-group-dynamic .form-control:placeholder-shown + .form-label {
+  top: 10px;
+  font-size: 1rem;
+  color: #757575;
+}
+
 // ... rest of your styles ... 

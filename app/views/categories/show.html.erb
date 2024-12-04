@@ -1,69 +1,57 @@
-<div class="container-fluid py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-            <h6 class="text-white text-capitalize ps-3 mb-0">Category Details</h6>
-            <div class="me-3">
-              <%= link_to edit_category_path(@category), class: 'btn btn-sm btn-info' do %>
-                <i class="material-icons">edit</i> Edit
-              <% end %>
-              <%= link_to category_path(@category), 
-                  class: 'btn btn-sm btn-danger', 
-                  data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' } do %>
-                <i class="material-icons">delete</i> Delete
-              <% end %>
-            </div>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Category Details</h4>
+    <div class="d-flex gap-3">
+      <%= link_to edit_category_path(@category), class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">edit</i>&nbsp;Edit Category
+      <% end %>
+      <%= link_to categories_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Categories
+      <% end %>
+    </div>
+  </div>    
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Category Name</h6>
+            <p class="text-lg mb-0"><%= @category.name %></p>
           </div>
         </div>
 
-        <div class="card-body px-4">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Name</h6>
-                <p class="text-sm mb-0"><%= @category.name %></p>
-              </div>
-
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Description</h6>
-                <p class="text-sm mb-0"><%= @category.description.presence || 'No description provided' %></p>
-              </div>
-
-              <% if @category.parent %>
-                <div class="info-item mb-3">
-                  <h6 class="text-uppercase text-sm font-weight-bolder">Parent Category</h6>
-                  <p class="text-sm mb-0">
-                    <%= link_to @category.parent.name, category_path(@category.parent), class: 'text-primary' %>
-                  </p>
-                </div>
-              <% end %>
-
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Created At</h6>
-                <p class="text-sm mb-0"><%= @category.created_at.strftime("%B %d, %Y") %></p>
-              </div>
-
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Last Updated</h6>
-                <p class="text-sm mb-0"><%= @category.updated_at.strftime("%B %d, %Y") %></p>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <% if @category.subcategories.any? %>
-                <div class="info-item mb-3">
-                  <h6 class="text-uppercase text-sm font-weight-bolder">Subcategories</h6>
-                  <p class="text-sm mb-0">
-                    <%= @category.subcategories.count %>
-                  </p>
-                </div>
-              <% end %>
-            </div>
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Created At</h6>
+            <p class="text-lg mb-0"><%= @category.created_at.strftime("%B %d, %Y") %></p>
           </div>
         </div>
+
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Total Assets</h6>
+            <p class="text-lg mb-0"><%= @category.assets.count %></p>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Description</h6>
+            <p class="text-lg mb-0"><%= @category.description.presence || "No description provided" %></p>
+          </div>
+        </div>        
       </div>
     </div>
   </div>
+
+  <% if @category.assets.any? %>
+    <div class="card mt-4">
+      <div class="card-header p-3">
+        <h5 class="mb-0">Associated Assets</h5>
+      </div>
+      <div class="table-responsive">
+        <!-- Similar table structure as assets index but with relevant columns -->
+      </div>
+    </div>
+  <% end %>  
 </div> 
