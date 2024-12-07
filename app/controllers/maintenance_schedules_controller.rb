@@ -3,7 +3,9 @@ class MaintenanceSchedulesController < ApplicationController
 
   def index
     @q = policy_scope(MaintenanceSchedule).ransack(params[:q])
-    @maintenance_schedules = @q.result.includes(:asset, :assigned_to).page(params[:page])
+    @maintenance_schedules = @q.result.includes(:asset, :assigned_to)
+    .order(params[:sort] || 'created_at DESC')
+    .page(params[:page]).per(10)
   end
 
   def show
@@ -62,6 +64,6 @@ class MaintenanceSchedulesController < ApplicationController
   end
 
   def maintenance_schedule_params
-    params.require(:maintenance_schedule).permit(:title, :description, :frequency, :last_performed_at, :next_due_at, :asset_id, :assigned_to_id)
+    params.require(:maintenance_schedule).permit(:title, :status, :description, :frequency, :last_performed_at, :next_due_at, :asset_id, :assigned_to_id, :notes, :completed_date, :last_performed_at)
   end
 end 

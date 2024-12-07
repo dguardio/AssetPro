@@ -1,86 +1,86 @@
-<div class="container-fluid py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
-            <h6 class="text-white text-capitalize ps-3 mb-0">Maintenance Schedule Details</h6>
-            <div class="me-3">
-              <%= link_to edit_maintenance_schedule_path(@maintenance_schedule), class: 'btn btn-info btn-sm' do %>
-                <i class="material-icons">edit</i> Edit
-              <% end %>
-            </div>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Maintenance Schedule Details</h4>
+    <div class="d-flex gap-3">
+      <% if current_user.admin? %>
+        <%= link_to edit_maintenance_schedule_path(@maintenance_schedule), class: 'btn bg-gradient-dark mb-0' do %>
+          <i class="material-icons-round text-sm">edit</i>&nbsp;Edit Schedule
+        <% end %>
+      <% end %>
+      <%= link_to maintenance_schedules_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Schedules
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Title</h6>
+            <p class="text-lg mb-0"><%= @maintenance_schedule.title %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset</h6>
+            <p class="text-lg mb-0">
+              <%= link_to @maintenance_schedule.asset.name, inventory_asset_path(@maintenance_schedule.asset), class: 'text-primary' %>
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Description</h6>
+            <p class="text-lg mb-0"><%= @maintenance_schedule.description %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Frequency</h6>
+            <p class="text-lg mb-0"><%= @maintenance_schedule.frequency&.titleize || 'Not Set' %></p>
           </div>
         </div>
 
-        <div class="card-body px-4">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Title</h6>
-                <p class="text-sm mb-0"><%= @maintenance_schedule.title %></p>
-              </div>
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Status</h6>
+            <span class="badge badge-sm bg-gradient-<%= @maintenance_schedule.status_badge_color %>">
+              <%= @maintenance_schedule.status&.titleize || 'Pending'%>
+            </span>
+          </div>
 
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Asset</h6>
-                <p class="text-sm mb-0">
-                  <%= link_to @maintenance_schedule.asset.name, asset_path(@maintenance_schedule.asset), class: 'text-primary' %>
-                </p>
-              </div>
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Next Due Date</h6>
+            <p class="text-lg mb-0"><%= @maintenance_schedule.next_due_at&.strftime("%B %d, %Y %H:%M") || 'Not Set' %></p>
+          </div>
 
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Description</h6>
-                <p class="text-sm mb-0"><%= @maintenance_schedule.description %></p>
-              </div>
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Last Performed</h6>
+            <p class="text-lg mb-0">
+              <%= @maintenance_schedule.last_performed_at&.strftime("%B %d, %Y %H:%M") || 'Never performed' %>
+            </p>
+          </div>
 
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Frequency</h6>
-                <p class="text-sm mb-0"><%= @maintenance_schedule.frequency&.titleize || 'Not Set' %></p>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Status</h6>
-                <span class="badge badge-sm bg-gradient-<%= @maintenance_schedule.status_badge_color %>">
-                  <%= @maintenance_schedule.status&.titleize || 'Pending'%>
-                </span>
-              </div>
-
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Next Due Date</h6>
-                <p class="text-sm mb-0"><%= @maintenance_schedule.next_due_at&.strftime("%B %d, %Y %H:%M") || 'Not Set' %></p>
-              </div>
-
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Last Performed</h6>
-                <p class="text-sm mb-0">
-                  <%= @maintenance_schedule.last_performed_at&.strftime("%B %d, %Y %H:%M") || 'Never performed' %>
-                </p>
-              </div>
-
-              <div class="info-item mb-3">
-                <h6 class="text-uppercase text-sm font-weight-bolder">Assigned To</h6>
-                <p class="text-sm mb-0">
-                  <%= @maintenance_schedule.assigned_to&.email || 'Unassigned' %>
-                </p>
-              </div>
-            </div>
+          <div class="info-item mb-3">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Assigned To</h6>
+            <p class="text-lg mb-0">
+              <%= @maintenance_schedule.assigned_to&.email || 'Unassigned' %>
+            </p>
           </div>
         </div>
-
-        <div class="card-footer">
-          <div class="d-flex justify-content-between align-items-center">
-            <%= link_to 'Back to Maintenance Schedules', maintenance_schedules_path, class: 'btn btn-outline-secondary' %>
-            
-            <% if @maintenance_schedule.status != 'completed' %>
-              <%= button_to complete_maintenance_schedule_path(@maintenance_schedule),
-                  method: :post,
-                  class: 'btn btn-success' do %>
-                <i class="material-icons">build</i> Complete Maintenance
-              <% end %>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-9">
+          <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Notes</h6>
+          <p class="text-lg mb-0"><%= @maintenance_schedule.notes %></p>
+        </div>
+        <div class="col-md-3">
+          <% if @maintenance_schedule.status != 'completed' %>
+            <%= button_to complete_maintenance_schedule_path(@maintenance_schedule),
+                method: :post,
+                class: 'btn btn-success' do %>
+              <i class="material-icons-round text-sm">build</i> Complete Maintenance
             <% end %>
-          </div>
+          <% end %>          
         </div>
       </div>
     </div>

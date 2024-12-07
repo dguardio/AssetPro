@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_28_044512) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_07_015033) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -199,7 +199,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_28_044512) do
   create_table "rfid_tags", force: :cascade do |t|
     t.string "rfid_number"
     t.boolean "active"
-    t.bigint "asset_id", null: false
+    t.bigint "asset_id"
     t.datetime "last_scanned_at"
     t.bigint "location_id"
     t.datetime "created_at", null: false

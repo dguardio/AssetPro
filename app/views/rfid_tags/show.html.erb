@@ -1,49 +1,49 @@
-<div class="container-fluid py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-            <h6 class="text-white text-capitalize ps-3">RFID Tag Details</h6>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">RFID Tag Details</h4>
+    <div class="d-flex gap-3">
+      <% if current_user.admin? %>
+        <%= link_to edit_rfid_tag_path(@rfid_tag), class: 'btn bg-gradient-dark mb-0' do %>
+          <i class="material-icons-round text-sm">edit</i>&nbsp;Edit Tag
+        <% end %>
+      <% end %>
+      <%= link_to rfid_tags_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Tags
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Tag ID</h6>
+            <p class="text-lg mb-0"><%= @rfid_tag.rfid_number %></p>
+          </div>
+          
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset</h6>
+            <p class="text-lg mb-0"><%= @rfid_tag.asset&.name || "Not assigned" %></p>
           </div>
         </div>
 
-        <div class="card-body px-4">
-          <div class="row">
-            <div class="col-md-6">
-              <p>
-                <strong>RFID Number:</strong>
-                <%= @rfid_tag.rfid_number %>
-              </p>
-
-              <p>
-                <strong>Asset:</strong>
-                <%= @rfid_tag.asset&.name %>
-              </p>
-            </div>
-
-            <div class="col-md-6">
-              <p>
-                <strong>Status:</strong>
-                <%= @rfid_tag.active? ? 'Active' : 'Inactive' %>
-              </p>
-
-              <p>
-                <strong>Last Scanned:</strong>
-                <%= @rfid_tag.last_scanned_at&.strftime("%Y-%m-%d %H:%M") %>
-              </p>
-
-              <p>
-                <strong>Location:</strong>
-                <%= @rfid_tag.asset&.location&.name %>
-              </p>
-            </div>
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Status</h6>
+            <span class="badge badge-lg bg-gradient-<%= @rfid_tag.active? ? 'success' : 'secondary' %>">
+              <%= @rfid_tag.active? ? 'Active' : 'Inactive' %>
+            </span>
           </div>
 
-          <div class="text-end mt-4">
-            <%= link_to 'Back', rfid_tags_path, class: 'btn btn-light me-2' %>
-            <%= link_to 'Edit', edit_rfid_tag_path(@rfid_tag), class: 'btn btn-primary' %>
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Last Scanned At</h6>
+            <p class="text-lg mb-0"><%= @rfid_tag.last_scanned_at&.strftime("%B %d, %Y") || "Never Scanned" %></p>
           </div>
+        </div>
+        <div class="col-md-12">
+          <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Location</h6>
+          <p class="text-lg mb-0"><%= @rfid_tag.last_known_location&.name || "Not assigned" %></p>
         </div>
       </div>
     </div>

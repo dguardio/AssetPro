@@ -81,6 +81,7 @@ Rails.application.routes.draw do
 
   resources :rfid_tags
   resources :maintenance_schedules do
+    resources :maintenance_records
     member do
       post :complete
     end

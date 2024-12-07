@@ -3,7 +3,9 @@ class RfidTagsController < ApplicationController
 
   def index
     @q = policy_scope(RfidTag).ransack(params[:q])
-    @rfid_tags = @q.result.includes(asset: :location).page(params[:page])
+    @rfid_tags = @q.result.includes(asset: :location)
+    .order(params[:sort] || 'created_at DESC')
+    .page(params[:page]).per(10)
   end
 
   def show

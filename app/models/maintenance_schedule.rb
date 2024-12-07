@@ -3,11 +3,11 @@ class MaintenanceSchedule < ApplicationRecord
   belongs_to :assigned_to, class_name: 'User', optional: true
   
   enum status: {
-    pending: 'pending',
-    in_progress: 'in_progress',
-    completed: 'completed',
-    overdue: 'overdue',
-    cancelled: 'cancelled'
+    pending: 0,
+    in_progress: 1,
+    completed: 2,
+    overdue: 3,
+    cancelled: 4
   }
   
   validates :title, presence: true
