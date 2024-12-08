@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Asset Tracking Event Details</h4>
+    <div class="d-flex gap-3">
+      <%= link_to asset_tracking_events_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Events
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset</h6>
+            <p class="text-lg mb-0">
+              <%= link_to @asset_tracking_event.asset.name, inventory_asset_path(@asset_tracking_event.asset), class: 'text-primary' %>
+            </p>
+            <p class="text-xs text-secondary mb-0">
+              Asset Code: <%= @asset_tracking_event.asset.asset_code %>
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset Assigned To</h6>
+            <p class="text-lg mb-0">
+              <%= @asset_tracking_event.asset.asset_assignments.last&.user&.name || 'Unassigned' %>
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Location</h6>
+            <p class="text-lg mb-0"><%= @asset_tracking_event.location&.name %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Event Type</h6>
+            <span class="badge badge-sm bg-gradient-<%= @asset_tracking_event.event_type_badge_color %>">
+              <%= @asset_tracking_event.event_type&.titleize %>
+            </span>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">RFID Number</h6>
+            <p class="text-lg mb-0"><%= @asset_tracking_event.rfid_number %></p>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Scanned At</h6>
+            <p class="text-lg mb-0">
+              <%= @asset_tracking_event.scanned_at.strftime("%B %d, %Y %H:%M") %>
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Scanned By</h6>
+            <p class="text-lg mb-0">
+              <%= @asset_tracking_event.scanned_by&.name %>
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Created At</h6>
+            <p class="text-lg mb-0">
+              <%= @asset_tracking_event.created_at.strftime("%B %d, %Y %H:%M") %>
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Updated At</h6>
+            <p class="text-lg mb-0">
+              <%= @asset_tracking_event.updated_at.strftime("%B %d, %Y %H:%M") %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

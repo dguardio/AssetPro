@@ -1,31 +1,87 @@
 <div class="container">
-  <h2>Audit Log Details</h2>
-
-  <p><strong>Date:</strong> <%= @audit_log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></p>
-  <p><strong>User:</strong> <%= @audit_log.user&.email || 'System' %></p>
-  <p><strong>Action:</strong> <%= @audit_log.action.titleize %></p>
-  <p><strong>Record Type:</strong> <%= @audit_log.auditable_type %></p>
-  <p><strong>Record ID:</strong> <%= @audit_log.auditable_id %></p>
-
-  <h3>Changes</h3>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Field</th>
-        <th>Old Value</th>
-        <th>New Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @audit_log.changes.each do |field, values| %>
-        <tr>
-          <td><%= field %></td>
-          <td><%= format_change_value(values.is_a?(Array) ? values[0] : 'N/A') %></td>
-          <td><%= format_change_value(values.is_a?(Array) ? values[1] : values) %></td>
-        </tr>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Audit Log Details</h4>
+    <div class="d-flex gap-3">
+      <%= link_to audit_logs_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Audit Logs
       <% end %>
-    </tbody>
-  </table>
+    </div>
+  </div>
 
-  <%= link_to 'Back to Audit Logs', audit_logs_path, class: 'btn btn-secondary' %>
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Date</h6>
+            <p class="text-lg mb-0"><%= @audit_log.created_at.strftime("%B %d, %Y %H:%M") %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">User</h6>
+            <p class="text-lg mb-0"><%= @audit_log.user&.name || 'System' %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Action</h6>
+            <span class="badge badge-sm bg-gradient-<%= audit_action_badge_color(@audit_log.action) %>">
+              <%= @audit_log.action.titleize %>
+            </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Record Type</h6>
+            <p class="text-lg mb-0"><%= @audit_log.auditable_type %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Record ID</h6>
+            <p class="text-lg mb-0"><%= @audit_log.auditable_id %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-12">
+          <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder mb-3">Changes</h6>
+          <div class="table-responsive">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Field</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Old Value</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">New Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @audit_log.changes.each do |field, values| %>
+                  <tr>
+                    <td>
+                      <div class="d-flex px-2 py-1">
+                        <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm"><%= field %></h6>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0">
+                        <%= format_change_value(values.is_a?(Array) ? values[0] : 'N/A') %>
+                      </p>
+                    </td>
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0">
+                        <%= format_change_value(values.is_a?(Array) ? values[1] : values) %>
+                      </p>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div> 

@@ -8,7 +8,11 @@ Rails.application.routes.draw do
   
   # Admin namespace for user management
   namespace :admin do
-    resources :users
+    resources :users do
+      member do
+        get :status_history
+      end
+    end
   end
 
   namespace :api do

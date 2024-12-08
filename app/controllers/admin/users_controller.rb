@@ -1,15 +1,19 @@
 class Admin::UsersController < ApplicationController
-  before_action :authenticate_user!
-  before_action :require_admin
-  before_action :set_user, only: [:edit, :update, :destroy]
+  before_action :set_user, only: [:edit, :update, :destroy, :status_history]
 
   def index
-    authorize :admin_user, :index?
-    @users = policy_scope([:admin, User]).order(created_at: :desc).page(params[:page])
+    @q = policy_scope(User).ransack(params[:q])
+    @users = @q.result(distinct: true).page(params[:page])
+  end
+
+  def show
+    @user = User.find(params[:id])
+    authorize @user
   end
 
   def new
     @user = User.new
+    authorize @user
   end
 
   def create
@@ -30,11 +34,11 @@ class Admin::UsersController < ApplicationController
   end
 
   def edit
-    authorize [:admin, @user]
+    authorize @user
   end
 
   def update
-    authorize [:admin, @user]
+    authorize @user
 
     User.transaction do
       if @user.update(user_params_without_role)
@@ -53,13 +57,14 @@ class Admin::UsersController < ApplicationController
   end
 
   def destroy
+    authorize @user
     @user.destroy
     redirect_to admin_users_path, notice: 'User was successfully deleted.'
   end
 
   def status_history
-    @user = User.find(params[:id])
-    @status_logs = @user.account_status_logs.includes(:changed_by).order(created_at: :desc)
+    authorize @user
+    @status_logs = @user.status_logs.includes(:changed_by).order(created_at: :desc)
   end
 
   private
@@ -89,11 +94,5 @@ class Admin::UsersController < ApplicationController
       :last_name,
       :active
     )
-  end
-
-  def require_admin
-    unless current_user.admin?
-      redirect_to root_path, alert: 'You are not authorized to access this area.'
-    end
   end
 end 

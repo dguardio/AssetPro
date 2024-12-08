@@ -1,0 +1,55 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">User Details</h4>
+    <div class="d-flex gap-3">
+      <%= link_to admin_users_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Users
+      <% end %>
+      <%= link_to edit_admin_user_path(@user), class: 'btn bg-gradient-info mb-0' do %>
+        <i class="material-icons-round text-sm">edit</i>&nbsp;Edit User
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Email</h6>
+            <p class="text-lg mb-0"><%= @user.email %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Full Name</h6>
+            <p class="text-lg mb-0"><%= @user.full_name %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Role</h6>
+            <p class="text-lg mb-0"><%= @user.role&.titleize %></p>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Status</h6>
+            <span class="badge badge-sm bg-gradient-<%= @user.active? ? 'success' : 'danger' %>">
+              <%= @user.active? ? 'Active' : 'Inactive' %>
+            </span>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Created At</h6>
+            <p class="text-lg mb-0"><%= @user.created_at.strftime("%B %d, %Y %H:%M") %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Last Updated</h6>
+            <p class="text-lg mb-0"><%= @user.updated_at.strftime("%B %d, %Y %H:%M") %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

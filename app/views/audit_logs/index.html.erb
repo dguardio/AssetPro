@@ -1,30 +1,88 @@
-<div class="container">
-  <h2>Audit Logs</h2>
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Audit Logs</h4>
+  </div> 
 
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>User</th>
-        <th>Action</th>
-        <th>Record Type</th>
-        <th>Record ID</th>
-        <th>Details</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @audit_logs.each do |log| %>
-        <tr>
-          <td><%= log.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
-          <td><%= log.user&.email || 'System' %></td>
-          <td><%= log.action.titleize %></td>
-          <td><%= log.auditable_type %></td>
-          <td><%= log.auditable_id %></td>
-          <td><%= link_to 'View Details', audit_log_path(log) %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive p-0">
+        <table class="table table-striped align-items-center mb-0">
+          <thead>
+            <tr>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                <%= sort_link(@q, :created_at, "Date") %>
+              </th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                <%= sort_link(@q, :user_email, "User") %>
+              </th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                <%= sort_link(@q, :action, "Action") %>
+              </th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                <%= sort_link(@q, :auditable_type, "Record Type") %>
+              </th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                <%= sort_link(@q, :auditable_id, "Record ID") %>
+              </th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @audit_logs.each do |log| %>
+              <tr>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0 text-sm"><%= log.created_at.strftime("%B %d, %Y %H:%M") %></h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="text-xs font-weight-bold mb-0">
+                    <%= log.user&.name || 'System' %>
+                  </p>
+                </td>
+                <td>
+                  <span class="badge badge-sm bg-gradient-<%= audit_action_badge_color(log.action) %>">
+                    <%= log.action.titleize %>
+                  </span>
+                </td>
+                <td>
+                  <p class="text-xs font-weight-bold mb-0">
+                    <%= log.auditable_type %>
+                  </p>
+                </td>
+                <td>
+                  <p class="text-xs font-weight-bold mb-0">
+                    <%= log.auditable_id %>
+                  </p>
+                </td>
+                <td>
+                  <%= link_to audit_log_path(log), 
+                      class: "btn btn-link text-secondary mb-0", 
+                      title: "View Details" do %>
+                    <i class="material-icons-round">visibility</i>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>      
+    </div>
+    <div class="card-footer px-3 border-0">
+      <div class="d-flex justify-content-between align-items-center">
+        <%= paginate @audit_logs %>
+      </div>
+    </div> 
+  </div>
+</div>
 
-  <%= paginate @audit_logs %>
-</div> 
+<% content_for :page_scripts do %>
+  <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
+<% end %> 

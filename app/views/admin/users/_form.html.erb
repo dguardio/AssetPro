@@ -1,0 +1,74 @@
+<%= form_with(model: [:admin, user], local: true) do |f| %>
+  <% if user.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h4>
+      <ul>
+        <% user.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :email %>
+        <%= f.email_field :email, class: 'form-control', required: true %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :role %>
+        <%= f.select :role, 
+            User.available_roles.map { |r| [r.titleize, r] },
+            { include_blank: 'Select Role' },
+            { class: 'form-select', required: true } %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :first_name %>
+        <%= f.text_field :first_name, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :last_name %>
+        <%= f.text_field :last_name, class: 'form-control' %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :password %>
+        <%= f.password_field :password, class: 'form-control', required: user.new_record? %>
+        <% unless user.new_record? %>
+          <small class="form-text text-muted">Leave blank if you don't want to change it</small>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="input-group input-group-static mb-4">
+        <%= f.label :password_confirmation %>
+        <%= f.password_field :password_confirmation, class: 'form-control', required: user.new_record? %>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="form-check form-switch">
+        <%= f.check_box :active, class: 'form-check-input', role: "switch", checked: true %>
+        <%= f.label :active, class: 'form-check-label ms-3' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-3 mt-4">
+    <%= link_to 'Cancel', admin_users_path, class: 'btn btn-light mb-0' %>
+    <%= f.submit user.new_record? ? 'Create User' : 'Update User', class: 'btn bg-gradient-dark mb-0' %>
+  </div>
+<% end %> 

@@ -1,7 +1,25 @@
 class UserPolicy < ApplicationPolicy
+
+  def index?
+    user.admin?
+  end
+
+  def show?
+    edit?
+  end
+
+  def new?
+    create?
+  end
+
+  def create?
+    user.admin?
+  end
+
   def edit?
     # Users can only edit their own profile
-    user == record
+    # Admins can edit any user
+    user == record || user.admin?
   end
 
   def update?

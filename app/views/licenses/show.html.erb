@@ -1,64 +1,79 @@
-<div class="container-fluid py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-            <h6 class="text-white text-capitalize ps-3">License Details</h6>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">License Details</h4>
+    <div class="d-flex gap-3">
+      <% if current_user.admin? %>
+        <%= link_to edit_license_path(@license), class: 'btn bg-gradient-dark mb-0' do %>
+          <i class="material-icons-round text-sm">edit</i>&nbsp;Edit License
+        <% end %>
+      <% end %>
+      <%= link_to licenses_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Licenses
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Name</h6>
+            <p class="text-lg mb-0"><%= @license.name %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">License Key</h6>
+            <p class="text-lg mb-0"><%= @license.license_key %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset</h6>
+            <p class="text-lg mb-0">
+              <% if @license.asset %>
+                <%= link_to @license.asset.name, inventory_asset_path(@license.asset), class: 'text-primary' %>
+              <% else %>
+                Not assigned
+              <% end %>
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Seats</h6>
+            <p class="text-lg mb-0"><%= @license.seats || 'Unlimited' %></p>
           </div>
         </div>
 
-        <div class="card-body px-4">
-          <div class="row">
-            <div class="col-md-6">
-              <p>
-                <strong>Name:</strong>
-                <%= @license.name %>
-              </p>
-
-              <p>
-                <strong>License Key:</strong>
-                <%= @license.license_key %>
-              </p>
-
-              <p>
-                <strong>Seats:</strong>
-                <%= @license.seats %>
-              </p>
-
-              <p>
-                <strong>Expiration Date:</strong>
-                <%= @license.expiration_date&.strftime("%Y-%m-%d") %>
-              </p>
-            </div>
-
-            <div class="col-md-6">
-              <p>
-                <strong>Cost:</strong>
-                <%= number_to_currency(@license.cost) %>
-              </p>
-
-              <p>
-                <strong>Supplier:</strong>
-                <%= @license.supplier %>
-              </p>
-
-              <p>
-                <strong>Asset:</strong>
-                <%= @license.asset&.name %>
-              </p>
-
-              <p>
-                <strong>Notes:</strong>
-                <%= @license.notes %>
-              </p>
-            </div>
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Cost</h6>
+            <p class="text-lg mb-0"><%= number_to_currency(@license.cost) %></p>
           </div>
 
-          <div class="text-end mt-4">
-            <%= link_to 'Back', licenses_path, class: 'btn btn-light me-2' %>
-            <%= link_to 'Edit', edit_license_path(@license), class: 'btn btn-primary' %>
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Purchase Date</h6>
+            <p class="text-lg mb-0">
+              <%= @license.purchase_date&.strftime("%B %d, %Y") || 'Not set' %>
+            </p>
           </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Expiration Date</h6>
+            <p class="text-lg mb-0">
+              <%= @license.expiration_date&.strftime("%B %d, %Y") || 'No expiration' %>
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Vendor</h6>
+            <p class="text-lg mb-0"><%= @license.supplier || 'Not specified' %></p>
+          </div>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-12">
+          <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Notes</h6>
+          <p class="text-lg mb-0"><%= @license.notes %></p>
         </div>
       </div>
     </div>

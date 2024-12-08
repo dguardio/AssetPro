@@ -52,7 +52,11 @@ class User < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    ["email", "first_name", "last_name", "name", "id", "created_at", "updated_at"]
+    %w[email first_name last_name name role active created_at updated_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[account_status_logs asset_assignments assigned_assets audit_logs notifications roles]
   end
 
   def self.available_roles
