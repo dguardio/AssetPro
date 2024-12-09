@@ -13,6 +13,9 @@ Rails.application.routes.draw do
         get :status_history
       end
     end
+    resources :asset_tracking_events, only: [:index] do
+      get :timeline, on: :collection
+    end
   end
 
   namespace :api do

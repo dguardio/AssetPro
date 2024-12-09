@@ -22,7 +22,8 @@
           
           <div class="mb-4">
             <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Assigned To</h6>
-            <p class="text-lg mb-0"><%= @asset_assignment.user&.email %></p>
+            <p class="text-lg mb-0"><%= @asset_assignment.assigned_to&.email %></p>
+            <p class="text-lg mb-0"><%= @asset_assignment.assigned_by&.email %></p>
           </div>
         </div>
 

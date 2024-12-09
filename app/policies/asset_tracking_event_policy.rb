@@ -1,28 +1,39 @@
 class AssetTrackingEventPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
-      if user.admin?
+      case user.role
+      when 'admin'
         scope.all
-      else
+      when 'manager'
+        scope.all
+      when 'security'
+        scope.all
+      when 'user'
         scope.where(scanned_by: user)
+      else
+        scope.none
       end
     end
   end
 
   def index?
-    true
+    user.admin? || user.manager? || user.security?
   end
 
   def show?
-    user.admin? || record.scanned_by_id == user.id
+    user.admin? || user.manager? || user.security? || record.scanned_by_id == user.id
   end
 
   def create?
-    true
+    user.admin? || user.manager? || user.security?
   end
 
   def update?
-    user.admin? || record.scanned_by_id == user.id
+    user.admin?
+  end
+
+  def timeline?
+    user.admin? || user.manager? || user.security?
   end
 
   def destroy?

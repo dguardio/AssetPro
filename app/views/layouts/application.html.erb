@@ -25,7 +25,7 @@
 
     
     <div class="sidenav-header">
-      <%= link_to root_path, class: "navbar-brand m-0" do %>
+      <%= link_to root_path, class: "navbar-brand white m-0" do %>
         <span class="ms-2">AssetPro</span>
       <% end %>
     </div>
@@ -47,6 +47,15 @@
             <span>Assets</span>
           <% end %>
         </li>
+
+        <% if current_user&.admin? || current_user&.manager? || current_user&.security? %>
+          <li class="nav-item">
+            <%= link_to timeline_admin_asset_tracking_events_path, class: "nav-link #{current_page?(timeline_admin_asset_tracking_events_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">history</span>
+              <span>Timeline</span>
+            <% end %>
+          </li>
+        <% end %>
 
         <% if current_user&.security? || current_user&.admin? %>
           <li class="nav-item">

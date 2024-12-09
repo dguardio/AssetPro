@@ -15,7 +15,7 @@
   <div class="row g-4">
     <div class="col-md-6">
       <div class="input-group input-group-dynamic mb-4">
-        <%= f.collection_select :asset_id, Asset.all, :id, :name, 
+        <%= f.collection_select :asset_id, Asset.all.select(&:available?), :id, :name, 
             { prompt: 'Select an asset' }, 
             { class: 'form-select' } %>
       </div>

@@ -30,7 +30,7 @@ class AssetAssignmentsController < ApplicationController
     authorize @asset_assignment
 
     if @asset_assignment.save
-      redirect_to @asset_assignment, notice: 'Asset assignment was successfully created.'
+      redirect_to asset_assignments_path, notice: 'Asset assignment was successfully created.'
     else
       render :new, status: :unprocessable_entity
     end
