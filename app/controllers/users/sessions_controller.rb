@@ -1,5 +1,7 @@
 class Users::SessionsController < Devise::SessionsController
   # Skip Pundit authorization for Devise actions
+  # 
+  layout 'auth'
   skip_after_action :verify_authorized
   skip_after_action :verify_policy_scoped
   

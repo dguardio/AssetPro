@@ -1,0 +1,45 @@
+.auth-layout {
+  .page-header {
+    background-size: cover;
+    // background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+  }
+
+  .footer {
+    .nav-link {
+      color: rgba(255, 255, 255, 0.8) !important;
+      font-size: 0.875rem;
+      padding: 0.5rem 0.7rem;
+      
+      &:hover {
+        color: rgba(255, 255, 255, 1) !important;
+      }
+    }
+  }
+
+  .container .homer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin-top: 100px;
+    padding-top: 100px;
+  }
+  
+  .auth-card {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: 12px;
+    border: 1px solid rgba(209, 213, 219, 0.3);
+  }
+} 

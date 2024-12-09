@@ -6,6 +6,10 @@ Rails.application.routes.draw do
     sessions: 'users/sessions'
   }
   
+  root 'pages#home'
+  get 'about', to: 'pages#about'
+  get 'contact', to: 'pages#contact'
+
   # Admin namespace for user management
   namespace :admin do
     resources :users do
@@ -52,7 +56,7 @@ Rails.application.routes.draw do
   resources :locations
   resources :categories
   
-  root 'dashboards#index'
+  # root 'dashboards#index'
   
   # API endpoint for RFID scanning
   post '/scan', to: 'asset_tracking_events#create'
