@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_09_050237) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_10_223803) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -63,7 +63,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_09_050237) do
     t.string "asset_code"
     t.string "status"
     t.date "purchase_date"
-    t.decimal "purchase_price"
+    t.decimal "purchase_price", precision: 10, scale: 2
     t.bigint "category_id", null: false
     t.bigint "location_id", null: false
     t.datetime "created_at", null: false
@@ -73,6 +73,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_09_050237) do
     t.decimal "depreciation_rate", precision: 5, scale: 2
     t.integer "quantity", default: 1, null: false
     t.integer "minimum_quantity", default: 1, null: false
+    t.integer "useful_life_years"
+    t.decimal "salvage_value", precision: 10, scale: 2
+    t.date "warranty_expiry_date"
+    t.decimal "maintenance_cost_yearly", precision: 10, scale: 2
+    t.decimal "insurance_value", precision: 10, scale: 2
     t.index ["asset_code"], name: "index_assets_on_asset_code", unique: true
     t.index ["category_id"], name: "index_assets_on_category_id"
     t.index ["location_id"], name: "index_assets_on_location_id"

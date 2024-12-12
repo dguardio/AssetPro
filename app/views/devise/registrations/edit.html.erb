@@ -1,4 +1,4 @@
-<div class="container-fluid py-4">
+<div class="container homer">
   <div class="row">
     <div class="col-12">
       <div class="card">
@@ -13,21 +13,21 @@
 
             <div class="row">
               <div class="col-md-6">
-                <div class="input-group input-group-static mb-4">
+                <div class="input-group input-group-dynamic mb-4">
                   <%= f.label :first_name %>
                   <%= f.text_field :first_name, class: "form-control" %>
                 </div>
               </div>
 
               <div class="col-md-6">
-                <div class="input-group input-group-static mb-4">
+                <div class="input-group input-group-dynamic mb-4">
                   <%= f.label :last_name %>
                   <%= f.text_field :last_name, class: "form-control" %>
                 </div>
               </div>
             </div>
 
-            <div class="input-group input-group-static mb-4">
+            <div class="input-group input-group-dynamic mb-4">
               <%= f.label :email %>
               <%= f.email_field :email, autocomplete: "email", class: "form-control" %>
             </div>
@@ -38,17 +38,17 @@
               </div>
             <% end %>
 
-            <div class="input-group input-group-static mb-4">
+            <div class="input-group input-group-dynamic mb-4">
               <%= f.label :password %> <small>(leave blank if you don't want to change it)</small>
               <%= f.password_field :password, autocomplete: "new-password", class: "form-control" %>
             </div>
 
-            <div class="input-group input-group-static mb-4">
+            <div class="input-group input-group-dynamic mb-4">
               <%= f.label :password_confirmation %>
               <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
             </div>
 
-            <div class="input-group input-group-static mb-4">
+            <div class="input-group input-group-dynamic mb-4">
               <%= f.label :current_password %> <small>(we need your current password to confirm your changes)</small>
               <%= f.password_field :current_password, autocomplete: "current-password", class: "form-control" %>
             </div>

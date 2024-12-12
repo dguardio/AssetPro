@@ -25,7 +25,7 @@
 
     
     <div class="sidenav-header">
-      <%= link_to root_path, class: "navbar-brand white m-0" do %>
+      <%= link_to root_path, class: "navbar-brand text-white m-0" do %>
         <span class="ms-2">AssetPro</span>
       <% end %>
     </div>
@@ -35,7 +35,7 @@
     <div class="collapse navbar-collapse w-auto h-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <%= link_to root_path, class: "nav-link #{current_page?(root_path) ? 'active' : ''}" do %>
+          <%= link_to dashboard_path, class: "nav-link #{current_page?(dashboard_path) ? 'active' : ''}" do %>
             <span class="material-icons-round">dashboard</span>
             <span>Dashboard</span>
           <% end %>
@@ -51,7 +51,7 @@
         <% if current_user&.admin? || current_user&.manager? || current_user&.security? %>
           <li class="nav-item">
             <%= link_to timeline_admin_asset_tracking_events_path, class: "nav-link #{current_page?(timeline_admin_asset_tracking_events_path) ? 'active' : ''}" do %>
-              <span class="material-icons-round">history</span>
+              <span class="material-icons-round">view_timeline</span>
               <span>Timeline</span>
             <% end %>
           </li>
@@ -121,7 +121,7 @@
           <!-- Asset Tracking Events -->
           <li class="nav-item">
             <%= link_to asset_tracking_events_path, class: "nav-link #{current_page?(asset_tracking_events_path) ? 'active' : ''}" do %>
-              <span class="material-icons-round">history</span>
+              <span class="material-icons-round">event_repeat</span>
               <span class="nav-link-text ms-1">Tracking Events</span>
             <% end %>
           </li>
@@ -148,7 +148,7 @@
 
         <% if user_signed_in? %>
           <li class="nav-item">
-            <%= link_to edit_user_registration_path, class: "nav-link #{current_page?(edit_user_registration_path) ? 'active' : ''}" do %>
+            <%= link_to profile_edit_password_path, class: "nav-link #{current_page?(profile_edit_password_path) ? 'active' : ''}" do %>
               <span class="material-icons-round">person</span>
               <span>Profile</span>
             <% end %>

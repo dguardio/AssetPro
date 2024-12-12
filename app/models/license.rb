@@ -20,7 +20,51 @@ class License < ApplicationRecord
     ["asset"]
   end
   
+  def current_value
+    return 0 unless cost.present? && valid_dates?
+    
+    if perpetual?
+      total_value
+    elsif expired?
+      0
+    else
+      remaining_value = calculate_remaining_value
+      remaining_value.round(2)
+    end
+  end
+
+  def total_value
+    return 0 unless cost.present?
+    cost * seats
+  end
+
+  def utilization_rate
+    return 0 if seats.nil? || seats.zero?
+    (seats_used.to_f / seats * 100).round(2)
+  end
+
   private
+
+  def valid_dates?
+    purchase_date.present? && (perpetual? || expiration_date.present?)
+  end
+
+  def perpetual?
+    expiration_date.nil?
+  end
+
+  def expired?
+    expiration_date&.past?
+  end
+
+  def calculate_remaining_value
+    total_days = (expiration_date - purchase_date).to_i
+    remaining_days = (expiration_date - Date.current).to_i
+    
+    # Linear amortization of license value
+    value_per_seat = cost * (remaining_days.to_f / total_days)
+    value_per_seat * seats
+  end
 
   def check_expiration
     return unless should_notify_expiration?

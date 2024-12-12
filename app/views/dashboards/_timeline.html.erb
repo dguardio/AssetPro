@@ -1,0 +1,38 @@
+<div class="card">
+  <div class="card-header pb-0">
+    <h6 class="mb-0">Recent Activities Timeline</h6>
+  </div>
+  <div class="card-body p-3">
+    <%= turbo_frame_tag "dashboard_timeline", data: { controller: "auto-refresh", auto_refresh_interval_value: "10000" } do %>
+        <div class="timeline timeline-one-side" data-timeline-axis-style="dashed">
+          <% @recent_activities.each do |activity| %>
+            <div class="timeline-block mb-3">
+              <span class="timeline-step bg-<%= timeline_event_color(activity) %>">
+                <i class="material-icons-round text-white text-sm"><%= timeline_event_icon(activity) %></i>
+              </span>
+              <div class="timeline-content">
+                <h6 class="text-dark text-sm font-weight-bold mb-0">
+                  <%= activity.asset.name %> (<%= activity.asset.asset_code %>)
+                </h6>
+                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">
+                  <%= timeline_event_description(activity) %>
+                </p>
+                <p class="text-secondary text-xs mt-1 mb-0">
+                  <%= time_ago_in_words(activity.created_at) %> ago
+                  <% if current_user.admin? && activity.scanned_by.present? %>
+                    by <%= activity.scanned_by.name %>
+                  <% end %>
+                </p>
+              </div>
+            </div>
+          <% end %>
+
+          <% if @recent_activities.empty? %>
+            <div class="text-center py-4">
+              <p class="text-secondary mb-0">No events found</p>
+            </div>
+          <% end %>
+        </div>              
+    <% end %>
+  </div>
+</div> 

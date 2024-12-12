@@ -73,14 +73,41 @@ class Asset < ApplicationRecord
   end
 
   def current_value
-    return 0 if purchase_price.nil?
-    return purchase_price if purchase_date.nil? || depreciation_rate.nil?
+    return 0 unless valid_for_valuation?
     
-    age_in_years = (Time.current.to_date - purchase_date).to_f / 365
-    depreciated_value = purchase_price * (1 - (depreciation_rate * age_in_years))
-    [depreciated_value, 0].max
+    # Calculate age in years (including partial years)
+    age_in_years = (Date.current - purchase_date).to_f / 365.25
+    
+    if useful_life_years.present?
+      # Straight-line depreciation with salvage value
+      if age_in_years >= useful_life_years
+        (salvage_value || 0) * quantity
+      else
+        depreciation_per_year = (purchase_price - (salvage_value || 0)) / useful_life_years
+        current_single_value = purchase_price - (depreciation_per_year * age_in_years)
+        (current_single_value * quantity).round(2)
+      end
+    else
+      # Fallback to declining balance method if no useful life specified
+      depreciation_multiplier = 1 - (depreciation_rate || 0) / 100
+      value = purchase_price * (depreciation_multiplier ** age_in_years)
+      (value * quantity).round(2)
+    end
   end
-  
+
+  def annual_cost_of_ownership
+    # Combines all yearly costs
+    [
+      maintenance_cost_yearly || 0,
+      annual_depreciation,
+      insurance_cost
+    ].sum.round(2)
+  end
+
+  def total_purchase_value
+    purchase_price ? (purchase_price * quantity) : 0
+  end
+
   def next_maintenance
     maintenance_schedules.upcoming.order(scheduled_date: :asc).first
   end
@@ -132,5 +159,29 @@ class Asset < ApplicationRecord
     return false unless status_changed?
     return false if status.nil?
     ['retired', 'in_maintenance'].include?(status)
+  end
+
+  def valid_for_valuation?
+    purchase_price.present? && purchase_date.present? && 
+    (useful_life_years.present? || depreciation_rate.present?)
+  end
+
+  def annual_depreciation
+    return 0 unless valid_for_valuation?
+    return 0 if age_in_years >= useful_life_years
+
+    if useful_life_years.present?
+      (purchase_price - (salvage_value || 0)) / useful_life_years
+    else
+      purchase_price * (depreciation_rate || 0) / 100
+    end
+  end
+
+  def insurance_cost
+    insurance_value.present? ? (insurance_value / 12) : 0
+  end
+
+  def age_in_years
+    @age_in_years ||= (Date.current - purchase_date).to_f / 365.25
   end
 end

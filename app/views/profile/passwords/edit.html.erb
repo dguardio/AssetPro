@@ -1,6 +1,6 @@
 <main class="container homer">
   <div class="page-header align-items-start min-vh-100">
-    <span class="mask bg-gradient-dark opacity-6"></span>
+    <%# <span class="mask bg-gradient-dark opacity-6"></span> %>
     <div class="container my-auto">
       <div class="row">
         <div class="col-lg-8 col-md-8 col-12 mx-auto">
@@ -11,23 +11,33 @@
               </div>
             </div>
             <div class="card-body">
-              <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "text-start" }) do |f| %>
-                <%= render "devise/shared/error_messages", resource: resource %>
-                <%= f.hidden_field :reset_password_token %>
+              <%= form_for(@user, url: profile_password_path, html: { method: :patch, class: "text-start" }) do |f| %>
+                <% if @user.errors.any? %>
+                    <div class="alert alert-danger">
+                    <h4><%= pluralize(@user.errors.count, "error") %> prohibited this change:</h4>
+                    <ul>
+                        <% @user.errors.full_messages.each do |msg| %>
+                        <li><%= msg %></li>
+                        <% end %>
+                    </ul>
+                    </div>
+                <% end %>
 
-                <div class="input-group input-group-outline my-3">
+                <div class="input-group input-group-dynamic my-3">
+                  <%= f.password_field :current_password, autocomplete: "current-password", class: "form-control", placeholder: "Current Password" %>
+                </div>
+
+                <div class="input-group input-group-dynamic my-3">
                   <%= f.password_field :password, autocomplete: "new-password", class: "form-control", placeholder: "New Password" %>
                 </div>
 
-                <div class="input-group input-group-outline mb-3">
+                <div class="input-group input-group-dynamic mb-3">
                   <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", placeholder: "Confirm New Password" %>
                 </div>
 
                 <div class="text-center">
                   <%= f.submit "Change password", class: "btn bg-gradient-primary w-100 my-4 mb-2" %>
                 </div>
-
-                <%= render "devise/shared/links" %>
               <% end %>
             </div>
           </div>

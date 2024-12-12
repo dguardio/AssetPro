@@ -3,7 +3,8 @@ require 'sidekiq/web'
 Rails.application.routes.draw do
   devise_for :users, controllers: {
     registrations: 'users/registrations',
-    sessions: 'users/sessions'
+    sessions: 'users/sessions',
+    passwords: 'users/passwords'
   }
   
   root 'pages#home'
@@ -99,4 +100,20 @@ Rails.application.routes.draw do
   end
   resources :licenses
   resources :asset_tracking_events, only: [:index, :show]
+
+  namespace :profile do
+    get 'password/edit', to: 'passwords#edit', as: :edit_password
+    patch 'password', to: 'passwords#update', as: :password
+  end
+  # Add this devise_scope block for profile password routes
+  # devise_scope :user do
+  #   get '/profile/password/edit', to: 'profile/passwords#edit', as: 'profile_edit_password'
+  #   put '/profile/password', to: 'profile/passwords#update', as: 'profile_password'
+  # end
+
+  resources :dashboards do
+    collection do
+      get :timeline
+    end
+  end
 end

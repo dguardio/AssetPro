@@ -60,6 +60,14 @@ class DashboardsController < ApplicationController
     end
   end
 
+  def timeline
+    @recent_activities = AssetActivity.includes(:asset, :user, :location)
+                                    .order(created_at: :desc)
+                                    .limit(10)
+                                    
+    render partial: 'timeline'
+  end  
+
   private
 
   def search_params
@@ -73,11 +81,31 @@ class DashboardsController < ApplicationController
   end
 
   def set_dashboard_data
+    # Get current values
+    current_investment = Asset.sum('purchase_price * quantity')
+    current_assets = Asset.count
+    current_licenses = License.count
+    
+    # Get historical values (example using 1 month ago)
+    last_month_investment = Asset.where('created_at <= ?', 1.month.ago)
+                                .sum('purchase_price * quantity')
+    last_week_assets = Asset.where('created_at <= ?', 1.week.ago).count
+
+    # Calculate percentage changes
+    investment_change = last_month_investment > 0 ? 
+      ((current_investment - last_month_investment) / last_month_investment.to_f) * 100 : 0
+    assets_change = last_week_assets > 0 ? 
+      ((current_assets - last_week_assets) / last_week_assets.to_f) * 100 : 0
+
     @dashboard_data = {
-      total_assets: Asset.count,
+      total_assets: current_assets,
+      total_investment: current_investment,
+      total_licenses: current_licenses,
       available_assets: Asset.available.count,
       in_use_assets: Asset.in_use.count,
-      maintenance_assets: Asset.in_maintenance.count
+      maintenance_assets: Asset.in_maintenance.count,
+      investment_change: investment_change,
+      assets_change: assets_change
     }
 
     @assets_by_status = Asset.group(:status).count
