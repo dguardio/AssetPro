@@ -3,7 +3,7 @@ module Api
     class RfidReadersController < BaseController
       before_action :doorkeeper_authorize!
       before_action :set_reader, only: [:show, :update]
-      before_action :verify_admin, except: [:show, :ping]
+      before_action :verify_admin_scope, except: [:show, :ping]
 
       def show
         authorize @reader
@@ -70,9 +70,12 @@ module Api
         )
       end
 
-      def verify_admin
-        unless current_resource_owner.admin?
-          render json: { error: 'Unauthorized' }, status: :forbidden
+      def verify_admin_scope
+        unless doorkeeper_token&.scopes&.include?('admin')
+          render json: { 
+            error: 'Admin scope required',
+            provided_scopes: doorkeeper_token&.scopes&.to_a
+          }, status: :forbidden
         end
       end
     end
