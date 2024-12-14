@@ -1,0 +1,117 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">RFID Reader Details</h4>
+    <div class="d-flex gap-3">
+      <% if policy(@reader).update? %>
+        <%= link_to edit_rfid_reader_path(@reader), class: 'btn bg-gradient-dark mb-0' do %>
+          <i class="material-icons-round text-sm">edit</i>&nbsp;Edit Reader
+        <% end %>
+      <% end %>
+      <%= link_to rfid_readers_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Readers
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Reader ID</h6>
+            <p class="text-lg mb-0"><%= @reader.reader_id %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Name</h6>
+            <p class="text-lg mb-0"><%= @reader.name %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Position</h6>
+            <p class="text-lg mb-0"><%= @reader.position %></p>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">API Application</h6>
+            <p class="text-lg mb-0">
+              <% if @reader.oauth_application %>
+                <%= link_to @reader.oauth_application.name, 
+                    admin_oauth_application_path(@reader.oauth_application),
+                    class: "text-primary" %>
+              <% else %>
+                <span class="text-secondary">Not assigned</span>
+              <% end %>
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Status</h6>
+            <span class="badge badge-lg bg-gradient-<%= @reader.active? ? 'success' : 'secondary' %>">
+              <%= @reader.active? ? 'Active' : 'Inactive' %>
+            </span>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Last Active</h6>
+            <p class="text-lg mb-0">
+              <% if @reader.last_ping_at %>
+                <%= time_ago_in_words(@reader.last_ping_at) %> ago
+              <% else %>
+                <span class="text-secondary">Never</span>
+              <% end %>
+            </p>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Recent Scans</h6>
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Asset</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Location</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Event</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @recent_scans.each do |scan| %>
+                    <tr>
+                      <td class="ps-4">
+                        <p class="text-xs font-weight-bold mb-0">
+                          <%= time_ago_in_words(scan.created_at) %> ago
+                        </p>
+                      </td>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">
+                              <%= link_to scan.asset.name, asset_path(scan.asset), class: "text-primary" %>
+                            </h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="text-xs font-weight-bold mb-0"><%= scan.location&.name %></p>
+                      </td>
+                      <td>
+                        <span class="badge badge-sm bg-gradient-info">
+                          <%= scan.event_type&.humanize %>
+                        </span>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

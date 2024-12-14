@@ -1,0 +1,1682 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Asset Tracking API V1",
+    "version": "v1",
+    "description": "API for RFID scanners, mobile apps, and ERP integration"
+  },
+  "components": {
+    "securitySchemes": {
+      "oauth2": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "/oauth/token",
+            "scopes": {
+              "read": "Read access",
+              "write": "Write access",
+              "admin": "Admin access"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/asset_assignments": {
+      "get": {
+        "summary": "Lists all asset assignments",
+        "tags": [
+          "Asset Assignments"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "assignments found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "checked_out_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "checked_in_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "expected_return_date": {
+                            "type": "string",
+                            "format": "date",
+                            "nullable": true
+                          },
+                          "notes": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "asset": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "asset_code": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "user": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "email": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "assigned_by": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "email": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "total_pages": {
+                          "type": "integer"
+                        },
+                        "total_count": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates an asset assignment",
+        "tags": [
+          "Asset Assignments"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "write"
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "assignment created"
+          },
+          "422": {
+            "description": "invalid request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_assignment": {
+                    "type": "object",
+                    "properties": {
+                      "asset_id": {
+                        "type": "integer"
+                      },
+                      "user_id": {
+                        "type": "integer"
+                      },
+                      "expected_return_date": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "notes": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "asset_id",
+                      "user_id"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/asset_assignments/{id}": {
+      "get": {
+        "summary": "Retrieves an asset assignment",
+        "tags": [
+          "Asset Assignments"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "assignment found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "checked_out_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "checked_in_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "expected_return_date": {
+                          "type": "string",
+                          "format": "date",
+                          "nullable": true
+                        },
+                        "notes": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates an asset assignment",
+        "tags": [
+          "Asset Assignments"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "assignment updated"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_assignment": {
+                    "type": "object",
+                    "properties": {
+                      "expected_return_date": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "notes": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/asset_assignments/{id}/check_out": {
+      "post": {
+        "summary": "Checks out an asset assignment",
+        "tags": [
+          "Asset Assignments"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "asset checked out"
+          }
+        }
+      }
+    },
+    "/api/v1/asset_assignments/{id}/check_in": {
+      "post": {
+        "summary": "Checks in an asset assignment",
+        "tags": [
+          "Asset Assignments"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "asset checked in"
+          }
+        }
+      }
+    },
+    "/api/v1/asset_tracking_events": {
+      "get": {
+        "summary": "Lists all asset tracking events",
+        "tags": [
+          "Asset Tracking Events"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "events found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "event_type": {
+                            "type": "string"
+                          },
+                          "rfid_number": {
+                            "type": "string"
+                          },
+                          "scanned_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "notes": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "asset": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "location": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "scanned_by": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "email": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "total_pages": {
+                          "type": "integer"
+                        },
+                        "total_count": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates an asset tracking event",
+        "tags": [
+          "Asset Tracking Events"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "write"
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "event created"
+          },
+          "422": {
+            "description": "invalid request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_tracking_event": {
+                    "type": "object",
+                    "properties": {
+                      "asset_id": {
+                        "type": "integer"
+                      },
+                      "location_id": {
+                        "type": "integer"
+                      },
+                      "event_type": {
+                        "type": "string",
+                        "enum": [
+                          "movement",
+                          "check_in",
+                          "check_out",
+                          "assigned"
+                        ]
+                      },
+                      "rfid_number": {
+                        "type": "string"
+                      },
+                      "notes": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "asset_id",
+                      "location_id",
+                      "event_type"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/asset_tracking_events/{id}": {
+      "get": {
+        "summary": "Retrieves an asset tracking event",
+        "tags": [
+          "Asset Tracking Events"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "event found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "event_type": {
+                          "type": "string"
+                        },
+                        "rfid_number": {
+                          "type": "string"
+                        },
+                        "scanned_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "notes": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "asset": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "location": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "event not found"
+          }
+        }
+      }
+    },
+    "/api/v1/asset_tracking_events/timeline": {
+      "get": {
+        "summary": "Retrieves event timeline",
+        "tags": [
+          "Asset Tracking Events"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "timeline retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "event_type": {
+                            "type": "string"
+                          },
+                          "scanned_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assets": {
+      "get": {
+        "summary": "Lists all assets",
+        "tags": [
+          "Assets"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "assets found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "asset_code": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "available",
+                              "in_use",
+                              "maintenance"
+                            ]
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "rfid_tag": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "rfid_number": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/assets/{id}": {
+      "get": {
+        "summary": "Retrieves an asset",
+        "tags": [
+          "Assets"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "asset found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "asset_code": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "location": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "rfid_tag": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "rfid_number": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "asset not found"
+          }
+        }
+      }
+    },
+    "/api/v1/assets/{id}/history": {
+      "get": {
+        "summary": "Retrieves asset history",
+        "tags": [
+          "Assets"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "history retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "event_type": {
+                            "type": "string"
+                          },
+                          "scanned_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "location": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "scanned_by": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "email": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assets/search": {
+      "get": {
+        "summary": "Search assets",
+        "tags": [
+          "Assets"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "Search query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "asset_code": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/locations": {
+      "get": {
+        "summary": "Lists all locations",
+        "tags": [
+          "Locations"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "locations found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": "string"
+                          },
+                          "building": {
+                            "type": "string"
+                          },
+                          "floor": {
+                            "type": "string"
+                          },
+                          "room": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "asset_count": {
+                            "type": "integer"
+                          },
+                          "assets": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "asset_code": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "total_pages": {
+                          "type": "integer"
+                        },
+                        "total_count": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/locations/{id}": {
+      "get": {
+        "summary": "Retrieves a location",
+        "tags": [
+          "Locations"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "location found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": "string"
+                        },
+                        "building": {
+                          "type": "string"
+                        },
+                        "floor": {
+                          "type": "string"
+                        },
+                        "room": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "asset_count": {
+                          "type": "integer"
+                        },
+                        "assets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "asset_code": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "asset_tracking_events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "event_type": {
+                                "type": "string"
+                              },
+                              "scanned_at": {
+                                "type": "string",
+                                "format": "date-time"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "location not found"
+          }
+        }
+      }
+    },
+    "/api/v1/rfid_readers/{id}": {
+      "get": {
+        "summary": "Retrieves an RFID reader",
+        "tags": [
+          "RFID Readers"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "RFID reader ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "rfid reader found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "reader_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "position": {
+                          "type": "string"
+                        },
+                        "active": {
+                          "type": "boolean"
+                        },
+                        "last_ping_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "oauth_application": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "reader not found"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Updates an RFID reader",
+        "tags": [
+          "RFID Readers"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "reader updated"
+          },
+          "422": {
+            "description": "invalid request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rfid_reader": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "position": {
+                        "type": "string"
+                      },
+                      "active": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/rfid_readers/ping": {
+      "post": {
+        "summary": "Updates reader heartbeat status",
+        "tags": [
+          "RFID Readers"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "write"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ping successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "server_time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "reader": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "reader_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "position": {
+                          "type": "string"
+                        },
+                        "active": {
+                          "type": "boolean"
+                        },
+                        "last_ping_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "reader not found"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        }
+      }
+    },
+    "/api/v1/rfid_tags/{id}": {
+      "get": {
+        "summary": "Retrieves an RFID tag",
+        "tags": [
+          "RFID Tags"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "RFID tag ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "rfid tag found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "rfid_number": {
+                          "type": "string"
+                        },
+                        "active": {
+                          "type": "boolean"
+                        },
+                        "last_scanned_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true
+                        },
+                        "location_id": {
+                          "type": "integer",
+                          "nullable": true
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "asset": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "asset_code": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "last_known_location": {
+                          "type": "object",
+                          "nullable": true,
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "asset_tracking_events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "event_type": {
+                                "type": "string"
+                              },
+                              "scanned_at": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "location": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized"
+          },
+          "404": {
+            "description": "rfid tag not found"
+          }
+        }
+      }
+    },
+    "/api/v1/scans": {
+      "post": {
+        "summary": "Create a new scan",
+        "tags": [
+          "Scans"
+        ],
+        "security": [
+          {
+            "oauth2": [
+              "write"
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "scan created"
+          },
+          "401": {
+            "description": "unauthorized"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rfid_number": {
+                    "type": "string"
+                  },
+                  "location_id": {
+                    "type": "integer"
+                  },
+                  "event_type": {
+                    "type": "string",
+                    "enum": [
+                      "movement",
+                      "check_in",
+                      "check_out"
+                    ]
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "rfid_number",
+                  "location_id"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "API Server"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">RFID Readers</h4>
+    <div class="d-flex gap-2">
+      <% if policy(RfidReader.new).create? %>
+        <%= link_to new_rfid_reader_path, class: 'btn bg-gradient-dark' do %>
+          <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New RFID Reader
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body px-0 pb-2">
+      <div class="table-responsive p-0">
+        <table class="table table-striped align-items-center mb-0">
+          <thead>
+            <tr>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Reader ID</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Name</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Position</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Application</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Last Active</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @readers.each do |reader| %>
+              <tr>
+                <td><%= reader.reader_id %></td>
+                <td><%= reader.name %></td>
+                <td><%= reader.position %></td>
+                <td><%= reader.oauth_application&.name %></td>
+                <td><%= time_ago_in_words(reader.last_ping_at) if reader.last_ping_at %> ago</td>
+                <td>
+                  <span class="badge badge-sm bg-gradient-<%= reader.active? ? 'success' : 'secondary' %>">
+                    <%= reader.active? ? 'Active' : 'Inactive' %>
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <%= link_to rfid_reader_path(reader), class: 'btn btn-link text-secondary mb-0' do %>
+                      <i class="material-icons-round">visibility</i>
+                    <% end %>
+                    
+                    <% if policy(reader).update? %>
+                      <%= link_to edit_rfid_reader_path(reader), class: 'btn btn-link text-secondary mb-0' do %>
+                        <i class="material-icons-round">edit</i>
+                      <% end %>
+                    <% end %>
+
+                    <% if policy(reader).toggle_active? %>
+                      <%= link_to toggle_active_rfid_reader_path(reader), 
+                          method: :patch,
+                          class: "btn btn-link mb-0 text-#{reader.active? ? 'warning' : 'success'}" do %>
+                        <i class="material-icons-round"><%= reader.active? ? 'toggle_off' : 'toggle_on' %></i>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div> 

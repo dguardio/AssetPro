@@ -1,6 +1,7 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  use_doorkeeper
   devise_for :users, controllers: {
     registrations: 'users/registrations',
     sessions: 'users/sessions',
@@ -21,24 +22,55 @@ Rails.application.routes.draw do
     resources :asset_tracking_events, only: [:index] do
       get :timeline, on: :collection
     end
+    resources :oauth_applications, controller: 'oauth_applications'
   end
 
   namespace :api do
     namespace :v1 do
-      resources :assets do
+      # Asset Tracking Events (including check-in/check-out)
+      resources :scans, only: [:create] # For RFID scanner input
+      resources :asset_tracking_events, only: [:index, :show, :create] do
+        collection do
+          get :timeline
+        end
+      end
+
+      # Core Resources
+      resources :assets, only: [:index, :show] do
+        member do
+          get :history # Shows asset tracking history
+        end
+        collection do
+          get :search
+        end
+      end
+
+      # Asset Assignments
+      resources :asset_assignments, only: [:index, :show, :create, :update] do
         member do
           post :check_out
           post :check_in
-          get :history
         end
       end
-      resources :categories
-      resources :locations
-      resources :asset_assignments
-      resources :maintenance_records
-      post '/scans', to: 'scans#create'
+
+      # Supporting Resources
+      resources :locations, only: [:index, :show]
+      resources :rfid_tags, only: [:show]
+
+      # Reporting
+      get 'dashboard', to: 'dashboard#index'
+      get 'reports/asset_movement', to: 'reports#asset_movement'
+
+      # RFID Readers
+      resources :rfid_readers, only: [:show, :update] do
+        collection do
+          post :ping
+        end
+      end
     end
   end
+
+  
   resources :users
   resources :roles
   namespace :inventory do
@@ -116,4 +148,14 @@ Rails.application.routes.draw do
       get :timeline
     end
   end
+
+  resources :rfid_readers do
+    member do
+      patch :toggle_active
+    end
+  end
+
+  # Mount RSwag UI and API
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
 end

@@ -126,3 +126,14 @@ gem 'request_store'
 # Asset processing
 # gem 'sassc-rails'
 gem 'terser'
+
+gem 'doorkeeper'
+
+gem 'rswag'
+gem 'rswag-ui'
+gem 'rswag-api'
+gem 'rswag-specs'
+
+gem 'active_model_serializers'
+
+gem 'rack-cors'

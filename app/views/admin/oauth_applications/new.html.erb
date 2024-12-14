@@ -1,0 +1,143 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="text-white text-capitalize ps-3">New API Application</h6>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="alert alert-info text-white" role="alert">
+                <div class="d-flex">
+                  <div class="text-white">
+                    <i class="material-icons-round opacity-10">info</i>
+                  </div>
+                  <div class="ms-3">
+                    <h6 class="text-white mb-1">Important Information</h6>
+                    <p class="mb-0">
+                      After creating the application, you'll receive a Client ID and Client Secret. 
+                      Make sure to save these credentials as the Client Secret will only be shown once.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <%= render 'form', application: @application %>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header p-3">
+                  <h6 class="mb-0">Application Types</h6>
+                </div>
+                <div class="card-body p-3">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="d-flex">
+                        <div>
+                          <i class="material-icons-round text-gradient text-primary">sensors</i>
+                        </div>
+                        <div class="ms-3">
+                          <h6 class="mb-1">RFID Reader</h6>
+                          <p class="text-sm mb-0">
+                            For RFID reader devices that will be scanning tags and reporting locations.
+                            Uses client credentials flow.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="d-flex">
+                        <div>
+                          <i class="material-icons-round text-gradient text-primary">smartphone</i>
+                        </div>
+                        <div class="ms-3">
+                          <h6 class="mb-1">Mobile App</h6>
+                          <p class="text-sm mb-0">
+                            For mobile applications that require user authentication.
+                            Uses authorization code flow with PKCE.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header p-3">
+                  <h6 class="mb-0">Available Scopes</h6>
+                </div>
+                <div class="card-body p-3">
+                  <div class="table-responsive">
+                    <table class="table align-items-center mb-0">
+                      <thead>
+                        <tr>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Scope</th>
+                          <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <code>read</code>
+                          </td>
+                          <td>Access to read asset and location data</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code>write</code>
+                          </td>
+                          <td>Ability to create and update scan records</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <code>admin</code>
+                          </td>
+                          <td>Full administrative access (mobile apps only)</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script>
+    // Show/hide relevant fields based on application type
+    document.addEventListener('DOMContentLoaded', function() {
+      const appTypeSelect = document.querySelector('#doorkeeper_application_app_type');
+      const redirectUriField = document.querySelector('#doorkeeper_application_redirect_uri').closest('.input-group');
+      
+      function updateFields() {
+        if (appTypeSelect.value === 'mobile_app') {
+          redirectUriField.style.display = 'block';
+        } else {
+          redirectUriField.style.display = 'none';
+        }
+      }
+
+      appTypeSelect.addEventListener('change', updateFields);
+      updateFields();
+    });
+  </script>
+<% end %> 

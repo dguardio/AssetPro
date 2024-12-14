@@ -4,6 +4,10 @@ class AssetTrackingEvent < ApplicationRecord
   belongs_to :asset_assignment, optional: true
   belongs_to :scanned_by, class_name: 'User'
   belongs_to :previous_location, class_name: 'Location', optional: true
+  belongs_to :oauth_application, class_name: 'Doorkeeper::Application', optional: true
+  # belongs_to :organization
+  # belongs_to :sub_organization, optional: true
+  belongs_to :scanned_by_device, class_name: 'RfidReader', foreign_key: 'rfid_reader_id', optional: true
 
   # Define event types enum
   enum event_type: {
@@ -82,4 +86,17 @@ class AssetTrackingEvent < ApplicationRecord
 
   # Add this scope
   scope :recent, -> { order(created_at: :desc) }
+
+  before_save :set_organization_names
+  
+  private
+
+  def set_organization_names
+    if oauth_application
+      self.organization_id = oauth_application.organization_id
+      self.sub_organization_id = oauth_application.sub_organization_id
+      self.organization_name = oauth_application.organization_name
+      self.sub_organization_name = oauth_application.sub_organization_name
+    end
+  end
 end 

@@ -94,6 +94,13 @@
             <% end %>
           </li>
 
+          <li class="nav-item">
+            <%= link_to rfid_readers_path, class: "nav-link #{current_page?(rfid_readers_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">sensors</span>
+              <span class="nav-link-text ms-1">RFID Readers</span>
+            <% end %>
+          </li>
+
       <!-- RFID Tags -->
           <li class="nav-item">
             <%= link_to rfid_tags_path, class: "nav-link #{current_page?(rfid_tags_path) ? 'active' : ''}" do %>
@@ -132,7 +139,14 @@
               <span class="material-icons-round">history</span>
               <span class="nav-link-text ms-1">Audit Logs</span>
             <% end %>
-          </li>          
+          </li>      
+
+          <li class="nav-item">
+            <%= link_to admin_oauth_applications_path, class: "nav-link #{current_page?(admin_oauth_applications_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">electrical_services</span>
+              <span class="nav-link-text ms-1">API Applications</span>
+            <% end %>
+          </li>              
 
           <li class="nav-item">
             <%= link_to admin_users_path, class: "nav-link #{current_page?(admin_users_path) ? 'active' : ''}" do %>

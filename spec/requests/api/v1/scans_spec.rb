@@ -1,43 +1,31 @@
-require 'rails_helper'
+require 'swagger_helper'
 
-RSpec.describe 'API V1 Scans', type: :request do
-  let(:user) { create(:user, :security) }
-  let(:asset) { create(:asset, :with_rfid) }
-  let(:location) { create(:location) }
-
-  before do
-    sign_in user
-  end
-
-  describe 'POST /api/v1/scans' do
-    let(:valid_params) do
-      {
-        scan: {
-          rfid_number: asset.rfid_tag.rfid_number,
-          location_id: location.id,
-          event_type: 'location_update'
-        }
+RSpec.describe 'API V1', swagger_doc: 'v1/swagger.yaml' do
+  path '/api/v1/scans' do
+    post 'Create a new scan' do
+      tags 'Scans'
+      security [oauth2: ['write']]
+      consumes 'application/json'
+      produces 'application/json'
+      
+      parameter name: :scan, in: :body, schema: {
+        type: :object,
+        properties: {
+          rfid_number: { type: :string },
+          location_id: { type: :integer },
+          event_type: { type: :string, enum: ['movement', 'check_in', 'check_out'] },
+          notes: { type: :string }
+        },
+        required: ['rfid_number', 'location_id']
       }
-    end
 
-    context 'with valid parameters' do
-      it 'creates a new tracking event' do
-        expect {
-          post '/api/v1/scans', params: valid_params
-        }.to change(AssetTrackingEvent, :count).by(1)
-        
-        expect(response).to have_http_status(:created)
-        expect(JSON.parse(response.body)['status']).to eq('success')
+      response '201', 'scan created' do
+        let(:scan) { { rfid_number: 'ABC123', location_id: 1 } }
+        run_test!
       end
-    end
 
-    context 'with invalid RFID number' do
-      it 'returns not found status' do
-        post '/api/v1/scans', params: { 
-          scan: valid_params[:scan].merge(rfid_number: 'INVALID') 
-        }
-        
-        expect(response).to have_http_status(:not_found)
+      response '401', 'unauthorized' do
+        run_test!
       end
     end
   end

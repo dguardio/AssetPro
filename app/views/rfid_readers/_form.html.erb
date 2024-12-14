@@ -1,0 +1,51 @@
+<%= form_with(model: reader) do |f| %>
+  <% if reader.errors.any? %>
+    <div class="alert alert-danger text-white">
+      <h6 class="text-white">Unable to save RFID Reader:</h6>
+      <ul class="mb-0">
+        <% reader.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="input-group input-group-dynamic mb-4">
+        <%= f.label :reader_id, class: reader.reader_id.present? ? 'form-label focused' : 'form-label' %>
+        <%= f.text_field :reader_id, class: "form-control" %>
+      </div>
+
+      <div class="input-group input-group-dynamic mb-4">
+        <%= f.label :name, class: reader.name.present? ? 'form-label focused' : 'form-label' %>
+        <%= f.text_field :name, class: "form-control" %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="input-group input-group-dynamic mb-4">
+        <%= f.label :position, class: reader.position.present? ? 'form-label focused' : 'form-label' %>
+        <%= f.text_field :position, class: "form-control" %>
+      </div>
+
+      <div class="input-group input-group-static mb-4">
+        <%= f.collection_select :oauth_application_id, 
+            Doorkeeper::Application.all, 
+            :id, 
+            :name, 
+            { prompt: "Select API Application" }, 
+            { class: "form-select" } %>
+      </div>
+
+      <div class="form-check form-switch mb-4">
+        <%= f.check_box :active, class: "form-check-input", role: "switch" %>
+        <%= f.label :active, class: "form-check-label" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end mt-4">
+    <%= link_to 'Cancel', rfid_readers_path, class: "btn btn-dark-gray m-0" %>
+    <%= f.submit class: "btn btn-dark m-0 ms-2" %>
+  </div>
+<% end %> 

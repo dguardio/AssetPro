@@ -28,5 +28,15 @@ module AssetPro
     # config.active_job.queue_adapter = :sidekiq
     config.active_job.queue_adapter = :async  # Change from :sidekiq to :async
 
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*' # Use specific domains in production
+        resource '*',
+          headers: :any,
+          methods: [:get, :post, :put, :patch, :delete, :options, :head],
+          expose: ['Authorization']
+      end
+    end
+
   end
 end
