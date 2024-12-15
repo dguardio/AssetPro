@@ -1,7 +1,6 @@
 module Api
   module V1
     class RfidReadersController < BaseController
-      before_action :doorkeeper_authorize!
       before_action :set_reader, only: [:show, :update]
       before_action :verify_admin_scope, except: [:show, :ping]
 

@@ -1,8 +1,10 @@
 class AssetAssignmentSerializer < ActiveModel::Serializer
   attributes :id,
+             :asset_id,
+             :user_id,
+             :assigned_by_id,
              :checked_out_at,
              :checked_in_at,
-             :expected_return_date,
              :notes,
              :created_at,
              :updated_at

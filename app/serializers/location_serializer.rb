@@ -1,7 +1,6 @@
 class LocationSerializer < ActiveModel::Serializer
   attributes :id,
              :name,
-             :description,
              :address,
              :building,
              :floor,

@@ -1,7 +1,6 @@
 module Api
   module V1
     class ScansController < BaseController
-      before_action :doorkeeper_authorize!
       before_action :verify_reader
 
       def create

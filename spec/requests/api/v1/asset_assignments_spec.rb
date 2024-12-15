@@ -20,7 +20,6 @@ RSpec.describe 'API V1 Asset Assignments', swagger_doc: 'v1/swagger.yaml' do
                   id: { type: :integer },
                   checked_out_at: { type: :string, format: 'date-time', nullable: true },
                   checked_in_at: { type: :string, format: 'date-time', nullable: true },
-                  expected_return_date: { type: :string, format: 'date', nullable: true },
                   notes: { type: :string },
                   created_at: { type: :string, format: 'date-time' },
                   updated_at: { type: :string, format: 'date-time' },
@@ -122,7 +121,6 @@ RSpec.describe 'API V1 Asset Assignments', swagger_doc: 'v1/swagger.yaml' do
                 id: { type: :integer },
                 checked_out_at: { type: :string, format: 'date-time', nullable: true },
                 checked_in_at: { type: :string, format: 'date-time', nullable: true },
-                expected_return_date: { type: :string, format: 'date', nullable: true },
                 notes: { type: :string }
               }
             }
@@ -147,7 +145,8 @@ RSpec.describe 'API V1 Asset Assignments', swagger_doc: 'v1/swagger.yaml' do
           asset_assignment: {
             type: :object,
             properties: {
-              expected_return_date: { type: :string, format: 'date' },
+              checked_out_at: { type: :string, format: 'date-time' },
+              checked_in_at: { type: :string, format: 'date-time' },
               notes: { type: :string }
             }
           }

@@ -1,7 +1,6 @@
 module Api
   module V1
     class RfidTagsController < BaseController
-      before_action :doorkeeper_authorize!
       before_action :set_rfid_tag, only: [:show]
 
       def show

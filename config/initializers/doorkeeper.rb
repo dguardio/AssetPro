@@ -7,7 +7,7 @@ Doorkeeper.configure do
 
   # This block will be called to check whether the resource owner is authenticated or not.
   resource_owner_authenticator do
-    current_user || redirect_to(login_url)
+    current_user || warden.authenticate!(scope: :user)
   end
 
   # If you didn't skip applications controller from Doorkeeper routes in your application routes.rb
@@ -524,6 +524,8 @@ Doorkeeper.configure do
   #
   # realm "Doorkeeper"
 
+
+ 
   # Enable password grant flow (for mobile apps)
   grant_flows %w[password client_credentials]
 
@@ -535,10 +537,22 @@ Doorkeeper.configure do
     user = User.find_by(email: params[:email])
     user if user&.valid_password?(params[:password])
   end
+  # 
+  # resource_owner_from_credentials do |routes|
+  #   case params[:grant_type]
+  #   when 'client_credentials'
+  #     # For client credentials flow, return nil since there's no resource owner
+  #     nil
+  #   when 'password'
+  #     # For password flow, authenticate the user
+  #     user = User.find_by(email: params[:email])
+  #     user if user&.valid_password?(params[:password])
+  #   end
+  # end 
 
   # Skip authorization for RFID readers using client credentials
   skip_authorization do |resource_owner, client|
-    client.application.name.include?('RFID Reader')
+    client.app_type == 'rfid_reader'
   end
 
   # Optional: Add custom token info
@@ -554,7 +568,23 @@ Doorkeeper.configure do
   default_scopes :read
   optional_scopes :write, :admin
 
-  access_token_methods :from_bearer_authorization, :from_access_token_param
+  access_token_methods :from_bearer_authorization,
+                      :from_access_token_param,
+                      :from_bearer_param
+                      
+  access_token_expires_in 1.day
+  use_refresh_token
+  reuse_access_token
+
+  before_successful_strategy_response do |request|
+    Rails.logger.info "OAUTH Strategy Request: #{request.class}"
+    Rails.logger.info "Client: #{request.client.inspect}"
+    Rails.logger.info "Grant type: #{request.grant_type}"
+  end
+
+  after_successful_strategy_response do |request, response|
+    Rails.logger.info "OAUTH Strategy Response: #{response.body}"
+  end
 end
 
 Doorkeeper::Application.class_eval do

@@ -1,7 +1,6 @@
 module Api
   module V1
     class ReportsController < BaseController
-      before_action :doorkeeper_authorize!
 
       def asset_movement
         @movements = AssetTrackingEvent.includes(:asset, :location, :scanned_by)

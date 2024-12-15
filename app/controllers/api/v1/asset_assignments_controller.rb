@@ -1,7 +1,6 @@
 module Api
   module V1
     class AssetAssignmentsController < BaseController
-      before_action :doorkeeper_authorize!
       before_action :set_asset_assignment, only: [:show, :update, :check_in, :check_out]
 
       def index
@@ -10,7 +9,10 @@ module Api
           .order(created_at: :desc)
           .page(params[:page])
 
-        render json: @assignments, each_serializer: AssetAssignmentSerializer
+          render json: {
+            data: ActiveModel::SerializableResource.new(@assignments, each_serializer: AssetAssignmentSerializer),
+            meta: pagination_meta(@assignments)
+          }
       end
 
       def show
@@ -73,8 +75,9 @@ module Api
           :asset_id,
           :user_id,
           :checked_out_at,
-          :expected_return_date,
-          :notes
+          :checked_in_at,
+          :notes,
+          :assigned_by_id
         )
       end
     end

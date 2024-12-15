@@ -1,9 +1,16 @@
 module Api
   module V1
     class BaseController < ApplicationController
+      include Pundit::Authorization
+      
+      skip_before_action :verify_authenticity_token
+      skip_before_action :authenticate_user!
+      skip_after_action :verify_authorized
+      skip_after_action :verify_policy_scoped
+
       before_action :doorkeeper_authorize!
       before_action :verify_scope
-      
+
       private
 
       def verify_scope
@@ -25,17 +32,17 @@ module Api
         end
       end
 
-      def verify_admin_scope
-        unless doorkeeper_token&.scopes&.include?('admin')
-          render json: { 
-            error: 'Admin scope required',
-            provided_scopes: doorkeeper_token&.scopes&.to_a
-          }, status: :forbidden
-        end
+      def current_resource_owner
+        return nil if doorkeeper_token.resource_owner_id.nil?
+        @current_resource_owner ||= User.find(doorkeeper_token.resource_owner_id)
       end
 
-      def current_resource_owner
-        @current_resource_owner ||= User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
+      def pundit_user
+        if doorkeeper_token.resource_owner_id.nil?
+          doorkeeper_token.application
+        else
+          current_resource_owner
+        end
       end
 
       def current_application

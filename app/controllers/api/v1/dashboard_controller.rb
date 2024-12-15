@@ -1,7 +1,6 @@
 module Api
   module V1
     class DashboardController < BaseController
-      before_action :doorkeeper_authorize!
 
       def index
         @stats = {

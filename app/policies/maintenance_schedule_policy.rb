@@ -1,38 +1,55 @@
 class MaintenanceSchedulePolicy < ApplicationPolicy
+  class Scope < Scope
+    def resolve
+      case user
+      when Doorkeeper::Application
+        scope.none # OAuth apps don't need maintenance schedule access
+      when User
+        case user.role
+        when 'admin', 'manager'
+          scope.all
+        when 'security'
+          scope.joins(:asset).where(assets: { location_id: user.location_id })
+        else
+          scope.where(assigned_to_id: user.id)
+        end
+      else
+        scope.none
+      end
+    end
+  end
+
   def index?
+    return false if user.is_a?(Doorkeeper::Application)
     user.present?
   end
 
   def show?
-    user.present?
-  end
-
-  def create?
-    user.present?
-  end
-
-  def update?
-    user.present?
-  end
-
-  def destroy?
-    user.present?
-  end
-
-  # Add this method for the complete action
-  def complete?
-    return false unless user.present?
-    
-    # Allow admins to complete any maintenance schedule
-    return true if user.admin?
-    
-    # Allow assigned users to complete their maintenance schedules
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin? || user.manager? ||
+    (user.security? && record.asset&.location_id == user.location_id) ||
     record.assigned_to_id == user.id
   end
 
-  class Scope < Scope
-    def resolve
-      scope.all
-    end
+  def create?
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin? || user.manager?
+  end
+
+  def update?
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin? || user.manager?
+  end
+
+  def destroy?
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin?
+  end
+
+  def complete?
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin? || user.manager? ||
+    (user.security? && record.asset&.location_id == user.location_id) ||
+    record.assigned_to_id == user.id
   end
 end 

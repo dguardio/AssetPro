@@ -1,7 +1,6 @@
 module Api
   module V1
     class LocationsController < BaseController
-      before_action :doorkeeper_authorize!
       before_action :set_location, only: [:show]
 
       def index
@@ -10,7 +9,10 @@ module Api
                     .order(name: :asc)
                     .page(params[:page])
         
-        render json: @locations, each_serializer: LocationSerializer
+        render json: {
+          data: ActiveModel::SerializableResource.new(@locations, each_serializer: LocationSerializer),
+          meta: pagination_meta(@locations)
+        }
       end
 
       def show

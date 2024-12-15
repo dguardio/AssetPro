@@ -1,7 +1,6 @@
 module Api
   module V1
     class AssetsController < BaseController
-      before_action :doorkeeper_authorize!
       before_action :set_asset, only: [:show, :history]
       
       def index
@@ -9,11 +8,15 @@ module Api
                  .includes(:location, :rfid_tag)
                  .order(updated_at: :desc)
         
-        render json: @assets, each_serializer: AssetSerializer
+        render json: @assets, 
+               each_serializer: AssetSerializer,
+               include: [:location, :rfid_tag]
       end
 
       def show
-        render json: @asset, serializer: AssetSerializer
+        render json: @asset, 
+               serializer: AssetSerializer,
+               include: [:location, :rfid_tag]
       end
 
       def history
@@ -25,7 +28,7 @@ module Api
       end
 
       def search
-        @assets = Asset.search(params[:q])
+        @assets = policy_scope(Asset).search(params[:q])
                       .includes(:location, :rfid_tag)
         
         render json: @assets, each_serializer: AssetSerializer

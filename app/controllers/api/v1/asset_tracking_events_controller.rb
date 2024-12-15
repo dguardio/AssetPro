@@ -1,7 +1,6 @@
 module Api
   module V1
     class AssetTrackingEventsController < BaseController
-      before_action :doorkeeper_authorize!
       before_action :set_event, only: [:show]
 
       def index
@@ -19,9 +18,9 @@ module Api
 
       def create
         @event = AssetTrackingEvent.new(event_params)
-        @event.scanned_by = current_user
-        # Set the device that scanned the asset
-        # TODO: Implement device scanning
+        @event.scanned_by = current_resource_owner
+        @event.oauth_application = current_application
+        @event.rfid_reader = current_application.rfid_reader
         @event.scanned_at = Time.current
         
         authorize @event
