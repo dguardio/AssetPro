@@ -1,140 +1,160 @@
-<div class="container-fluid py-4">
-  <div class="row">
-    <div class="col-12">
-      <div class="card my-4">
-        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <h6 class="text-white text-capitalize ps-3">API Application Details</h6>
-              <div class="pe-3">
-                <%= link_to edit_admin_oauth_application_path(@application), class: "btn btn-sm bg-gradient-dark mb-0" do %>
-                  <i class="material-icons text-sm">edit</i>&nbsp;&nbsp;Edit
-                <% end %>
-              </div>
+<div data-controller="oauth-application">
+  <div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="mb-0"><%= @application.name %></h4>
+      <div class="d-flex gap-2">
+        <% if policy(@application).update? %>
+          <%= link_to edit_admin_oauth_application_path(@application), class: 'btn bg-gradient-dark' do %>
+            <i class="material-icons-round text-sm">edit</i>&nbsp;&nbsp;Edit Application
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-xl-8 mb-4">
+        <div class="card">
+          <div class="card-header pb-0">
+            <h6>Application Details</h6>
+          </div>
+          <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <tbody>
+                  <tr>
+                    <td class="ps-4">
+                      <p class="text-xs font-weight-bold mb-0">Organization</p>
+                      <h6 class="text-sm mb-0"><%= @application.organization_name %></h6>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-4">
+                      <p class="text-xs font-weight-bold mb-0">Client ID</p>
+                      <div class="input-group">
+                        <input type="text" class="form-control" value="<%= @application.uid %>" readonly>
+                        <button class="btn btn-outline-secondary" type="button" 
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Copy to clipboard"
+                                onclick="navigator.clipboard.writeText('<%= @application.uid %>')">
+                          <i class="material-icons-round text-sm">content_copy</i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-4">
+                      <p class="text-xs font-weight-bold mb-0">Client Secret</p>
+                      <div class="input-group">
+                        <input type="password" class="form-control" value="<%= @application.secret %>" readonly>
+                        <button class="btn btn-outline-secondary" type="button" 
+                                onclick="toggleSecretVisibility(this)">
+                          <i class="material-icons-round text-sm">visibility</i>
+                        </button>
+                        <button class="btn btn-outline-secondary" type="button" 
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Copy to clipboard"
+                                onclick="navigator.clipboard.writeText('<%= @application.secret %>')">
+                          <i class="material-icons-round text-sm">content_copy</i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-4">
+                      <p class="text-xs font-weight-bold mb-0">Scopes</p>
+                      <h6 class="text-sm mb-0">
+                        <% @application.scopes.each do |scope| %>
+                          <span class="badge bg-gradient-info"><%= scope %></span>
+                        <% end %>
+                      </h6>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-4">
+                      <p class="text-xs font-weight-bold mb-0">Status</p>
+                      <h6 class="text-sm mb-0">
+                        <span class="badge bg-gradient-<%= @application.confidential? ? 'success' : 'warning' %>">
+                          <%= @application.confidential? ? 'Confidential' : 'Public' %>
+                        </span>
+                      </h6>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="card-body px-0 pb-2">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-4">
-                  <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Name</h6>
-                  <p class="text-lg mb-0"><%= @application.name %></p>
-                </div>
-
-                <div class="mb-4">
-                  <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Organization</h6>
-                  <p class="text-lg mb-0"><%= @application.organization_name %></p>
-                </div>
-
-                <div class="mb-4">
-                  <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Sub-Organization</h6>
-                  <p class="text-lg mb-0"><%= @application.sub_organization_name %></p>
-                </div>
-
-                <div class="mb-4">
-                  <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Application Type</h6>
-                  <p class="text-lg mb-0"><%= @application.app_type&.humanize %></p>
-                </div>
-
-                <div class="mb-4">
-                  <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Client ID</h6>
-                  <div class="d-flex align-items-center gap-2">
-                    <p class="text-lg mb-0"><%= @application.uid %></p>
-                    <button class="btn btn-link btn-sm p-0" onclick="copyToClipboard('<%= @application.uid %>')" data-bs-toggle="tooltip" title="Copy to clipboard">
-                      <i class="material-icons">content_copy</i>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="mb-4">
-                  <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Client Secret</h6>
-                  <div class="d-flex align-items-center gap-2">
-                    <p class="text-lg mb-0"><%= @application.secret %></p>
-                    <button class="btn btn-link btn-sm p-0" onclick="copyToClipboard('<%= @application.secret %>')" data-bs-toggle="tooltip" title="Copy to clipboard">
-                      <i class="material-icons">content_copy</i>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="mb-4">
-                  <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Scopes</h6>
-                  <p class="text-lg mb-0"><%= @application.scopes %></p>
-                </div>
-
-                <div class="mb-4">
-                  <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Confidential</h6>
-                  <span class="badge badge-sm bg-gradient-<%= @application.confidential? ? 'success' : 'secondary' %>">
-                    <%= @application.confidential? ? 'Yes' : 'No' %>
-                  </span>
-                </div>
-              </div>
+      <div class="col-12 col-xl-4 mb-4">
+        <div class="card">
+          <div class="card-header pb-0">
+            <h6>Active Readers</h6>
+          </div>
+          <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-4">Name</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Last Seen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @readers.each do |reader| %>
+                    <tr>
+                      <td class="ps-4">
+                        <h6 class="text-sm mb-0"><%= reader.name %></h6>
+                      </td>
+                      <td>
+                        <p class="text-sm text-secondary mb-0">
+                          <%= time_ago_in_words(reader.last_ping_at) if reader.last_ping_at %>
+                        </p>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            <!-- Connected Readers -->
-            <div class="row mt-4">
-              <div class="col-12">
-                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder mb-3">Connected Readers</h6>
-                <div class="table-responsive">
-                  <table class="table align-items-center mb-0">
-                    <thead>
-                      <tr>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Reader ID</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Name</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Position</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Last Active</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% @readers.each do |reader| %>
-                        <tr>
-                          <td><%= reader.reader_id %></td>
-                          <td><%= reader.name %></td>
-                          <td><%= reader.position %></td>
-                          <td>
-                            <span class="badge badge-sm bg-gradient-<%= reader.active? ? 'success' : 'secondary' %>">
-                              <%= reader.active? ? 'Active' : 'Inactive' %>
-                            </span>
-                          </td>
-                          <td><%= time_ago_in_words(reader.last_ping_at) if reader.last_ping_at %> ago</td>
-                        </tr>
-                      <% end %>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <!-- Recent Scans -->
-            <div class="row mt-4">
-              <div class="col-12">
-                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder mb-3">Recent Scans</h6>
-                <div class="table-responsive">
-                  <table class="table align-items-center mb-0">
-                    <thead>
-                      <tr>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Time</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Asset</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Reader</th>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Event</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% @recent_scans.each do |scan| %>
-                        <tr>
-                          <td><%= time_ago_in_words(scan.created_at) %> ago</td>
-                          <td><%= scan.asset.name %></td>
-                          <td><%= scan.scanned_by_device&.name %></td>
-                          <td><%= scan.event_type&.humanize %></td>
-                        </tr>
-                      <% end %>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header pb-0">
+            <h6>Recent Scans</h6>
+          </div>
+          <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-4">Time</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Asset</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Reader</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Event</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @recent_scans.each do |scan| %>
+                    <tr>
+                      <td class="ps-4">
+                        <p class="text-sm mb-0"><%= time_ago_in_words(scan.created_at) %> ago</p>
+                      </td>
+                      <td>
+                        <p class="text-sm mb-0"><%= scan.asset.name %></p>
+                      </td>
+                      <td>
+                        <p class="text-sm mb-0"><%= scan.scanned_by_device&.name %></p>
+                      </td>
+                      <td>
+                        <p class="text-sm mb-0"><%= scan.event_type&.humanize %></p>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -145,21 +165,24 @@
 
 <% content_for :javascript do %>
   <script>
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(function() {
-        const tooltip = bootstrap.Tooltip.getInstance('[data-bs-toggle="tooltip"]');
-        tooltip.setContent({ '.tooltip-inner': 'Copied!' });
-        setTimeout(() => {
-          tooltip.setContent({ '.tooltip-inner': 'Copy to clipboard' });
-        }, 1000);
-      });
-    }
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 
-    document.addEventListener('DOMContentLoaded', function() {
-      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-      tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-      });
-    });
+    // Toggle password visibility
+    function toggleSecretVisibility(button) {
+      var input = button.parentElement.querySelector('input');
+      var icon = button.querySelector('i');
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
   </script>
 <% end %> 
