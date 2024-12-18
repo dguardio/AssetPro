@@ -4,4 +4,3 @@
 //= link application.scss
 //= link application.js
 //= link bootstrap.min.js
-//= link ../javascripts/channels/notifications_channel.js
