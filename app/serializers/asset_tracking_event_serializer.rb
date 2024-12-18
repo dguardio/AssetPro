@@ -1,9 +1,11 @@
 class AssetTrackingEventSerializer < ActiveModel::Serializer
   attributes :id,
              :event_type,
+             :asset_id,
              :rfid_number,
              :scanned_at,
-             :notes,
+             :rfid_number,
+             :scanned_at,
              :created_at,
              :updated_at
 

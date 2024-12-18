@@ -1,6 +1,7 @@
 class Location < ApplicationRecord
   scope :active, -> { where(active: true) }
   has_many :assets, dependent: :restrict_with_error
+  has_many :asset_tracking_events, through: :assets
   has_many :rfid_tags, dependent: :restrict_with_error
 
   validates :name, presence: true
