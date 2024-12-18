@@ -1,4 +1,5 @@
 class Dashboard
+  include ActiveModel::Model
   include ActiveModel::Serialization
   
   attr_accessor :total_assets, :assets_in_use, :assets_available, 
