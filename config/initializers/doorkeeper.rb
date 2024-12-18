@@ -577,16 +577,16 @@ Doorkeeper.configure do
   end
 
   # Configure custom constraints for token grant types
-  grant_flows %w[password refresh_token]
+  # grant_flows %w[password refresh_token]
 
   # Allow CORS requests
-  allow_cors do |cors|
-    cors.allow do |allow|
-      allow.all_origins
-      allow.all_methods
-      allow.all_headers
-    end
-  end
+  # allow_cors do |cors|
+  #   cors.allow do |allow|
+  #     allow.all_origins
+  #     allow.all_methods
+  #     allow.all_headers
+  #   end
+  # end
 end
 
 Doorkeeper::Application.class_eval do

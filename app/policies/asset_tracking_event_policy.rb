@@ -43,6 +43,10 @@ class AssetTrackingEventPolicy < ApplicationPolicy
     end
   end
 
+  def timeline?  # Add this method
+    user.admin? || user.manager?
+  end
+
   def create?
     case user
     when Doorkeeper::Application
