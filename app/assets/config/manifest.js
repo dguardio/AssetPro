@@ -1,4 +1,9 @@
 //= link_tree ../images
 //= link_directory ../stylesheets .scss
-//= link_tree ../javascripts .js
-//= link_tree ../javascripts/controllers .js
+//= link_directory ../javascripts .js
+//= link application.scss
+//= link application.js
+//= link bootstrap.min.js
+//= link javascript/channels/notifications_channel.js
+//= link javascript/channels/application_cable.js
+//= link_ javascript/controllers .js

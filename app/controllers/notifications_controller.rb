@@ -6,21 +6,20 @@ class NotificationsController < ApplicationController
   end
 
   def mark_as_read
-    notifications = current_user.notifications.unread
-    notifications.update_all(read_at: Time.current)
+    @notification = current_user.notifications.find(params[:id])
+    @notification.mark_as_read!
     
     respond_to do |format|
-      format.html { redirect_back(fallback_location: notifications_path, notice: 'All notifications marked as read') }
+      format.html { redirect_back(fallback_location: notifications_path) }
       format.json { render json: { success: true } }
     end
   end
 
-  def destroy
-    @notification = current_user.notifications.find(params[:id])
-    @notification.destroy
+  def mark_all_as_read
+    current_user.notifications.unread.update_all(read_at: Time.current)
     
     respond_to do |format|
-      format.html { redirect_back(fallback_location: notifications_path, notice: 'Notification removed') }
+      format.html { redirect_back(fallback_location: notifications_path) }
       format.json { render json: { success: true } }
     end
   end

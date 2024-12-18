@@ -134,6 +134,7 @@ class Asset < ApplicationRecord
   end
 
   after_save :check_stock_level
+  after_save :notify_status_change
 
   def available_quantity
     quantity - asset_assignments.where(checked_in_at: nil).count
@@ -183,5 +184,17 @@ class Asset < ApplicationRecord
 
   def age_in_years
     @age_in_years ||= (Date.current - purchase_date).to_f / 365.25
+  end
+
+  def notify_status_change
+    return unless saved_change_to_status?
+    
+    recipients = User.with_role(:admin) + User.with_role(:manager)
+    
+    AssetStatusNotification.with(
+      asset: self,
+      status: status,
+      changed_by: RequestStore.store[:current_user]
+    ).deliver_later(recipients)
   end
 end

@@ -19,6 +19,7 @@ class MaintenanceSchedule < ApplicationRecord
   scope :overdue, -> { where('next_due_at < ?', Time.current) }
 
   after_save :check_and_notify
+  after_save :notify_completion
 
   def self.ransackable_attributes(auth_object = nil)
     ["asset_id", "assigned_to_id", "created_at", "description", "frequency", 
@@ -86,5 +87,16 @@ class MaintenanceSchedule < ApplicationRecord
 
   def overdue?
     next_due_at.present? && next_due_at < Time.current
+  end
+
+  def notify_completion
+    return unless saved_change_to_status? && status == 'completed'
+    
+    recipients = [asset.users.first, assigned_to].compact + User.with_role(:manager)
+    
+    MaintenanceCompletedNotification.with(
+      maintenance_schedule: self,
+      completed_by: RequestStore.store[:current_user]
+    ).deliver_later(recipients)
   end
 end 

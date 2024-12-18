@@ -287,5 +287,32 @@
       <%= yield %>
     </div>
   </main>
+
+  <%= javascript_include_tag "application" %>
+  <script>
+    document.addEventListener('turbo:load', function() {
+      if (typeof $.notify === 'function') {
+        $.notifyDefaults({
+          type: 'info',
+          placement: {
+            from: 'top',
+            align: 'right'
+          },
+          animate: {
+            enter: 'animated fadeInDown',
+            exit: 'animated fadeOutUp'
+          },
+          template: `
+            <div data-notify="container" class="alert alert-{0} alert-with-icon" role="alert">
+              <i class="material-icons" data-notify="icon">notifications</i>
+              <span data-notify="title">{1}</span>
+              <span data-notify="message">{2}</span>
+              <a href="{3}" target="{4}" data-notify="url"></a>
+            </div>
+          `
+        });
+      }
+    });
+  </script>
 </body>
 </html>

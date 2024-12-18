@@ -534,21 +534,11 @@ Doorkeeper.configure do
 
   # Find user for password grant
   resource_owner_from_credentials do |_routes|
-    user = User.find_by(email: params[:email])
-    user if user&.valid_password?(params[:password])
+    user = User.find_for_database_authentication(email: params[:email])
+    if user&.valid_password?(params[:password])
+      user
+    end
   end
-  # 
-  # resource_owner_from_credentials do |routes|
-  #   case params[:grant_type]
-  #   when 'client_credentials'
-  #     # For client credentials flow, return nil since there's no resource owner
-  #     nil
-  #   when 'password'
-  #     # For password flow, authenticate the user
-  #     user = User.find_by(email: params[:email])
-  #     user if user&.valid_password?(params[:password])
-  #   end
-  # end 
 
   # Skip authorization for RFID readers using client credentials
   skip_authorization do |resource_owner, client|
@@ -572,7 +562,7 @@ Doorkeeper.configure do
                       :from_access_token_param,
                       :from_bearer_param
                       
-  access_token_expires_in 1.day
+  access_token_expires_in ENV.fetch('ACCESS_TOKEN_EXPIRES_IN', 2.hours).to_i
   use_refresh_token
   reuse_access_token
 
@@ -584,6 +574,18 @@ Doorkeeper.configure do
 
   after_successful_strategy_response do |request, response|
     Rails.logger.info "OAUTH Strategy Response: #{response.body}"
+  end
+
+  # Configure custom constraints for token grant types
+  grant_flows %w[password refresh_token]
+
+  # Allow CORS requests
+  allow_cors do |cors|
+    cors.allow do |allow|
+      allow.all_origins
+      allow.all_methods
+      allow.all_headers
+    end
   end
 end
 
