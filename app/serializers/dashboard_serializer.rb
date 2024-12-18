@@ -1,8 +1,11 @@
 class DashboardSerializer < ActiveModel::Serializer
-  attributes :total_assets,
-             :assets_in_use,
-             :assets_available,
-             :active_assignments
+  attributes :metrics, :assets_by_status, :assets_by_category, 
+             :assets_by_location, :recent_activities
 
-  has_many :recent_movements, serializer: AssetTrackingEventSerializer
+  def recent_activities
+    ActiveModel::SerializableResource.new(
+      object.recent_activities,
+      each_serializer: AssetTrackingEventSerializer
+    )
+  end
 end 
