@@ -1,6 +1,6 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins ENV.fetch('ALLOWED_ORIGINS', '*').split(',')
+    origins ENV.fetch('ALLOWED_ORIGINS', 'https://asset-pro-d61d98a548ad.herokuapp.com/', 'https://getassetpro.com', 'https://app.getassetpro.com').split(',')
 
     resource '*',
       headers: :any,
