@@ -13,6 +13,8 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
   <%= javascript_importmap_tags %>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -199,15 +201,11 @@
                 <%= current_user.email %> (<%= current_user.role %>)               
               </span>
               <div class="dropdown">
-                <a href="#" class="nav-link" data-bs-toggle="dropdown" aria-expanded="false">
-                  <div class="position-relative">
-                    <span class="material-icons-round">notifications</span>
-                    <% if current_user.notifications.unread.exists? %>
-                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        <%= current_user.notifications.unread.count %>
-                      </span>
-                    <% end %>
-                  </div>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">
+                  <i class="material-icons-round">notifications</i>
+                  <% if current_user.notifications.unread.exists? %>
+                    <span class="notification-indicator"></span>
+                  <% end %>
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end px-2" style="width: 320px;">
@@ -216,7 +214,8 @@
                     <% if current_user.notifications.unread.exists? %>
                       <%= button_to mark_all_as_read_notifications_path, 
                           class: "btn btn-link btn-sm text-secondary p-0 me-2",
-                          method: :post do %>
+                          method: :post,
+                          data: { turbo: true } do %>
                         Mark all read
                       <% end %>
                     <% end %>
@@ -226,7 +225,13 @@
                     <% current_user.notifications.newest_first.limit(5).each do |notification| %>
                       <li>
                         <%= link_to notification.to_notification.url, 
-                            class: "dropdown-item rounded #{'bg-light' unless notification.read_at?}" do %>
+                            class: "dropdown-item rounded #{'bg-light' unless notification.read_at?}",
+                            data: { 
+                              turbo_method: :post,
+                              turbo_frame: "_top",
+                              action: "click->notifications#markAsRead",
+                              notification_id: notification.id
+                            } do %>
                           <div class="d-flex align-items-center py-2">
                             <div class="flex-grow-1 pe-2">
                               <p class="text-sm text-dark mb-0"><%= notification.to_notification.message %></p>
@@ -257,7 +262,7 @@
                     </li>
                   <% end %>
                 </ul>
-              </div>            
+              </div>          
             <% end %>
           </div>
         </div>

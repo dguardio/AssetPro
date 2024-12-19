@@ -33,7 +33,8 @@ class LicensesController < ApplicationController
   def update
     authorize @license
     if @license.update(license_params)
-      redirect_to @license, notice: 'License was successfully updated.'
+      check_license_thresholds
+      redirect_to @license, notice: 'License updated successfully.'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -53,5 +54,17 @@ class LicensesController < ApplicationController
 
   def license_params
     params.require(:license).permit(:name, :license_key, :seats, :expiration_date, :supplier, :cost, :notes, :asset_id)
+  end
+
+  def check_license_thresholds
+    # Check expiration
+    if @license.expires_soon?
+      LicenseExpiringNotification.with(license: @license).deliver_later(@license.assigned_to)
+    end
+
+    # Check seats usage
+    if @license.seats_used_percentage >= 80
+      LicenseNotifier.with(license: @license).seats_threshold_reached
+    end
   end
 end 

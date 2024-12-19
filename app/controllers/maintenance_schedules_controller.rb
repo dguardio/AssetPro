@@ -35,6 +35,7 @@ class MaintenanceSchedulesController < ApplicationController
   def update
     authorize @maintenance_schedule
     if @maintenance_schedule.update(maintenance_schedule_params)
+      notify_maintenance_changes
       redirect_to @maintenance_schedule, notice: 'Maintenance schedule was successfully updated.'
     else
       render :edit, status: :unprocessable_entity
@@ -65,5 +66,17 @@ class MaintenanceSchedulesController < ApplicationController
 
   def maintenance_schedule_params
     params.require(:maintenance_schedule).permit(:title, :status, :description, :frequency, :last_performed_at, :next_due_at, :asset_id, :assigned_to_id, :notes, :completed_date, :last_performed_at)
+  end
+
+  def notify_maintenance_changes
+    if @maintenance_schedule.status_changed? && @maintenance_schedule.completed?
+      @maintenance_schedule.notify_completion
+    end
+
+    if @maintenance_schedule.due_date <= 7.days.from_now
+      AssetNotifier.with(
+        asset: @maintenance_schedule.asset
+      ).maintenance_due
+    end
   end
 end 

@@ -299,3 +299,19 @@ body {
 }
 
 // ... rest of your styles ... 
+
+.notification-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #f5365c;
+  border: 2px solid #fff;
+}
+
+.dropdown-menu {
+  max-height: 400px;
+  overflow-y: auto;
+}

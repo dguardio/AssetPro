@@ -1,0 +1,19 @@
+<div class="content">
+  <div class="card" style="background: var(--success); color: white; padding: 16px; margin: 16px 0;">
+    <h3 style="margin-top: 0;">✓ Maintenance Complete</h3>
+    <p><strong>Asset:</strong> <%= @schedule.asset.name %></p>
+    <p><strong>Completed By:</strong> <%= @completed_by.full_name %></p>
+    <p><strong>Date:</strong> <%= @schedule.completed_at.strftime("%B %d, %Y") %></p>
+  </div>
+
+  <div class="card" style="background: var(--light); padding: 16px; margin: 16px 0;">
+    <h4 style="margin-top: 0;">Maintenance Details</h4>
+    <p><strong>Type:</strong> <%= @schedule.maintenance_type %></p>
+    <% if @schedule.completion_notes.present? %>
+      <p><strong>Notes:</strong> <%= @schedule.completion_notes %></p>
+    <% end %>
+    <p><strong>Next Scheduled:</strong> <%= @schedule.next_due_date&.strftime("%B %d, %Y") || "Not scheduled" %></p>
+  </div>
+
+  <%= link_to "View Full Details", maintenance_schedule_url(@schedule), class: "btn" %>
+</div> 

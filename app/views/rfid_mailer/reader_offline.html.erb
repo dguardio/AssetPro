@@ -1,0 +1,11 @@
+<div class="content">
+  <div class="card" style="background: var(--warning); color: white; padding: 16px; margin: 16px 0;">
+    <h3 style="margin-top: 0;">🔌 Reader Offline</h3>
+    <p>An RFID reader has gone offline:</p>
+    <p><strong>Reader ID:</strong> <%= @reader.serial_number %></p>
+    <p><strong>Location:</strong> <%= @reader.location.name %></p>
+    <p><strong>Last Seen:</strong> <%= @reader.last_seen_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+  </div>
+
+  <%= link_to "View Reader Status", rfid_reader_url(@reader), class: "btn" %>
+</div> 

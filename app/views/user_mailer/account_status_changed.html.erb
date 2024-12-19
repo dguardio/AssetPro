@@ -1,0 +1,18 @@
+<div class="content">
+  <div class="card" style="background: var(--primary); color: white; padding: 16px; margin: 16px 0;">
+    <h3 style="margin-top: 0;">Account Status Update</h3>
+    <p>Hello <%= @user.full_name %>,</p>
+    <p>Your account status has been changed to: <strong><%= @user.status.titleize %></strong></p>
+  </div>
+
+  <div class="card" style="background: var(--light); padding: 16px; margin: 16px 0;">
+    <h4 style="margin-top: 0;">What This Means</h4>
+    <% if @user.active? %>
+      <p>Your account is now active and you can access all assigned features.</p>
+    <% else %>
+      <p>Your account access has been restricted. Please contact your administrator for more information.</p>
+    <% end %>
+  </div>
+
+  <%= link_to "View Account Details", user_url(@user), class: "btn" %>
+</div> 

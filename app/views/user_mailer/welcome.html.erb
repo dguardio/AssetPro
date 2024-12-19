@@ -1,0 +1,19 @@
+<div class="content">
+  <div class="card" style="background: var(--primary); color: white; padding: 16px; margin: 16px 0;">
+    <h3 style="margin-top: 0;">👋 Welcome to Asset Management System</h3>
+    <p>Hello <%= @user.full_name %>,</p>
+    <p>Your account has been created with the following details:</p>
+    <p><strong>Role:</strong> <%= @user.role.titleize %></p>
+  </div>
+
+  <div class="card" style="background: var(--light); padding: 16px; margin: 16px 0;">
+    <h4 style="margin-top: 0;">Next Steps</h4>
+    <ul style="padding-left: 20px;">
+      <li>Complete your profile</li>
+      <li>Set up your notification preferences</li>
+      <li>Review the user guide</li>
+    </ul>
+  </div>
+
+  <%= link_to "Get Started", root_url, class: "btn" %>
+</div> 

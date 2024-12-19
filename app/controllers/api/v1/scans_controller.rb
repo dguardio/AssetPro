@@ -29,6 +29,7 @@ module Api
             last_scanned_at: Time.current
           )
           
+          notify_scan_events
           render json: @tracking_event, 
                  serializer: AssetTrackingEventSerializer,
                  status: :created
@@ -57,6 +58,21 @@ module Api
         unless @current_reader&.active?
           render json: { error: 'Unauthorized RFID reader' }, 
                  status: :unauthorized
+        end
+      end
+
+      def notify_scan_events
+        unless @current_reader&.active?
+          RfidNotifier.with(
+            reader: @current_reader,
+            location: scan_params[:location]
+          ).unauthorized_scan_attempt
+        end
+
+        if @tracking_event.location_id_changed?
+          AssetNotifier.with(
+            asset: @tracking_event.asset
+          ).location_changed
         end
       end
     end

@@ -36,8 +36,11 @@ class AssetsController < ApplicationController
   end
 
   def update
+    previous_assignee = @asset.assigned_to
+    
     authorize @asset
     if @asset.update(asset_params)
+      notify_asset_changes(previous_assignee)
       redirect_to inventory_asset_path(@asset), notice: 'Asset was successfully updated.'
     else
       render :edit
@@ -79,5 +82,31 @@ class AssetsController < ApplicationController
 
   def asset_params
     params.require(:asset).permit(:name, :description, :category_id, :location_id, :status)
+  end
+
+  def notify_asset_changes(previous_assignee)
+    if @asset.saved_change_to_location_id?
+      AssetNotifier.with(asset: @asset).location_changed
+    end
+
+    if @asset.saved_change_to_assigned_to_id?
+      if @asset.assigned_to
+        AssetAssignmentNotification.with(
+          asset_assignment: @asset.current_assignment
+        ).deliver_later(@asset.assigned_to)
+      end
+
+      if previous_assignee
+        AssetNotifier.with(
+          asset: @asset,
+          previous_assignee: previous_assignee
+        ).assignment_removed
+      end
+    end
+
+    if @asset.quantity && @asset.quantity <= @asset.minimum_quantity
+      LowStockNotification.with(asset: @asset)
+        .deliver_later(User.with_role(:manager))
+    end
   end
 end 

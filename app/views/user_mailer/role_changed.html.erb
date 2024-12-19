@@ -1,0 +1,19 @@
+<div class="content">
+  <div class="card" style="background: var(--primary); color: white; padding: 16px; margin: 16px 0;">
+    <h3 style="margin-top: 0;">Role Update</h3>
+    <p>Hello <%= @user.full_name %>,</p>
+    <p>Your role has been updated to: <strong><%= @user.role.titleize %></strong></p>
+  </div>
+
+  <div class="card" style="background: var(--light); padding: 16px; margin: 16px 0;">
+    <h4 style="margin-top: 0;">New Permissions</h4>
+    <p>This role change affects your system access and permissions.</p>
+    <p>Please review the documentation for your new role to understand your updated responsibilities and access levels.</p>
+  </div>
+
+  <%= link_to "View Role Details", user_url(@user), class: "btn" %>
+
+  <p style="color: var(--secondary); font-size: 0.875rem; margin-top: 24px;">
+    If you believe this change was made in error, please contact your system administrator.
+  </p>
+</div> 

@@ -1,0 +1,15 @@
+<div class="content">
+  <div class="card" style="background: var(--danger); color: white; padding: 16px; margin: 16px 0;">
+    <h3 style="margin-top: 0;">⚠️ Security Alert</h3>
+    <p>An unauthorized RFID scan was detected:</p>
+    <p><strong>Location:</strong> <%= @location.name %></p>
+    <p><strong>Time:</strong> <%= @scan.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+  </div>
+
+  <div class="card" style="background: var(--light); padding: 16px; margin: 16px 0;">
+    <h4 style="margin-top: 0;">Action Required</h4>
+    <p>Please investigate this unauthorized scan attempt immediately.</p>
+  </div>
+
+  <%= link_to "View Security Log", security_logs_url, class: "btn" %>
+</div> 
