@@ -25,7 +25,7 @@ module Api
         if @tracking_event.save
           # Update RFID tag's last known location
           rfid_tag.update(
-            last_known_location_id: scan_params[:location_id],
+            # last_known_location_id: scan_params[:location_id],
             last_scanned_at: Time.current
           )
           
