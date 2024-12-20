@@ -49,7 +49,7 @@ module Api
       end
 
       def event_params
-        params.require(:asset_tracking_event).permit(:asset_id, :location_id, :event_type, :notes)
+        params.require(:asset_tracking_event).permit(:asset_id, :location_id, :event_type, :notes, :scanned_by_device_id)
       end
     end
   end

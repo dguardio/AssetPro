@@ -2,7 +2,7 @@ class AssetTrackingEvent < ApplicationRecord
   belongs_to :asset
   belongs_to :location
   belongs_to :asset_assignment, optional: true
-  belongs_to :scanned_by, class_name: 'User'
+  belongs_to :scanned_by, class_name: 'User', optional: true
   belongs_to :previous_location, class_name: 'Location', optional: true
   belongs_to :oauth_application, class_name: 'Doorkeeper::Application', optional: true
   # belongs_to :organization
@@ -43,6 +43,10 @@ class AssetTrackingEvent < ApplicationRecord
   validates :event_type, presence: true
   validates :rfid_number, presence: true
   validates :scanned_at, presence: true
+  #  validate presence of scanned_by or scanned_by_device
+  # validates :scanned_by, presence: true, if: :scanned_by_device.blank?
+  # validates :scanned_by_device, presence: true, if: :scanned_by.blank?
+  validate :validate_scanner_presence
 
   # Ransack configuration
   def self.ransackable_attributes(auth_object = nil)
@@ -97,6 +101,12 @@ class AssetTrackingEvent < ApplicationRecord
       self.sub_organization_id = oauth_application.sub_organization_id
       self.organization_name = oauth_application.organization_name
       self.sub_organization_name = oauth_application.sub_organization_name
+    end
+  end
+
+  def validate_scanner_presence
+    unless scanned_by.present? || scanned_by_device.present?
+      errors.add(:base, 'Must have either a user or device scanner')
     end
   end
 end 

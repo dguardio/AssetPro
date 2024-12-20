@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_13_063334) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_20_044535) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -43,7 +43,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_13_063334) do
   create_table "asset_tracking_events", force: :cascade do |t|
     t.bigint "asset_id", null: false
     t.bigint "location_id", null: false
-    t.bigint "scanned_by_id", null: false
+    t.bigint "scanned_by_id"
     t.string "event_type"
     t.string "rfid_number"
     t.datetime "scanned_at"

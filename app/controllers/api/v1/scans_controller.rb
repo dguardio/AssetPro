@@ -16,25 +16,20 @@ module Api
           location_id: scan_params[:location_id],
           rfid_number: scan_params[:rfid_number],
           event_type: scan_params[:event_type] || 'movement',
-          scanned_by: current_resource_owner,
+          scanned_by: doorkeeper_token.resource_owner_id ? current_resource_owner : nil,
           scanned_by_device: @current_reader,
           scanned_at: Time.current,
           oauth_application: current_application
         )
 
         if @tracking_event.save
-          # Update RFID tag's last known location
-          rfid_tag.update(
-            # last_known_location_id: scan_params[:location_id],
-            last_scanned_at: Time.current
-          )
-          
+          rfid_tag.update(last_scanned_at: Time.current)
           notify_scan_events
           render json: @tracking_event, 
                  serializer: AssetTrackingEventSerializer,
                  status: :created
         else
-          render json: { errors: @tracking_event.errors }, 
+          render json: { errors: @tracking_event.errors.full_messages }, 
                  status: :unprocessable_entity
         end
       end
@@ -42,30 +37,27 @@ module Api
       private
 
       def scan_params
-        params.require(:scan).permit(
-          :rfid_number,
-          :location_id,
-          :event_type,
-          :notes
-        )
+        params.require(:scan).permit(:rfid_number, :location_id, :event_type, :notes, :scanned_by_device_id)
       end
 
       def verify_reader
-        @current_reader = RfidReader.find_by(
-          oauth_application_id: current_application.id
-        )
-        
+        @current_reader = RfidReader.find_by(oauth_application_id: current_application.id)
+        #@current_reader = RfidReader.find(scan_params[:scanned_by_device_id])
+
+
         unless @current_reader&.active?
-          render json: { error: 'Unauthorized RFID reader' }, 
-                 status: :unauthorized
+          render json: { error: 'Unauthorized RFID reader' }, status: :unauthorized
         end
       end
 
       def notify_scan_events
-        unless @current_reader&.active?
+        if @current_reader&.active?
+          # Log successful scan
+          Rails.logger.info("Authorized scan by reader: #{@current_reader.reader_id}")
+        else
           RfidNotifier.with(
             reader: @current_reader,
-            location: scan_params[:location]
+            location: Location.find(scan_params[:location_id])
           ).unauthorized_scan_attempt
         end
 
