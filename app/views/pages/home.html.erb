@@ -1,7 +1,7 @@
 <div class="container homer">
-  <div class="row mt-lg-n6 mt-md-n6 mt-n6 justify-content-center">
-    <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
-      <div class="card auth-card mt-8">
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 mx-auto">
+      <div class="card auth-card mt-4 mt-sm-6 mt-md-8">
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
           <div class="bg-gradient-primary shadow-primary border-radius-lg py-3 pe-1">
             <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">
@@ -9,16 +9,18 @@
             </h4>
           </div>
         </div>
-        <div class="card-body text-center">
-          <p class="mb-4">
+        <div class="card-body text-center p-4">
+          <p class="mb-4 text-sm text-secondary">
             Manage your assets efficiently and effectively.
           </p>
-          <% if user_signed_in? %>
-            <%= link_to "Dashboard", dashboard_path, class: "btn bg-gradient-primary w-100 mb-2" %>
-          <% else %>
-            <%= link_to "Sign In", new_user_session_path, class: "btn bg-gradient-primary w-100 mb-2" %>
-            <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-outline-primary w-100" %>
-          <% end %>
+          <div class="d-grid gap-2">
+            <% if user_signed_in? %>
+              <%= link_to "Dashboard", dashboard_path, class: "btn bg-gradient-primary w-100" %>
+            <% else %>
+              <%= link_to "Sign In", new_user_session_path, class: "btn bg-gradient-primary w-100" %>
+              <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-outline-primary w-100" %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>

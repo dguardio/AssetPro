@@ -562,7 +562,7 @@ Doorkeeper.configure do
                       :from_access_token_param,
                       :from_bearer_param
                       
-  access_token_expires_in ENV.fetch('ACCESS_TOKEN_EXPIRES_IN', 2.hours).to_i
+  access_token_expires_in ENV.fetch('ACCESS_TOKEN_EXPIRES_IN', 5.days).to_i
   use_refresh_token
   reuse_access_token
 

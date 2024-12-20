@@ -55,7 +55,7 @@ Rails.application.routes.draw do
 
       # Supporting Resources
       resources :locations, only: [:index, :show]
-      resources :rfid_tags, only: [:show]
+      resources :rfid_tags, only: [:index, :show, :create, :update]
 
       # Reporting
       get 'dashboard', to: 'dashboard#index'
