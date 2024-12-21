@@ -22,9 +22,9 @@
 
 <body class="g-sidenav-show bg-gray-200" data-controller="sidebar">
   <!-- Sidebar -->
-
-  <aside class="collapse show sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" 
-         id="sidenav-main">
+  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-gradient-dark" 
+         id="sidenav-main" 
+         data-sidebar-target="sidebar">
 
     
     <div class="sidenav-header">
@@ -35,7 +35,7 @@
 
     <hr class="horizontal light mt-0">
 
-    <div class="w-auto h-auto">
+    <div class="collapse navbar-collapse w-auto h-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
         <li class="nav-item">
           <%= link_to dashboard_path, class: "nav-link #{current_page?(dashboard_path) ? 'active' : ''}" do %>
@@ -188,13 +188,11 @@
     <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur">
       <div class="container-fluid py-1 px-3">
         <!-- Animated hamburger button -->
-        <a href="#" class="btn btn-link text-dark px-3 mb-0" 
-                    data-bs-toggle="collapse" 
-                    data-bs-target="#sidenav-main"
-                    aria-expanded="false" 
-                    aria-controls="sidenav-main">
-          <i class="material-icons-round opacity-10">menu</i>
-        </a>
+        <button class="hamburger-button" data-action="click->sidebar#toggle" data-sidebar-target="button">
+          <span class="line"></span>
+          <span class="line"></span>
+          <span class="line"></span>
+        </button>
 
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
