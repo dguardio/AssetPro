@@ -39,12 +39,6 @@ module Api
         end
       end
 
-      def destroy
-        authorize @rfid_tag
-        @rfid_tag.destroy
-        head :no_content
-      end
-
       private
 
       def set_rfid_tag

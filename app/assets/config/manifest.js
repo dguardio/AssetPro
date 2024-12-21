@@ -1,9 +1,6 @@
 //= link_tree ../images
 //= link_directory ../stylesheets .scss
 //= link_directory ../javascripts .js
-//= link_directory ../stylesheets/material-dashboard .css
-//= link_directory ../javascripts/material-dashboard .js
 //= link application.scss
 //= link application.js
 //= link bootstrap.min.js
-//= link_tree ../../../vendor/javascript .js
