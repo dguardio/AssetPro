@@ -2,6 +2,7 @@ class Asset < ApplicationRecord
   include QrCodeable
   include Auditable
   include Importable
+  acts_as_paranoid
   
   belongs_to :category
   belongs_to :location, optional: true

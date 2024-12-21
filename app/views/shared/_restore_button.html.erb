@@ -1,0 +1,8 @@
+<% if record.deleted? && policy(record).restore? %>
+  <%= button_to restore_path, 
+                method: :patch,
+                class: "btn btn-success btn-sm",
+                data: { turbo_confirm: "Are you sure you want to restore this #{record.class.name.underscore.humanize}?" } do %>
+    <i class="material-icons-round">restore</i> Restore
+  <% end %>
+<% end %> 

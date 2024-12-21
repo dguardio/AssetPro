@@ -5,8 +5,9 @@ module Api
       
       def index
         @assets = policy_scope(Asset)
-                 .includes(:location, :rfid_tag)
-                 .order(updated_at: :desc)
+        @assets = params[:show_deleted] ? @assets.with_deleted : @assets
+        @assets = @assets.includes(:location, :rfid_tag)
+                        .order(updated_at: :desc)
         
         render json: @assets, 
                each_serializer: AssetSerializer,
@@ -32,6 +33,28 @@ module Api
                       .includes(:location, :rfid_tag)
         
         render json: @assets, each_serializer: AssetSerializer
+      end
+
+      def destroy
+        @asset = Asset.find(params[:id])
+        authorize @asset
+        
+        if @asset.destroy
+          head :no_content
+        else
+          render json: { errors: @asset.errors }, status: :unprocessable_entity
+        end
+      end
+
+      def restore
+        @asset = Asset.with_deleted.find(params[:id])
+        authorize @asset
+        
+        if @asset.restore
+          render json: @asset, serializer: AssetSerializer
+        else
+          render json: { errors: @asset.errors }, status: :unprocessable_entity
+        end
       end
 
       private

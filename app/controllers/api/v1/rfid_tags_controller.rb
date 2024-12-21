@@ -1,7 +1,18 @@
 module Api
   module V1
     class RfidTagsController < BaseController
-      before_action :set_rfid_tag, only: [:show]
+      before_action :set_rfid_tag, only: [:show, :update, :destroy, :restore]
+
+      def index
+        @rfid_tags = policy_scope(RfidTag)
+        @rfid_tags = params[:show_deleted] ? @rfid_tags.with_deleted : @rfid_tags
+        @rfid_tags = @rfid_tags.includes(asset: :location)
+                              .order(updated_at: :desc)
+        
+        render json: @rfid_tags, 
+               each_serializer: RfidTagSerializer,
+               include: ['asset', 'asset.location']
+      end
 
       def show
         authorize @rfid_tag
@@ -14,47 +25,31 @@ module Api
         end
       end
 
-      def index
-        authorize RfidTag
-        rfid_tags = RfidTag.includes(:asset, :last_known_location, :asset_tracking_events)
-        render json: rfid_tags, each_serializer: RfidTagSerializer
-      end
-
-      def create
-        authorize RfidTag
-        rfid_tag = RfidTag.new(rfid_tag_params)
-        if rfid_tag.save
-          render json: rfid_tag, serializer: RfidTagSerializer, status: :created
+      def destroy
+        authorize @rfid_tag
+        
+        if @rfid_tag.destroy
+          head :no_content
         else
-          render json: rfid_tag.errors, status: :unprocessable_entity
+          render json: { errors: @rfid_tag.errors }, status: :unprocessable_entity
         end
       end
 
-      def update
+      def restore
         authorize @rfid_tag
-        if @rfid_tag.update(rfid_tag_params)
-          render json: @rfid_tag, serializer: RfidTagSerializer, status: :ok
+        
+        if @rfid_tag.restore
+          render json: @rfid_tag, serializer: RfidTagSerializer
         else
-          render json: @rfid_tag.errors, status: :unprocessable_entity
+          render json: { errors: @rfid_tag.errors }, status: :unprocessable_entity
         end
       end
 
       private
 
       def set_rfid_tag
-        @rfid_tag = RfidTag.includes(:asset, :last_known_location, :asset_tracking_events)
-                          .find(params[:id])
-      end
-
-      def rfid_tag_params
-        params.require(:rfid_tag).permit(
-          :rfid_number,
-          :asset_id,
-          :active,
-          :last_known_location_id,
-          :last_scanned_at,
-          :notes
-        )
+        @rfid_tag = RfidTag.with_deleted.find(params[:id])
+        authorize @rfid_tag
       end
     end
   end

@@ -3,16 +3,17 @@ class RfidTagPolicy < ApplicationPolicy
     def resolve
       case user
       when Doorkeeper::Application
-        scope.all
+        scope.with_deleted
       when User
+        base_scope = user.admin? ? scope.with_deleted : scope
         case user.role
         when 'admin', 'manager'
-          scope.all
+          base_scope
         when 'security'
-          scope.joins(:asset).where(assets: { location_id: user.location_id })
+          base_scope.joins(:asset).where(assets: { location_id: user.location_id })
         else
-          scope.joins(asset: :asset_assignments)
-               .where(asset_assignments: { user_id: user.id })
+          base_scope.joins(asset: :asset_assignments)
+                   .where(asset_assignments: { user_id: user.id })
         end
       else
         scope.none
@@ -66,11 +67,20 @@ class RfidTagPolicy < ApplicationPolicy
   end
 
   def destroy?
-    case user
-    when Doorkeeper::Application
+    if user.is_a?(Doorkeeper::Application)
       true
-    when User
-      user.admin?
+    elsif user.admin?
+      true
+    else
+      false
+    end
+  end
+
+  def restore?
+    if user.is_a?(Doorkeeper::Application)
+      true
+    elsif user.admin?
+      true
     else
       false
     end

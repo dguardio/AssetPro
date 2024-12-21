@@ -173,6 +173,8 @@
         <div class="mt-4">
           <%= f.submit "Search", class: 'btn bg-gradient-info' %>
           <%= link_to "Clear", inventory_assets_path, class: 'btn bg-gradient-secondary' %>
+          <%= link_to "Show Deleted", inventory_assets_path(show_deleted: true), class: "btn btn-outline-secondary" unless params[:show_deleted] %>
+          <%= link_to "Hide Deleted", inventory_assets_path, class: "btn btn-outline-secondary" if params[:show_deleted] %>
         </div>
       <% end %>
     </div>

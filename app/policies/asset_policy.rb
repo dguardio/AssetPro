@@ -3,15 +3,13 @@ class AssetPolicy < ApplicationPolicy
     def resolve
       case user
       when Doorkeeper::Application
-        # RFID readers can see all assets
-        scope.all
+        scope.with_deleted
       when User
-        case user.role
-        when 'admin', 'manager'
-          scope.all
-        when 'security'
+        if user.admin? || user.manager?
+          user.admin? ? scope.with_deleted : scope
+        elsif user.security?
           scope.where(location_id: user.location_id)
-        else # regular user
+        else
           scope.joins(:asset_assignments).where(asset_assignments: { user_id: user.id })
         end
       else
@@ -70,5 +68,14 @@ class AssetPolicy < ApplicationPolicy
   def destroy?
     return false if user.is_a?(Doorkeeper::Application)
     user.admin?
+  end
+
+  def restore?
+    case user
+    when User
+      user.admin? || user.manager?
+    else
+      false
+    end
   end
 end 

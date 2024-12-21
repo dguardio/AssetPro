@@ -140,3 +140,5 @@ gem 'rswag-specs'
 gem 'active_model_serializers'
 
 gem 'rack-cors'
+
+gem 'acts_as_paranoid'

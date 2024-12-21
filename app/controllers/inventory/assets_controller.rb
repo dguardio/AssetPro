@@ -6,7 +6,9 @@ module Inventory
     after_action :verify_policy_scoped, only: :index
   
     def index
-      @q = policy_scope(Asset).ransack(params[:q])
+      @q = policy_scope(Asset)
+      @q = params[:show_deleted] ? @q.with_deleted : @q
+      @q = @q.ransack(params[:q])
       @assets = @q.result.includes(:category, :location)
                   .order(params[:sort] || 'created_at DESC')
                   .page(params[:page]).per(10)
@@ -47,8 +49,22 @@ module Inventory
   
     def destroy
       authorize @asset
-      @asset.destroy
-      redirect_to inventory_assets_url, notice: 'Asset was successfully deleted.'
+      if @asset.destroy
+        redirect_to inventory_assets_url, notice: 'Asset was successfully archived.'
+      else
+        redirect_to inventory_assets_url, alert: 'Failed to archive asset.'
+      end
+    end
+  
+    def restore
+      @asset = Asset.with_deleted.find(params[:id])
+      authorize @asset
+      
+      if @asset.restore
+        redirect_to inventory_assets_url, notice: 'Asset was successfully restored.'
+      else
+        redirect_to inventory_assets_url, alert: 'Failed to restore asset.'
+      end
     end
   
     def import

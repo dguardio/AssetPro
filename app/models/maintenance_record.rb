@@ -1,4 +1,6 @@
 class MaintenanceRecord < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :asset
   belongs_to :performed_by, class_name: 'User'
   belongs_to :maintenance_schedule, optional: true

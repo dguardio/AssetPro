@@ -1,4 +1,6 @@
 class RfidTag < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :asset, optional: true
   belongs_to :last_known_location, class_name: 'Location', foreign_key: 'location_id', optional: true
   belongs_to :location, optional: true

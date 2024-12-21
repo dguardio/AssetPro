@@ -1,19 +1,18 @@
-
 class AssetAssignmentPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       case user
       when Doorkeeper::Application
-        # OAuth applications can see assignments for all assets.
-        scope.all
+        scope.with_deleted
       when User
+        base_scope = user.admin? ? scope.with_deleted : scope
         case user.role
         when 'admin', 'manager'
-          scope.all
+          base_scope
         when 'security'
-          scope.joins(:asset).where(assets: { location_id: user.location_id })
+          base_scope.joins(:asset).where(assets: { location_id: user.location_id })
         else
-          scope.where(user: user)
+          base_scope.where(user: user)
         end
       else
         scope.none
@@ -56,6 +55,11 @@ class AssetAssignmentPolicy < ApplicationPolicy
   end
 
   def destroy?
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin? || user.manager?
+  end
+
+  def restore?
     return false if user.is_a?(Doorkeeper::Application)
     user.admin?
   end

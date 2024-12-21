@@ -48,9 +48,20 @@ class AssetsController < ApplicationController
   end
 
   def destroy
+    @asset = Asset.find(params[:id])
     authorize @asset
-    @asset.destroy
-    redirect_to inventory_assets_url, notice: 'Asset was successfully deleted.'
+    
+    if @asset.destroy
+      respond_to do |format|
+        format.html { redirect_to inventory_assets_url, notice: 'Asset was successfully archived.' }
+        format.json { head :no_content }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to inventory_assets_url, alert: 'Failed to archive asset.' }
+        format.json { render json: @asset.errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   def import
@@ -71,6 +82,23 @@ class AssetsController < ApplicationController
     authorize Asset, :export?
     respond_to do |format|
       format.csv { send_data Asset.to_csv, filename: "assets-#{Date.current}.csv" }
+    end
+  end
+
+  def restore
+    @asset = Asset.with_deleted.find(params[:id])
+    authorize @asset
+    
+    if @asset.restore
+      respond_to do |format|
+        format.html { redirect_to assets_url, notice: 'Asset was successfully restored.' }
+        format.json { head :no_content }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_to assets_url, alert: 'Failed to restore asset.' }
+        format.json { render json: @asset.errors, status: :unprocessable_entity }
+      end
     end
   end
 

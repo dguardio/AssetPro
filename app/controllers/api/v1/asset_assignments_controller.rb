@@ -1,18 +1,19 @@
 module Api
   module V1
     class AssetAssignmentsController < BaseController
-      before_action :set_asset_assignment, only: [:show, :update, :check_in, :check_out]
+      before_action :set_asset_assignment, only: [:show, :update, :check_out, :check_in, :destroy, :restore]
 
       def index
         @assignments = policy_scope(AssetAssignment)
-          .includes(:asset, :user, :assigned_by)
-          .order(created_at: :desc)
-          .page(params[:page])
+        @assignments = params[:show_deleted] ? @assignments.with_deleted : @assignments
+        @assignments = @assignments.includes(:asset, :user, :assigned_by)
+                                 .order(created_at: :desc)
+                                 .page(params[:page])
 
-          render json: {
-            data: ActiveModel::SerializableResource.new(@assignments, each_serializer: AssetAssignmentSerializer),
-            meta: pagination_meta(@assignments)
-          }
+        render json: {
+          data: ActiveModel::SerializableResource.new(@assignments, each_serializer: AssetAssignmentSerializer),
+          meta: pagination_meta(@assignments)
+        }
       end
 
       def show
@@ -64,10 +65,31 @@ module Api
         end
       end
 
+      def destroy
+        authorize @asset_assignment
+        
+        if @asset_assignment.destroy
+          head :no_content
+        else
+          render json: { errors: @asset_assignment.errors }, status: :unprocessable_entity
+        end
+      end
+
+      def restore
+        authorize @asset_assignment
+        
+        if @asset_assignment.restore
+          render json: @asset_assignment, serializer: AssetAssignmentSerializer
+        else
+          render json: { errors: @asset_assignment.errors }, status: :unprocessable_entity
+        end
+      end
+
       private
 
       def set_asset_assignment
-        @asset_assignment = AssetAssignment.find(params[:id])
+        @asset_assignment = AssetAssignment.with_deleted.find(params[:id])
+        authorize @asset_assignment
       end
 
       def asset_assignment_params

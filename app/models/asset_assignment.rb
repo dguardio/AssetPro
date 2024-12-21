@@ -1,4 +1,6 @@
 class AssetAssignment < ApplicationRecord
+  acts_as_paranoid
+
   belongs_to :asset
   belongs_to :user 
   belongs_to :assigned_by, class_name: 'User', optional: true

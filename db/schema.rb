@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_20_044535) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_21_030151) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -35,8 +35,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_044535) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "assigned_by_id", null: false
+    t.datetime "deleted_at"
     t.index ["asset_id"], name: "index_asset_assignments_on_asset_id"
     t.index ["assigned_by_id"], name: "index_asset_assignments_on_assigned_by_id"
+    t.index ["deleted_at"], name: "index_asset_assignments_on_deleted_at"
     t.index ["user_id"], name: "index_asset_assignments_on_user_id"
   end
 
@@ -88,8 +90,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_044535) do
     t.date "warranty_expiry_date"
     t.decimal "maintenance_cost_yearly", precision: 10, scale: 2
     t.decimal "insurance_value", precision: 10, scale: 2
+    t.datetime "deleted_at"
     t.index ["asset_code"], name: "index_assets_on_asset_code", unique: true
     t.index ["category_id"], name: "index_assets_on_category_id"
+    t.index ["deleted_at"], name: "index_assets_on_deleted_at"
     t.index ["location_id"], name: "index_assets_on_location_id"
   end
 
@@ -111,6 +115,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_044535) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "parent_id"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_categories_on_deleted_at"
     t.index ["parent_id"], name: "index_categories_on_parent_id"
   end
 
@@ -142,6 +148,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_044535) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_locations_on_deleted_at"
   end
 
   create_table "maintenance_records", force: :cascade do |t|
@@ -154,7 +162,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_044535) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "performed_by_id"
+    t.datetime "deleted_at"
     t.index ["asset_id"], name: "index_maintenance_records_on_asset_id"
+    t.index ["deleted_at"], name: "index_maintenance_records_on_deleted_at"
     t.index ["performed_by_id"], name: "index_maintenance_records_on_performed_by_id"
   end
 
@@ -284,7 +294,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_044535) do
     t.bigint "location_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
     t.index ["asset_id"], name: "index_rfid_tags_on_asset_id"
+    t.index ["deleted_at"], name: "index_rfid_tags_on_deleted_at"
     t.index ["location_id"], name: "index_rfid_tags_on_location_id"
     t.index ["rfid_number"], name: "index_rfid_tags_on_rfid_number"
   end

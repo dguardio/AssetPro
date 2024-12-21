@@ -46,16 +46,21 @@ Rails.application.routes.draw do
       end
 
       # Asset Assignments
-      resources :asset_assignments, only: [:index, :show, :create, :update] do
+      resources :asset_assignments do
         member do
           post :check_out
           post :check_in
+          patch :restore
         end
       end
 
       # Supporting Resources
       resources :locations, only: [:index, :show]
-      resources :rfid_tags, only: [:index, :show, :create, :update]
+      resources :rfid_tags do
+        member do
+          patch :restore
+        end
+      end
 
       # Reporting
       get 'dashboard', to: 'dashboard#index'
@@ -76,16 +81,27 @@ Rails.application.routes.draw do
   namespace :inventory do
     resources :assets do
       resources :maintenance_records
-      resources :rfid_tags, only: [:new, :create]
+      resources :rfid_tags, only: [:new, :create] do
+        member do
+          patch :restore
+        end
+      end
       resources :asset_tracking_events, only: [:index]
       collection do
         post :import
         get :export
         get :download_template
       end
+      member do
+        patch :restore
+      end
     end
   end
-  resources :asset_assignments
+  resources :asset_assignments do
+    member do
+      patch :restore
+    end
+  end
   resources :locations
   resources :categories
   

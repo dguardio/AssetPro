@@ -1,4 +1,6 @@
 class Location < ApplicationRecord
+  acts_as_paranoid
+
   scope :active, -> { where(active: true) }
   has_many :assets, dependent: :restrict_with_error
   has_many :asset_tracking_events, through: :assets

@@ -2,7 +2,9 @@ class AssetAssignmentsController < ApplicationController
   before_action :set_asset_assignment, only: [:show, :edit, :update, :destroy]
 
   def index
-    @q = policy_scope(AssetAssignment).ransack(params[:q])
+    @q = policy_scope(AssetAssignment)
+    @q = params[:show_deleted] ? @q.with_deleted : @q
+    @q = @q.ransack(params[:q])
     @q.sorts = ['created_at desc'] if @q.sorts.empty?
     
     @asset_assignments = @q.result
@@ -47,8 +49,22 @@ class AssetAssignmentsController < ApplicationController
 
   def destroy
     authorize @asset_assignment
-    @asset_assignment.destroy
-    redirect_to asset_assignments_url, notice: 'Asset assignment was successfully deleted.'
+    if @asset_assignment.destroy
+      redirect_to asset_assignments_url, notice: 'Asset assignment was successfully archived.'
+    else
+      redirect_to asset_assignments_url, alert: 'Failed to archive asset assignment.'
+    end
+  end
+
+  def restore
+    @asset_assignment = AssetAssignment.with_deleted.find(params[:id])
+    authorize @asset_assignment
+    
+    if @asset_assignment.restore
+      redirect_to asset_assignments_url, notice: 'Asset assignment was successfully restored.'
+    else
+      redirect_to asset_assignments_url, alert: 'Failed to restore asset assignment.'
+    end
   end
 
   private
