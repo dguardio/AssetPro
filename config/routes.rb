@@ -36,9 +36,10 @@ Rails.application.routes.draw do
       end
 
       # Core Resources
-      resources :assets, only: [:index, :show] do
+      resources :assets do
         member do
           get :history # Shows asset tracking history
+          patch :restore
         end
         collection do
           get :search

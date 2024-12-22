@@ -1,7 +1,9 @@
 module Inventory
   class AssetsController < ApplicationController
+    include AssetParameters
+    
     before_action :authenticate_user!
-    before_action :set_asset, only: [:show, :edit, :update, :destroy]
+    before_action :set_asset, only: [:show, :edit, :update, :destroy, :restore]
     after_action :verify_authorized, except: :index
     after_action :verify_policy_scoped, only: :index
   
@@ -16,6 +18,11 @@ module Inventory
   
     def show
       authorize @asset
+      @depreciation = @asset.calculate_depreciation if @asset.depreciation_rate.present?
+      # Add next maintenance date and handle nil value
+      # Add warranty status and handle nil value
+      @maintenance_due = @asset.next_maintenance 
+      @warranty_status = @asset.warranty_status
     end
   
     def new
@@ -135,11 +142,7 @@ module Inventory
     private
   
     def set_asset
-      @asset = Asset.find(params[:id])
-    end
-  
-    def asset_params
-      params.require(:asset).permit(:name, :description, :category_id, :location_id, :status)
+      @asset = params[:id].present? ? Asset.with_deleted.find(params[:id]) : Asset.new
     end
   end 
 end 

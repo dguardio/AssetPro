@@ -1,12 +1,13 @@
 // Custom bootstrap variables must be set or imported *before* bootstrap
+@import "fonts";
 @import "bootstrap";
-
 // Material Dashboard
 @import "material-dashboard/material-dashboard";
 
 // Your custom styles
 @import "sidebar";
 @import "custom";
+
 
 // Global styles
 body {

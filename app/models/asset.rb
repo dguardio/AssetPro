@@ -110,15 +110,15 @@ class Asset < ApplicationRecord
   end
 
   def next_maintenance
-    maintenance_schedules.upcoming.order(scheduled_date: :asc).first
+    maintenance_schedules.upcoming.order(next_due_at: :asc).first
   end
 
   def warranty_status
-    return 'No Warranty' if warranty_expiry.nil?
+    return 'No Warranty' if warranty_expiry_date.nil?
     
-    if warranty_expiry < Date.current
+    if warranty_expiry_date < Date.current
       'Expired'
-    elsif warranty_expiry < 30.days.from_now
+    elsif warranty_expiry_date < 30.days.from_now
       'Expiring Soon'
     else
       'Active'
@@ -135,7 +135,7 @@ class Asset < ApplicationRecord
   end
 
   after_save :check_stock_level
-  after_save :notify_status_change
+  # after_save :notify_status_change
 
   def available_quantity
     quantity - asset_assignments.where(checked_in_at: nil).count
@@ -187,15 +187,23 @@ class Asset < ApplicationRecord
     @age_in_years ||= (Date.current - purchase_date).to_f / 365.25
   end
 
-  def notify_status_change
-    return unless saved_change_to_status?
+  # def notify_status_change
+  #   return unless saved_change_to_status?
     
-    recipients = User.with_role(:admin) + User.with_role(:manager)
+  #   recipients = User.with_role(:admin) + User.with_role(:manager)
     
-    AssetStatusNotification.with(
-      asset: self,
-      status: status,
-      changed_by: RequestStore.store[:current_user]
-    ).deliver_later(recipients)
-  end
+  #   AssetStatusNotification.with(
+  #     asset: self,
+  #     status: status,
+  #     changed_by: RequestStore.store[:current_user],
+  #     message: {
+  #       title: 'Asset Status Changed',
+  #       body: "The status of #{name} has been changed to #{status}."
+  #     }
+  #   ).deliver_by(:action_cable, message: {
+  #     title: 'Asset Status Changed',
+  #     body: "The status of #{name} has been changed to #{status}.",
+  #     asset_id: id
+  #   }).deliver_later(recipients)
+  # end
 end

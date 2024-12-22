@@ -11,3 +11,6 @@ Rails.application.config.assets.precompile += %w( material-dashboard/* )
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
 Rails.application.config.assets.precompile += %w( application.js application.scss application.css )
+
+Rails.application.config.assets.paths << Rails.root.join('app', 'assets', 'fonts')
+Rails.application.config.assets.precompile += %w( fonts.scss *.ttf )

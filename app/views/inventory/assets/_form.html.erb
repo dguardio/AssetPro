@@ -1,63 +1,164 @@
-  <%= form_with(model: [:inventory, @asset], local: true) do |f| %>
-    <% if @asset.errors.any? %>
-      <div class="alert alert-danger text-white" role="alert">
-        <h6 class="text-white mb-1">
-          <%= pluralize(@asset.errors.count, "error") %> prevented this asset from being saved:
-        </h6>
-        <ul class="mb-0">
-          <% @asset.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
-
-    <div class="row g-4">
-      <div class="col-md-6">
-        <div class="input-group input-group-dynamic <%= @asset.name.present? ? 'is-filled' : '' %>">
-          <%= f.text_field :name, class: 'form-control', placeholder: 'Enter Asset name' %>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="input-group input-group-dynamic <%= @asset.asset_code.present? ? 'is-filled' : '' %>">
-          <%= f.text_field :asset_code, class: 'form-control', placeholder: 'Enter Asset code' %>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="input-group input-group-static mb-4">
-          <%= f.collection_select :category_id, Category.all, :id, :name, 
-              { prompt: 'Select Category' }, 
-              { class: 'form-control' } %>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="input-group input-group-static mb-4">
-          <%= f.collection_select :location_id, Location.all, :id, :name, 
-              { prompt: 'Select Location' }, 
-              { class: 'form-control' } %>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="input-group input-group-static mb-4">
-          <%= f.select :status, Asset.statuses.keys.map { |s| [s.titleize, s] }, 
-              { prompt: 'Select Status' }, 
-              { class: 'form-control' } %>
-        </div>
-      </div>
-
-      <div class="col-12">
-        <div class="input-group input-group-dynamic <%= @asset.description.present? ? 'is-filled' : '' %>">
-          <%= f.text_area :description, rows: 4, class: 'form-control', placeholder: 'Enter Asset description' %>
-        </div>
-      </div>
-    </div>
-
-    <div class="d-flex justify-content-end gap-3 mt-4">
-      <%= link_to 'Cancel', inventory_assets_path, class: 'btn btn-dark-gray' %>
-      <%= f.submit class: 'btn btn-dark' %>
+<%= form_with(model: [:inventory, @asset], local: true) do |f| %>
+  <% if @asset.errors.any? %>
+    <div class="alert alert-danger text-white" role="alert">
+      <h6 class="text-white mb-1">
+        <%= pluralize(@asset.errors.count, "error") %> prevented this asset from being saved:
+      </h6>
+      <ul class="mb-0">
+        <% @asset.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
     </div>
   <% end %>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Basic Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic <%= @asset.name.present? ? 'is-filled' : '' %>">
+            <%= f.text_field :name, class: 'form-control', placeholder: 'Enter Asset name' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic <%= @asset.asset_code.present? ? 'is-filled' : '' %>">
+            <%= f.text_field :asset_code, class: 'form-control', placeholder: 'Enter Asset code' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-static mb-4">
+            <%= f.collection_select :category_id, Category.all, :id, :name, 
+                { prompt: 'Select Category' }, 
+                { class: 'form-control' } %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-static mb-4">
+            <%= f.collection_select :location_id, Location.all, :id, :name, 
+                { prompt: 'Select Location' }, 
+                { class: 'form-control' } %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-static mb-4">
+            <%= f.select :status, Asset.statuses.keys.map { |s| [s.titleize, s] }, 
+                { prompt: 'Select Status' }, 
+                { class: 'form-control' } %>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="input-group input-group-dynamic <%= @asset.description.present? ? 'is-filled' : '' %>">
+            <%= f.text_area :description, rows: 4, class: 'form-control', placeholder: 'Enter Asset description' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Financial Information</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic">
+            <%= f.number_field :purchase_price, class: 'form-control', step: '0.01', placeholder: 'Purchase Price' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-static">
+            <%= f.date_field :purchase_date, class: 'form-control', placeholder: 'Purchase Date' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic">
+            <%= f.number_field :depreciation_rate, class: 'form-control', step: '0.01', placeholder: 'Depreciation Rate (%)' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic">
+            <%= f.number_field :salvage_value, class: 'form-control', step: '0.01', placeholder: 'Salvage Value' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic">
+            <%= f.number_field :useful_life_years, class: 'form-control', placeholder: 'Useful Life (Years)' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic">
+            <%= f.number_field :insurance_value, class: 'form-control', step: '0.01', placeholder: 'Insurance Value' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Inventory Management</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic">
+            <%= f.number_field :quantity, class: 'form-control', placeholder: 'Quantity' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic">
+            <%= f.number_field :minimum_quantity, class: 'form-control', placeholder: 'Minimum Quantity' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-check form-switch">
+            <%= f.check_box :rfid_enabled, class: 'form-check-input', role: 'switch' %>
+            <%= f.label :rfid_enabled, class: 'form-check-label' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Maintenance & Warranty</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="input-group input-group-dynamic">
+            <%= f.number_field :maintenance_cost_yearly, class: 'form-control', step: '0.01', placeholder: 'Yearly Maintenance Cost' %>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="input-group input-group-static">
+            <%= f.date_field :warranty_expiry_date, class: 'form-control', placeholder: 'Warranty Expiry Date' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-end">
+    <%= f.submit class: 'btn bg-gradient-dark' %>
+    <%= link_to 'Cancel', inventory_assets_path, class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

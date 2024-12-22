@@ -11,52 +11,191 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-body">
-      <div class="row g-4">
-        <div class="col-md-6">
-          <div class="mb-4">
-            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset Name</h6>
-            <p class="text-lg mb-0"><%= @asset.name %></p>
-          </div>
-          
-          <div class="mb-4">
-            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset Code</h6>
-            <p class="text-lg mb-0"><%= @asset.asset_code %></p>
-          </div>
-
-          <div class="mb-4">
-            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Status</h6>
-            <span class="badge badge-lg bg-gradient-<%= status_color(@asset.status) %>">
-              <%= @asset.status.titleize %>
-            </span>
-          </div>
+  <div class="row">
+    <!-- Basic Information Card -->
+    <div class="col-12 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Basic Information</h5>
         </div>
-
-        <div class="col-md-6">
-          <div class="mb-4">
-            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Category</h6>
-            <p class="text-lg mb-0"><%= @asset.category&.name %></p>
-          </div>
-
-          <div class="mb-4">
-            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Location</h6>
-            <p class="text-lg mb-0"><%= @asset.location&.name %></p>
-          </div>
-
-          <div class="mb-4">
-            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Created At</h6>
-            <p class="text-lg mb-0"><%= @asset.created_at.strftime("%B %d, %Y") %></p>
-          </div>
-        </div>
-
-        <div class="col-12">
-          <div class="mb-4">
-            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Description</h6>
-            <p class="text-lg mb-0"><%= @asset.description.presence || "No description provided" %></p>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-4">
+                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset Name</h6>
+                <p class="text-lg mb-0"><%= @asset.name %></p>
+              </div>
+              <div class="mb-4">
+                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset Code</h6>
+                <p class="text-lg mb-0"><%= @asset.asset_code %></p>
+              </div>
+              <div class="mb-4">
+                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Category</h6>
+                <p class="text-lg mb-0"><%= @asset.category&.name %></p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-4">
+                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Location</h6>
+                <p class="text-lg mb-0"><%= @asset.location&.name %></p>
+              </div>
+              <div class="mb-4">
+                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Status</h6>
+                <span class="badge badge-sm bg-gradient-<%= status_color(@asset.status) %>">
+                  <%= @asset.status.titleize %>
+                </span>
+              </div>
+              <div class="mb-4">
+                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Description</h6>
+                <p class="text-lg mb-0"><%= @asset.description %></p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Financial Information Card -->
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="mb-0">Financial Information</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Purchase Details</h6>
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0">
+                <tr>
+                  <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Purchase Date</td>
+                  <td><%= @asset.purchase_date&.strftime("%B %d, %Y") %></td>
+                </tr>
+                <tr>
+                  <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Purchase Price</td>
+                  <td><%= number_to_currency(@asset.purchase_price) %></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Depreciation Details</h6>
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0">
+                <tr>
+                  <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Rate</td>
+                  <td><%= number_to_percentage(@asset.depreciation_rate, precision: 2) if @asset.depreciation_rate %></td>
+                </tr>
+                <tr>
+                  <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Useful Life</td>
+                  <td><%= pluralize(@asset.useful_life_years, 'year') if @asset.useful_life_years %></td>
+                </tr>
+                <tr>
+                  <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Salvage Value</td>
+                  <td><%= number_to_currency(@asset.salvage_value) if @asset.salvage_value %></td>
+                </tr>
+                <% if @depreciation %>
+                  <tr>
+                    <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Current Value</td>
+                    <td><%= number_to_currency(@depreciation[:current_value]) %></td>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Insurance Value</h6>
+            <p class="text-lg mb-0"><%= number_to_currency(@asset.insurance_value) if @asset.insurance_value %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Management Card -->
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="mb-0">Inventory Management</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table align-items-center mb-0">
+              <tr>
+                <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Current Quantity</td>
+                <td><%= @asset.quantity %></td>
+              </tr>
+              <tr>
+                <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Minimum Quantity</td>
+                <td><%= @asset.minimum_quantity %></td>
+              </tr>
+              <tr>
+                <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">RFID Enabled</td>
+                <td>
+                  <% if @asset.rfid_enabled? %>
+                    <span class="badge badge-sm bg-gradient-success">Yes</span>
+                  <% else %>
+                    <span class="badge badge-sm bg-gradient-secondary">No</span>
+                  <% end %>
+                </td>
+              </tr>
+              <tr>
+                <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Last Tracked</td>
+                <td><%= @asset.last_tracked_at&.strftime("%B %d, %Y %H:%M") || 'Never' %></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maintenance & Warranty Card -->
+    <div class="col-12 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">Maintenance & Warranty</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-4">
+                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Yearly Maintenance Cost</h6>
+                <p class="text-lg mb-0"><%= number_to_currency(@asset.maintenance_cost_yearly) if @asset.maintenance_cost_yearly %></p>
+              </div>
+              <% if @maintenance_due %>
+                <div class="alert alert-warning">
+                  <i class="material-icons-round">warning</i>
+                  Maintenance is due for this asset
+                </div>
+              <% end %>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-4">
+                <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Warranty Expiry</h6>
+                <p class="text-lg mb-0"><%= @asset.warranty_expiry_date&.strftime("%B %d, %Y") || 'No warranty information' %></p>
+              </div>
+              <% if @warranty_status == :expired %>
+                <div class="alert alert-danger">
+                  <i class="material-icons-round">error</i>
+                  Warranty has expired
+                </div>
+              <% elsif @warranty_status == :expiring_soon %>
+                <div class="alert alert-warning">
+                  <i class="material-icons-round">warning</i>
+                  Warranty expiring soon
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RFID Information Card (if enabled) -->
+    <% if @asset.rfid_enabled? %>
+      <div class="col-12 mb-4">
+        <%= render 'rfid_info' %>
+      </div>
+    <% end %>
   </div>
 </div> 
