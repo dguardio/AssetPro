@@ -18,9 +18,7 @@ module Inventory
   
     def show
       authorize @asset
-      @depreciation = @asset.calculate_depreciation if @asset.depreciation_rate.present?
-      # Add next maintenance date and handle nil value
-      # Add warranty status and handle nil value
+      @depreciation = @asset.current_value
       @maintenance_due = @asset.next_maintenance 
       @warranty_status = @asset.warranty_status
     end

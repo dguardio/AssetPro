@@ -27,14 +27,14 @@
       </dl>
 
       <%= link_to 'Remove RFID Tag', 
-          asset_rfid_tag_path(@asset), 
+          inventory_asset_rfid_tag_path(@asset), 
           method: :delete,
           data: { confirm: 'Are you sure?' },
           class: 'btn btn-danger' if policy(@asset.rfid_tag).destroy? %>
     <% else %>
       <p>No RFID tag assigned.</p>
       <%= link_to 'Assign RFID Tag', 
-          new_asset_rfid_tag_path(@asset), 
+          new_inventory_asset_rfid_tag_path(@asset), 
           class: 'btn btn-primary' if policy(RfidTag.new(asset: @asset)).create? %>
     <% end %>
   </div>
