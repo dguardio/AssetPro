@@ -57,6 +57,7 @@ Rails.application.routes.draw do
 
       # Supporting Resources
       resources :locations, only: [:index, :show]
+      resources :categories
       resources :rfid_tags do
         member do
           patch :restore
