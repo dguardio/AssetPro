@@ -25,6 +25,27 @@ module Api
         end
       end
 
+      def create
+        @rfid_tag = RfidTag.new(rfid_tag_params)
+        authorize @rfid_tag
+        
+        if @rfid_tag.save
+          render json: @rfid_tag, serializer: RfidTagSerializer, status: :created
+        else
+          render json: { errors: @rfid_tag.errors }, status: :unprocessable_entity
+        end
+      end
+
+      def update
+        authorize @rfid_tag
+        
+        if @rfid_tag.update(rfid_tag_params)
+          render json: @rfid_tag, serializer: RfidTagSerializer, status: :ok
+        else
+          render json: { errors: @rfid_tag.errors }, status: :unprocessable_entity
+        end
+      end
+
       def destroy
         authorize @rfid_tag
         
@@ -50,6 +71,10 @@ module Api
       def set_rfid_tag
         @rfid_tag = RfidTag.with_deleted.find(params[:id])
         authorize @rfid_tag
+      end
+
+      def rfid_tag_params
+        params.require(:rfid_tag).permit(:rfid_number, :active, :asset_id, :location_id)
       end
     end
   end
