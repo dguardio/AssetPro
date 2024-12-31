@@ -142,3 +142,5 @@ gem 'active_model_serializers'
 gem 'rack-cors'
 
 gem 'acts_as_paranoid'
+
+gem 'loading_screen', '~> 0.2.3'

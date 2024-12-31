@@ -11,11 +11,14 @@
   <!-- Fonts and icons -->  
   
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= loading_screen style: :cube_grid, color: '#4CAF50', background: 'rgba(26, 32, 53, 0.9)', text: 'Loading...' %>
+
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
   <%= javascript_importmap_tags %>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body class="g-sidenav-show bg-gray-200" data-controller="sidebar">
@@ -314,6 +317,50 @@
             </div>
           `
         });
+      }
+    });
+  </script> 
+
+  <script>
+    window.addEventListener('load', function() {
+      const loadingScreen = document.querySelector('.loading_screen-spinner');
+      // alert('Loading screen element: ' + (loadingScreen ? 'found' : 'not found'));
+      
+      if (!loadingScreen) {
+        console.error('Loading screen element not found');
+        return;
+      }
+
+      const body = document.body;
+      let isLoading = true;
+      
+      function hideLoadingScreen() {
+        console.log('Hiding loading screen');
+        isLoading = false;
+        loadingScreen.style.cssText = 'display: none !important; z-index: -1 !important;';
+        body.style.overflow = '';
+      }
+
+      function showLoadingScreen() {
+        console.log('Showing loading screen');
+        isLoading = true;
+        loadingScreen.style.cssText = 'display: flex !important; z-index: 99999 !important;';
+        body.style.overflow = 'hidden';
+      }
+      
+      if (loadingScreen && isLoading) {
+        console.log('Initial state:', loadingScreen.style.display, loadingScreen.style.zIndex);
+        hideLoadingScreen();
+        console.log('After hide:', loadingScreen.style.display, loadingScreen.style.zIndex);
+
+        document.addEventListener('turbo:before-visit', showLoadingScreen);
+        document.addEventListener('turbo:load', hideLoadingScreen);
+
+        setTimeout(() => {
+          if (isLoading) {
+            hideLoadingScreen();
+          }
+        }, 5000);
       }
     });
   </script>
