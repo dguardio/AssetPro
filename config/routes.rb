@@ -83,7 +83,7 @@ Rails.application.routes.draw do
   namespace :inventory do
     resources :assets do
       resources :maintenance_records
-      resources :rfid_tags, only: [:new, :create] do
+      resources :rfid_tags, only: [:new, :create, :destroy] do
         member do
           patch :restore
         end

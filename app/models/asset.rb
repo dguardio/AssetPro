@@ -9,12 +9,14 @@ class Asset < ApplicationRecord
   has_many :asset_assignments, dependent: :destroy
   has_many :users, through: :asset_assignments
   has_many :maintenance_records, dependent: :destroy
-  has_one :rfid_tag, dependent: :destroy
+  has_one :rfid_tag, dependent: :nullify
   has_many :asset_tracking_events, dependent: :destroy
   has_many :maintenance_schedules
   has_many :licenses
   has_many :audit_logs, as: :auditable, dependent: :destroy
 
+
+  before_destroy :cleanup_rfid_tag
 
   validates :name, presence: true
   validates :status, presence: true
@@ -206,4 +208,14 @@ class Asset < ApplicationRecord
   #     asset_id: id
   #   }).deliver_later(recipients)
   # end
+  
+  def cleanup_rfid_tag
+    if rfid_tag.present?
+      rfid_tag.update!(
+        asset_id: nil,
+        active: false
+      )
+      update_column(:rfid_enabled, false)
+    end
+  end
 end
