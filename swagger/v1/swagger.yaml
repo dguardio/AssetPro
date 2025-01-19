@@ -1671,6 +1671,39 @@
           }
         }
       }
+    },
+    "/api/v1/check-version": {
+      "get": {
+        "summary": "Check for latest firmware version",
+        "tags": [
+          "Updates"
+        ],
+        "responses": {
+          "200": {
+            "description": "Latest version information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string",
+                      "description": "Latest firmware version"
+                    },
+                    "url": {
+                      "type": "string",
+                      "description": "Download URL for the update file"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No updates available"
+          }
+        }
+      }
     }
   },
   "servers": [

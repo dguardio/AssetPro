@@ -1,11 +1,17 @@
 .auth-layout {
   .page-header {
-    background-size: cover;
-    // background-position: center;
-    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     margin: 0;
     padding: 0;
+    
+    @media (max-width: 576px) {
+      background-position: 70% center;
+    }
   }
 
   body, html {
@@ -24,20 +30,29 @@
         color: rgba(255, 255, 255, 1) !important;
       }
     }
+
+    @media (max-width: 576px) {
+      position: relative !important;
+      margin-top: 2rem;
+    }
   }
 
-  .container .homer{
+  .container.homer {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    margin-top: 100px;
-    padding-top: 100px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    
+    @media (max-width: 576px) {
+      margin-top: 0;
+      padding-top: 2rem;
+    }
   }
   
   .auth-card {
     backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
     background-color: rgba(255, 255, 255, 0.75);
     border-radius: 12px;
     border: 1px solid rgba(209, 213, 219, 0.3);

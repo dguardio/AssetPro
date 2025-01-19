@@ -36,29 +36,32 @@
         </div>
       <% end %>
 
-      <div class="page-header align-items-start min-vh-100" 
+      <div class="page-header min-vh-100 position-relative" 
            style="background-image: url('<%= asset_path('auth-bg.jpg') %>');">
         <span class="mask bg-gradient-dark opacity-6"></span>
         
-        <!-- Optional Logo Section -->
-        <div class="container mb-4">
+        <!-- Logo Section - Always at top -->
+        <div class="container position-relative z-index-2">
           <div class="row justify-content-center">
-            <div class="col-lg-4 col-md-8 col-12 mx-auto text-center">
+            <div class="col-12 text-center mt-4">
               <%= link_to root_path, class: "text-decoration-none" do %>
-                <h1 class="text-white mt-5" style="font-weight: bold; font-size: 2rem;">Asset Pro</h1>
+                <h1 class="text-white display-4 fw-bold mb-0">Asset Pro</h1>
               <% end %>
             </div>
           </div>
         </div>
 
-        <%= yield %>
+        <!-- Content Section -->
+        <div class="container position-relative z-index-2 d-flex flex-column justify-content-center flex-grow-1">
+          <%= yield %>
+        </div>
 
         <!-- Footer -->
-        <footer class="footer position-absolute bottom-2 py-2 w-100">
+        <footer class="footer position-absolute w-100 bottom-0 py-3 py-sm-4">
           <div class="container">
-            <div class="row align-items-center justify-content-center">
-              <div class="col-12 col-md-6 my-auto">
-                <div class="copyright text-center text-sm text-white">
+            <div class="row justify-content-center">
+              <div class="col-12 col-md-6">
+                <div class="copyright text-center text-white text-sm">
                   © <%= Time.current.year %> Asset Pro. All rights reserved.
                 </div>
               </div>

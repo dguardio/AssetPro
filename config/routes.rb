@@ -74,6 +74,8 @@ Rails.application.routes.draw do
           post :ping
         end
       end
+
+      get 'check-version', to: 'updates#check_version'
     end
   end
 
