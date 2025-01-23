@@ -1,6 +1,6 @@
 class LicenseNotifier < ApplicationNotifier
   deliver_by :email, mailer: 'LicenseMailer'
-  deliver_by :database
+  # deliver_by :database
 
   def license_expiring
     # Notify 30 days before expiration

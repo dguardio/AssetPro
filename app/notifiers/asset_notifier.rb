@@ -1,6 +1,6 @@
 class AssetNotifier < ApplicationNotifier
   deliver_by :email, mailer: 'AssetMailer'
-  deliver_by :database
+  # deliver_by :database
 
   def maintenance_due
     deliver(params[:asset].assigned_to)

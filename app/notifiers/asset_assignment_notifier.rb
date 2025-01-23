@@ -3,7 +3,7 @@
 # AssetAssignmentNotifier.with(record: @post, message: "New post").deliver(User.all)
 
 class AssetAssignmentNotifier < Noticed::Event
-  deliver_by :database
+  # deliver_by :database
   deliver_by :email do |config|
     config.mailer = "AssetAssignmentMailer"
     config.method = :notification_email

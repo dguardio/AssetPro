@@ -1,6 +1,6 @@
 class ApplicationNotification < Noticed::Base
   # Common delivery methods for all notifications
-  deliver_by :database
+  # deliver_by :database
   deliver_by :action_cable,
     channel: "NotificationChannel",
     stream: :custom_stream,

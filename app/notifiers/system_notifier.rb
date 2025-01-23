@@ -1,6 +1,6 @@
 class SystemNotifier < ApplicationNotifier
   deliver_by :email, mailer: 'SystemMailer'
-  deliver_by :database
+  # deliver_by :database
 
   def backup_completed
     deliver(User.with_role(:admin))

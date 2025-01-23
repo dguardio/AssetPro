@@ -1,6 +1,6 @@
 class UserNotifier < ApplicationNotifier
   deliver_by :email, mailer: 'UserMailer'
-  deliver_by :database
+  # deliver_by :database
 
   def welcome
     deliver(params[:user])

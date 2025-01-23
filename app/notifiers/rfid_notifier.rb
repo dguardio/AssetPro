@@ -1,6 +1,6 @@
 class RfidNotifier < ApplicationNotifier
   deliver_by :email, mailer: 'RfidMailer'
-  deliver_by :database
+  # deliver_by :database
 
   def unauthorized_scan_attempt
     deliver(User.with_role(:security))
