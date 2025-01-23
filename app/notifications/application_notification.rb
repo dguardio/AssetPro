@@ -1,9 +1,10 @@
 class ApplicationNotification < Noticed::Base
-  # Delivery methods
+  # Common delivery methods for all notifications
   deliver_by :database
   deliver_by :action_cable,
-    channel: "NotificationsChannel",
-    stream: :notification_stream
+    channel: "NotificationChannel",
+    stream: :custom_stream,
+    message: :notification_message
 
   # I18n helper
   def self.t(key, **options)

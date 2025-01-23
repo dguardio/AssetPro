@@ -173,6 +173,62 @@ available_assets = assets.select { |a| a.status == 'available' }
   )
 end
 
+# Create asset requests
+puts "Creating asset requests..."
+manager = users.find { |u| u.has_role?(:manager) }
+available_assets = Asset.where(status: 'available')
+
+20.times do
+  # Only use available assets for requests
+  asset = available_assets.sample
+  next unless asset
+  
+  user = users.sample
+  
+  # Calculate request dates that make sense
+  base_date = Date.today + rand(1..30).days
+  requested_from = base_date
+  requested_until = requested_from + rand(1..14).days
+  
+  begin
+    request = AssetRequest.new(
+      user: user,
+      asset: asset,
+      purpose: ["Development work", "Testing", "Client demo", "Training", "Backup device"].sample,
+      requested_from: requested_from,
+      requested_until: requested_until,
+      status: ['pending', 'approved', 'rejected', 'cancelled'].sample
+    )
+    
+    # Skip notifications during seeding
+    request.define_singleton_method(:notify_managers) { }
+    request.define_singleton_method(:notify_status_change) { }
+    
+    request.save!
+    
+    # Add review details for non-pending requests
+    if request.status != 'pending'
+      request.update!(
+        reviewed_by: manager,
+        reviewed_at: Time.current,
+        rejection_reason: request.rejected? ? "Asset unavailable during requested period" : nil
+      )
+    end
+    
+    # If request is approved, mark asset as in_use
+    if request.approved?
+      asset.update!(status: 'in_use')
+      available_assets = available_assets.where.not(id: asset.id)
+    end
+  rescue ActiveRecord::RecordInvalid => e
+    puts "Skipping invalid request: #{e.message}"
+    next
+  end
+end
+
+puts "Created #{AssetRequest.count} asset requests"
+
+
 # Create maintenance schedules (30 schedules)
 puts "Creating maintenance schedules..."
 30.times do

@@ -1,0 +1,84 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Asset Request Details</h4>
+    <div class="d-flex gap-3">
+      <% if policy(@asset_request).approve? && @asset_request.pending? %>
+        <%= button_to approve_asset_request_path(@asset_request), method: :post, class: 'btn bg-gradient-success mb-0' do %>
+          <i class="material-icons-round text-sm">check</i>&nbsp;Approve Request
+        <% end %>
+        
+        <button type="button" class="btn bg-gradient-danger mb-0" data-bs-toggle="modal" data-bs-target="#rejectModal">
+          <i class="material-icons-round text-sm">close</i>&nbsp;Reject Request
+        </button>
+      <% end %>
+      <%= link_to asset_requests_path, class: 'btn bg-gradient-dark mb-0' do %>
+        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Requests
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset</h6>
+            <p class="text-lg mb-0"><%= @asset_request.asset.name %></p>
+          </div>
+          
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Requested By</h6>
+            <p class="text-lg mb-0"><%= @asset_request.user.email %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Status</h6>
+            <span class="badge badge-sm bg-gradient-<%= request_status_color(@asset_request.status) %>">
+              <%= @asset_request.status.titleize %>
+            </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Requested Period</h6>
+            <p class="text-lg mb-0">
+              From: <%= @asset_request.requested_from.strftime("%B %d, %Y %I:%M %p") %><br>
+              Until: <%= @asset_request.requested_until.strftime("%B %d, %Y %I:%M %p") %>
+            </p>
+          </div>
+
+          <% if @asset_request.reviewed_by.present? %>
+            <div class="mb-4">
+              <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Reviewed By</h6>
+              <p class="text-lg mb-0">
+                <%= @asset_request.reviewed_by.email %><br>
+                <small class="text-muted">
+                  <%= @asset_request.reviewed_at.strftime("%B %d, %Y %I:%M %p") %>
+                </small>
+              </p>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="col-12">
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Purpose</h6>
+            <p class="text-lg mb-0"><%= @asset_request.purpose %></p>
+          </div>
+        </div>
+
+        <% if @asset_request.rejection_reason.present? %>
+          <div class="col-12">
+            <div class="mb-4">
+              <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Rejection Reason</h6>
+              <p class="text-lg mb-0"><%= @asset_request.rejection_reason %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'reject_modal', asset_request: @asset_request %> 

@@ -1,0 +1,177 @@
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Asset Requests</h4>
+    <div class="d-flex gap-2">  
+      <%= link_to new_asset_request_path, class: 'btn bg-gradient-dark' do %>
+        <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New Asset Request
+      <% end %>
+    </div>
+  </div>  
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= search_form_for @q do |f| %>
+        <div class="row g-4">
+          <div class="col-md-3">
+            <div class="input-group input-group-dynamic">
+              <%= f.search_field :asset_name_cont, placeholder: 'Search by Asset', class: 'form-control' %>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group input-group-dynamic">
+              <%= f.search_field :status_eq, placeholder: 'Status', class: 'form-control' %>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group input-group-static">
+              <%= f.date_field :requested_from_gteq, class: 'form-control' %>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <%= f.submit "Search", class: 'btn bg-gradient-info' %>
+          <%= link_to "Clear", asset_requests_path, class: 'btn bg-gradient-secondary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive p-0">
+      <table class="table table-striped align-items-center mb-0">
+        <thead>
+          <tr>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Asset</th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Requested By</th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+              <%= sort_link(@q, :requested_from, "Requested From") %>
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+              <%= sort_link(@q, :status, "Status") %>
+            </th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @asset_requests.each do |request| %>
+            <tr>
+              <td>
+                <div class="d-flex px-2 py-1">
+                  <div class="d-flex flex-column justify-content-center">
+                    <h6 class="mb-0 text-sm"><%= request.asset.name %></h6>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <p class="text-xs font-weight-bold mb-0"><%= request.user.email %></p>
+              </td>
+              <td>
+                <p class="text-xs font-weight-bold mb-0">
+                  <%= request.requested_from.strftime("%B %d, %Y") %>
+                </p>
+              </td>
+              <td>
+                <span class="badge badge-sm bg-gradient-<%= request_status_color(request.status) %>">
+                  <%= request.status.titleize %>
+                </span>
+              </td>
+              <td>
+                <div class="d-flex gap-2">
+                  <%= link_to asset_request_path(request), class: "btn btn-link text-secondary mb-0" do %>
+                    <i class="material-icons-round">visibility</i>
+                  <% end %>
+                  
+                  <% if policy(request).approve? && request.pending? %>
+                    <%= button_to approve_asset_request_path(request), method: :post, class: "btn btn-link text-success mb-0" do %>
+                      <i class="material-icons-round">check</i>
+                    <% end %>
+                    
+                    <% if policy(request).reject? && request.pending? %>
+                        <button type="button" 
+                                class="btn btn-link text-danger mb-0" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#rejectModal_<%= request.id %>">
+                        <i class="material-icons-round">close</i>
+                        </button>
+                    <% end %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-footer px-3 border-0">
+      <div class="d-flex justify-content-between align-items-center">
+        <%= paginate @asset_requests %>
+      </div>
+    </div>
+  </div>
+
+<!-- Reject Modals -->
+  <% @asset_requests.each do |request| %>
+    <%= render 'reject_modal', asset_request: request %>
+  <% end %>
+</div> 
+
+<style>
+  .modal-backdrop {
+    display: none;
+  }
+  
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-dialog {
+    margin: 1.75rem auto;
+  }
+</style>
+
+<% content_for :page_scripts do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Handle all reject forms
+      document.querySelectorAll('[id^="rejectForm_"]').forEach(form => {
+        const modalElement = form.closest('.modal');
+        
+        // Initialize modal without backdrop
+        const modal = new bootstrap.Modal(modalElement, {
+          backdrop: false
+        });
+
+        form.addEventListener('submit', function(event) {
+          event.preventDefault();
+          
+          fetch(this.action, {
+            method: 'POST',
+            body: new FormData(this),
+            headers: {
+              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+            },
+            credentials: 'same-origin'
+          }).then(response => {
+            if (response.ok) {
+              modal.hide();
+              window.location.reload();
+            } else {
+              response.json().then(data => {
+                alert(data.errors || 'An error occurred while rejecting the request.');
+              });
+            }
+          }).catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while rejecting the request.');
+          });
+        });
+
+        // Clean up modal on hide
+        modalElement.addEventListener('hidden.bs.modal', function() {
+          document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        });
+      });
+    });
+  </script>
+<% end %>

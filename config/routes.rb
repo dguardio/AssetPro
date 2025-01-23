@@ -76,6 +76,13 @@ Rails.application.routes.draw do
       end
 
       get 'check-version', to: 'updates#check_version'
+
+      resources :asset_requests do
+        member do
+          post :approve
+          post :reject
+        end
+      end
     end
   end
 
@@ -172,6 +179,13 @@ Rails.application.routes.draw do
   resources :rfid_readers do
     member do
       patch :toggle_active
+    end
+  end
+
+  resources :asset_requests do
+    member do
+      post :approve
+      post :reject
     end
   end
 

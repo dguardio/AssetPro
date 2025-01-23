@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_21_030151) do
+ActiveRecord::Schema[7.0].define(version: 2025_01_22_221354) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,25 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_21_030151) do
     t.index ["assigned_by_id"], name: "index_asset_assignments_on_assigned_by_id"
     t.index ["deleted_at"], name: "index_asset_assignments_on_deleted_at"
     t.index ["user_id"], name: "index_asset_assignments_on_user_id"
+  end
+
+  create_table "asset_requests", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "asset_id", null: false
+    t.string "status", default: "pending"
+    t.text "purpose"
+    t.datetime "requested_from"
+    t.datetime "requested_until"
+    t.text "rejection_reason"
+    t.bigint "reviewed_by_id"
+    t.datetime "reviewed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+    t.index ["asset_id"], name: "index_asset_requests_on_asset_id"
+    t.index ["deleted_at"], name: "index_asset_requests_on_deleted_at"
+    t.index ["reviewed_by_id"], name: "index_asset_requests_on_reviewed_by_id"
+    t.index ["user_id"], name: "index_asset_requests_on_user_id"
   end
 
   create_table "asset_tracking_events", force: :cascade do |t|
@@ -345,6 +364,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_21_030151) do
   add_foreign_key "asset_assignments", "assets"
   add_foreign_key "asset_assignments", "users"
   add_foreign_key "asset_assignments", "users", column: "assigned_by_id"
+  add_foreign_key "asset_requests", "assets"
+  add_foreign_key "asset_requests", "users"
+  add_foreign_key "asset_requests", "users", column: "reviewed_by_id"
   add_foreign_key "asset_tracking_events", "asset_assignments"
   add_foreign_key "asset_tracking_events", "assets"
   add_foreign_key "asset_tracking_events", "locations"

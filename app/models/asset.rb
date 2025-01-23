@@ -14,6 +14,7 @@ class Asset < ApplicationRecord
   has_many :maintenance_schedules
   has_many :licenses
   has_many :audit_logs, as: :auditable, dependent: :destroy
+  has_many :asset_requests, dependent: :destroy
 
 
   before_destroy :cleanup_rfid_tag

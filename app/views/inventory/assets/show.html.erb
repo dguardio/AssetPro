@@ -8,6 +8,11 @@
       <%= link_to inventory_assets_path, class: 'btn bg-gradient-dark mb-0' do %>
         <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Assets
       <% end %>
+      <% if policy(AssetRequest.new).create? && @asset.available? %>
+        <%= link_to new_asset_request_path(asset_id: @asset.id), class: 'btn bg-gradient-info mb-0' do %>
+          <i class="material-icons-round text-sm">schedule</i>&nbsp;Request Asset
+        <% end %>
+      <% end %>
     </div>
   </div>
 
