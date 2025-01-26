@@ -125,16 +125,12 @@ class AssetsController < ApplicationController
       end
 
       if previous_assignee
-        AssetNotifier.with(
-          asset: @asset,
-          previous_assignee: previous_assignee
-        ).assignment_removed
+        AssetNotifier.assignment_removed(@asset, previous_assignee)
       end
     end
 
     if @asset.quantity && @asset.quantity <= @asset.minimum_quantity
-      LowStockNotification.with(asset: @asset)
-        .deliver_later(User.with_role(:manager))
+      LowStockNotifier.minimum_reached(@asset)
     end
   end
 end 

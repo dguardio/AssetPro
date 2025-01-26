@@ -5,7 +5,7 @@ module Api
       skip_before_action :verify_scope, only: [:check_version]
       # skip_before_action :verify_authenticity_token, only: [:check_version]
 
-
+      # Check version for Hardware updates
       def check_version
         updates_path = Rails.public_path.join('updates')
         
@@ -32,6 +32,26 @@ module Api
           end
         else
           render json: { error: 'Updates directory not found' }, status: :not_found
+        end
+      end
+
+      # Check version for Mobile updates
+      def check_mobile_version
+        # TODO: Implement mobile version check
+        # Check the updates folder for a single .apk file
+        # Get the version from the file name
+        # Return the version and the url to the apk file
+        updates_path = Rails.public_path.join('updates')
+        # There should only be one apk file in the updates folder
+        apk_files = Dir.glob("#{updates_path}/*.apk")
+        if apk_files.any?
+          version = File.basename(apk_files.first, '.apk').split('_').last
+          file_name = File.basename(apk_files.first)
+          render json: {
+            version_code: version,
+            version_name: version,
+            apk_url: "#{request.base_url}/updates/#{file_name}"
+          }
         end
       end
     end

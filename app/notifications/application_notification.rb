@@ -1,4 +1,4 @@
-class ApplicationNotification < Noticed::Base
+class ApplicationNotification < Noticed::Event
   # Common delivery methods for all notifications
   # deliver_by :database
   deliver_by :action_cable,

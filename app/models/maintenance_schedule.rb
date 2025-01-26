@@ -91,12 +91,6 @@ class MaintenanceSchedule < ApplicationRecord
 
   def notify_completion
     return unless saved_change_to_status? && status == 'completed'
-    
-    recipients = [asset.users.first, assigned_to].compact + User.with_role(:manager)
-    
-    MaintenanceCompletedNotification.with(
-      maintenance_schedule: self,
-      completed_by: RequestStore.store[:current_user]
-    ).deliver_later(recipients)
+    MaintenanceDueNotifier.maintenance_completed(self)
   end
 end 

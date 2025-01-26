@@ -31,6 +31,16 @@ class AssetRequest < ApplicationRecord
     ["asset", "user", "reviewed_by"]
   end
 
+  def notify_managers
+    User.with_role(:manager).each do |manager|
+      AssetRequestNotifier.new_request(self).deliver_later(manager)
+    end
+  end
+
+  def notify_status_change
+    AssetRequestNotifier.status_changed(self)
+  end  
+
   private
 
   def valid_date_range
@@ -73,13 +83,4 @@ class AssetRequest < ApplicationRecord
     end
   end
 
-  def notify_managers
-    User.with_role(:manager).each do |manager|
-      AssetRequestNotification.with(asset_request: self).deliver_later(manager)
-    end
-  end
-
-  def notify_status_change
-    AssetRequestStatusNotification.with(asset_request: self).deliver_later(user)
-  end
 end 

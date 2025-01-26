@@ -153,11 +153,11 @@ class Asset < ApplicationRecord
   def check_stock_level
     return unless should_notify_stock_level?
     
-    recipients = User.admins
-
-    LowStockNotification.with(
-      asset: self
-    ).deliver_later(recipients)
+    if available_quantity <= 0
+      LowStockNotifier.out_of_stock(self)
+    elsif available_quantity <= minimum_quantity
+      LowStockNotifier.minimum_reached(self)
+    end
   end
 
   def should_notify_stock_level?
@@ -217,6 +217,7 @@ class Asset < ApplicationRecord
         active: false
       )
       update_column(:rfid_enabled, false)
+      RfidNotifier.tag_deactivated(self)
     end
   end
 end
