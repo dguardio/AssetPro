@@ -37,12 +37,12 @@ module Api
       private
 
       def scan_params
-        params.require(:scan).permit(:rfid_number, :location_id, :event_type, :notes, :scanned_by_device_id)
+        params.require(:scan).permit(:rfid_number, :location_id, :event_type, :notes, :scanned_by_device_id, :dev_id)
       end
 
       def verify_reader
-        @current_reader = RfidReader.find_by(oauth_application_id: current_application.id)
-        #@current_reader = RfidReader.find(scan_params[:scanned_by_device_id])
+        # @current_reader = RfidReader.find_by(oauth_application_id: current_application.id)
+        @current_reader = RfidReader.find_by(reader_id: scan_params[:dev_id]) ||RfidReader.find_by(id: scan_params[:scanned_by_device_id])
 
 
         unless @current_reader&.active?
