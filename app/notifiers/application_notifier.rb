@@ -1,8 +1,8 @@
-class ApplicationNotifier < Noticed::Base
+class ApplicationNotifier < Noticed::Event
   deliver_by :action_cable do |config|
     config.channel = "NotificationChannel"
     config.stream = :notification_stream
-    config.format = :to_action_cable
+    config.message = :to_action_cable
   end
 
   def notification_stream

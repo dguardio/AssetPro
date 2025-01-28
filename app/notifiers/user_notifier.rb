@@ -1,9 +1,12 @@
 class UserNotifier < ApplicationNotifier
-  deliver_by :email, mailer: 'UserMailer'
+  deliver_by :email do |config|
+    config.mailer = "UserMailer"
+    config.method = :notification_email
+  end
   # deliver_by :database
 
   required_param :user
-  param :notification_type
+  required_param :notification_type
 
   def message
     case params[:notification_type]
@@ -15,6 +18,8 @@ class UserNotifier < ApplicationNotifier
       "Your account status has been updated"
     when :role_changed
       "Your role has been updated to #{params[:user].role}"
+    else
+      "You have a new notification"
     end
   end
 

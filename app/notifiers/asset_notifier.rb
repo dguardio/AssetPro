@@ -1,5 +1,8 @@
 class AssetNotifier < ApplicationNotifier
-  deliver_by :email, mailer: 'AssetMailer'
+  deliver_by :email do |config|
+    config.mailer = "AssetMailer"
+    config.method = :notification_email
+  end
   # deliver_by :database
 
   required_param :asset

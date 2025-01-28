@@ -76,6 +76,7 @@ Rails.application.routes.draw do
       end
 
       get 'check-version', to: 'updates#check_version'
+      get 'app/latest', to: 'updates#check_mobile_version'
 
       resources :asset_requests do
         member do

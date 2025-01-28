@@ -62,9 +62,16 @@ class AssetAssignment < ApplicationRecord
   end
 
   def notify_assignment
-    AssetAssignmentNotifier.with(
-      asset_assignment: self
-    ).deliver(user)
+    AssetAssignmentNotifier.assignment_created(self)
+  end
+
+  def notify_status_change
+    case status
+    when 'checked_out'
+      AssetAssignmentNotifier.checked_out(self)
+    when 'checked_in'
+      AssetAssignmentNotifier.checked_in(self)
+    end
   end
 
   def create_assignment_event

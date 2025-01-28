@@ -1,5 +1,8 @@
 class SystemNotifier < ApplicationNotifier
-  deliver_by :email, mailer: 'SystemMailer'
+  deliver_by :email do |config|
+    config.mailer = "SystemMailer"
+    config.method = :notification_email
+  end
   # deliver_by :database
 
   param :notification_type

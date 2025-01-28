@@ -138,7 +138,7 @@ class Asset < ApplicationRecord
   end
 
   after_save :check_stock_level
-  # after_save :notify_status_change
+  after_save :notify_status_change
 
   def available_quantity
     quantity - asset_assignments.where(checked_in_at: nil).count
@@ -190,25 +190,10 @@ class Asset < ApplicationRecord
     @age_in_years ||= (Date.current - purchase_date).to_f / 365.25
   end
 
-  # def notify_status_change
-  #   return unless saved_change_to_status?
-    
-  #   recipients = User.with_role(:admin) + User.with_role(:manager)
-    
-  #   AssetStatusNotification.with(
-  #     asset: self,
-  #     status: status,
-  #     changed_by: RequestStore.store[:current_user],
-  #     message: {
-  #       title: 'Asset Status Changed',
-  #       body: "The status of #{name} has been changed to #{status}."
-  #     }
-  #   ).deliver_by(:action_cable, message: {
-  #     title: 'Asset Status Changed',
-  #     body: "The status of #{name} has been changed to #{status}.",
-  #     asset_id: id
-  #   }).deliver_later(recipients)
-  # end
+  def notify_status_change
+    return unless saved_change_to_status?
+    AssetStatusNotifier.status_changed(self, RequestStore.store[:current_user])
+  end
   
   def cleanup_rfid_tag
     if rfid_tag.present?

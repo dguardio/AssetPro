@@ -2,7 +2,7 @@ module Api
   module V1
     class UpdatesController < BaseController
       skip_before_action :doorkeeper_authorize!
-      skip_before_action :verify_scope, only: [:check_version]
+      skip_before_action :verify_scope, only: [:check_version, :check_mobile_version]
       # skip_before_action :verify_authenticity_token, only: [:check_version]
 
       # Check version for Hardware updates

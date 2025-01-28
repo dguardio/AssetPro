@@ -1,5 +1,8 @@
 class RfidNotifier < ApplicationNotifier
-  deliver_by :email, mailer: 'RfidMailer'
+  deliver_by :email do |config|
+    config.mailer = "RfidMailer"
+    config.method = :notification_email
+  end
   # deliver_by :database
 
   required_param :notification_type

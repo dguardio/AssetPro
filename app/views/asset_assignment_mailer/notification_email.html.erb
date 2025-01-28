@@ -5,25 +5,21 @@
   </head>
   <body>
     <div class="content">
-      <h2>New Asset Assignment</h2>
+      <h2><%= @notification.message %></h2>
       
       <p>Hello <%= @recipient.full_name %>,</p>
       
       <div class="card" style="background: var(--light); padding: 16px; margin: 16px 0;">
-        <h3 style="margin-top: 0;">Asset Details</h3>
-        <p><strong>Name:</strong> <%= @assignment.asset.name %></p>
-        <p><strong>Assigned By:</strong> <%= @assignment.assigned_by.full_name %></p>
-        <p><strong>Date:</strong> <%= @assignment.created_at.strftime("%B %d, %Y") %></p>
-        
-        <% if @assignment.asset.description.present? %>
-          <p><strong>Description:</strong> <%= @assignment.asset.description %></p>
+        <p><strong>Asset:</strong> <%= @asset_assignment.asset.name %></p>
+        <% if @asset_assignment.asset.description.present? %>
+          <p><strong>Description:</strong> <%= @asset_assignment.asset.description %></p>
         <% end %>
       </div>
 
-      <%= link_to "View Asset Details", asset_url(@assignment.asset), class: "btn" %>
+      <%= link_to "View Asset Details", @notification.url, class: "btn" %>
       
       <p style="color: var(--secondary); font-size: 0.875rem; margin-top: 24px;">
-        If you did not expect this assignment, please contact your system administrator.
+        If you have any questions, please contact your system administrator.
       </p>
     </div>
   </body>

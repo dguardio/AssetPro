@@ -1,5 +1,8 @@
 class LicenseNotifier < ApplicationNotifier
-  deliver_by :email, mailer: 'LicenseMailer'
+  deliver_by :email do |config|
+    config.mailer = "LicenseMailer"
+    config.method = :notification_email
+  end
   # deliver_by :database
 
   required_param :license
