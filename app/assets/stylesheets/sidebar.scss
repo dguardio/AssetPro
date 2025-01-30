@@ -5,18 +5,21 @@
   }
   -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
   scrollbar-width: none;  /* Hide scrollbar for Firefox */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  max-width: 250px !important;
+  width: 250px !important;
+}
 
-  .sidenav-close {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    color: white;
-    cursor: pointer;
-    z-index: 2;
-    
-    .material-icons-round {
-      font-size: 1.5rem;
-    }
+.sidenav-close {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  color: white;
+  cursor: pointer;
+  z-index: 2;
+  
+  .material-icons-round {
+    font-size: 1.5rem;
   }
 }
 
