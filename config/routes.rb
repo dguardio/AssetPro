@@ -92,13 +92,6 @@ Rails.application.routes.draw do
   resources :roles
   namespace :inventory do
     resources :assets do
-      resources :maintenance_records
-      resources :rfid_tags, only: [:new, :create, :destroy] do
-        member do
-          patch :restore
-        end
-      end
-      resources :asset_tracking_events, only: [:index]
       collection do
         post :import
         get :export
@@ -107,6 +100,14 @@ Rails.application.routes.draw do
       member do
         patch :restore
       end
+
+      resources :maintenance_records
+      resources :rfid_tags, only: [:new, :create, :destroy] do
+        member do
+          patch :restore
+        end
+      end
+      resources :asset_tracking_events, only: [:index]
     end
   end
   resources :asset_assignments do
@@ -144,6 +145,7 @@ Rails.application.routes.draw do
   resources :notifications, only: [:index, :destroy] do
     collection do
       post :mark_as_read
+      post :mark_all_as_read
     end
   end
 

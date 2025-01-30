@@ -33,7 +33,7 @@
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm"><%= notification.to_notification.message %></h6>
+                            <h6 class="mb-0 text-sm"><%= notification.event.message %></h6>
                           </div>
                         </div>
                       </td>
@@ -50,7 +50,7 @@
                         <% end %>
                       </td>
                       <td class="align-middle">
-                        <%= link_to notification.to_notification.url, class: 'btn btn-link text-secondary mb-0' do %>
+                        <%= link_to notification.event.url, class: 'btn btn-link text-secondary mb-0' do %>
                           <i class="material-icons">visibility</i>
                         <% end %>
                         <%= button_to notification_path(notification), 

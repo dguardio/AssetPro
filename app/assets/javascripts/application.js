@@ -7,6 +7,16 @@ import jQuery from "jquery"
 window.jQuery = jQuery
 window.$ = jQuery
 
+// Add Turbo confirmation handler
+document.addEventListener("turbo:before-fetch-request", (event) => {
+    if (event.detail.fetchOptions.method === "delete") {
+        const confirmMessage = event.target.getAttribute("data-turbo-confirm")
+        if (confirmMessage && !window.confirm(confirmMessage)) {
+        event.preventDefault()
+        }
+    }
+})
+
 // $(document).ready(function() {
 //   const loadingScreen = document.querySelector('.loading-screen');
 //   const body = document.body;

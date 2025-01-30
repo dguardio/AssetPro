@@ -67,6 +67,10 @@ class User < ApplicationRecord
     roles.first&.name || 'user'
   end
 
+  def profile_reset?
+    false  # Default to false since this is for the regular password reset flow
+  end
+
   private
 
   def assign_default_role

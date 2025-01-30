@@ -37,6 +37,8 @@ class Asset < ApplicationRecord
   scope :rfid_enabled, -> { where(rfid_enabled: true) }
   scope :needs_tracking, -> { rfid_enabled.where('last_tracked_at < ?', 24.hours.ago) }
 
+  scope :without_deleted, -> { where(deleted_at: nil) }
+
   def current_assignment
     asset_assignments.where(checked_in_at: nil).first
   end
@@ -148,6 +150,50 @@ class Asset < ApplicationRecord
     available_quantity <= minimum_quantity
   end
 
+  def self.import(file)
+    spreadsheet = open_spreadsheet(file)
+    header = spreadsheet.row(1)
+    existing_assets = []
+    
+    ActiveRecord::Base.transaction do
+      (2..spreadsheet.last_row).each do |i|
+        row = Hash[[header, spreadsheet.row(i)].transpose]
+        
+        # Check if asset already exists
+        if Asset.exists?(['asset_code = ? OR name = ?', row['asset_code'], row['name']])
+          existing_assets << "Asset with code '#{row['asset_code']}' or name '#{row['name']}' already exists"
+          next
+        end
+        
+        # Find category and location
+        category = Category.find_by!(name: row['category'])
+        location = Location.find_by!(name: row['location'])
+        
+        Asset.create!(
+          name: row['name'],
+          asset_code: row['asset_code'],
+          category_id: category.id,
+          location_id: location.id,
+          status: row['status'].presence || 'available',
+          description: row['description'],
+          purchase_date: row['purchase_date'],
+          purchase_price: row['purchase_price']
+        )
+      end
+    end
+    
+    # Return result with existing assets
+    { 
+      success: true, 
+      existing_assets: existing_assets,
+      message: existing_assets.any? ? 
+        "Import completed. Skipped existing assets: #{existing_assets.join(', ')}" :
+        "Import completed successfully."
+    }
+  rescue StandardError => e
+    { success: false, message: e.message }
+  end
+
   private
 
   def check_stock_level
@@ -203,6 +249,15 @@ class Asset < ApplicationRecord
       )
       update_column(:rfid_enabled, false)
       RfidNotifier.tag_deactivated(self)
+    end
+  end
+
+  def self.open_spreadsheet(file)
+    case File.extname(file.original_filename)
+    when '.csv' then Roo::CSV.new(file.path)
+    when '.xlsx' then Roo::Excelx.new(file.path)
+    when '.xls' then Roo::Excel.new(file.path)
+    else raise "Unknown file type: #{file.original_filename}"
     end
   end
 end

@@ -9,7 +9,6 @@
   <%= csp_meta_tag %>
 
   <!-- Fonts and icons -->  
-  
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
   <%= loading_screen style: :cube_grid, color: '#4CAF50', background: 'rgba(26, 32, 53, 0.9)', text: 'Loading...' %>
 
@@ -232,7 +231,7 @@
                   <% if current_user.notifications.exists? %>
                     <% current_user.notifications.newest_first.limit(5).each do |notification| %>
                       <li>
-                        <%= link_to notification.to_notification.url, 
+                        <%= link_to notification.event.url, 
                             class: "dropdown-item rounded #{'bg-light' unless notification.read_at?}",
                             data: { 
                               turbo_method: :post,
@@ -242,7 +241,8 @@
                             } do %>
                           <div class="d-flex align-items-center py-2">
                             <div class="flex-grow-1 pe-2">
-                              <p class="text-sm text-dark mb-0"><%= notification.to_notification.message %></p>
+                              <p class="text-sm text-dark mb-0"><%= notification.event.message %></p>
+                              
                               <p class="text-xs text-secondary mb-0">
                                 <%= time_ago_in_words(notification.created_at) %> ago
                               </p>
@@ -281,18 +281,18 @@
     <div class="container-fluid py-4">
       <% if notice %>
         <div class="alert alert-success alert-dismissible text-white fade show" role="alert">
-          <span class="alert-text"><%= notice %></span>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+          <%= notice %>
+          <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close">
+            <i class="material-icons-round">close</i>
           </button>
         </div>
       <% end %>
 
       <% if alert %>
         <div class="alert alert-danger alert-dismissible text-white fade show" role="alert">
-          <span class="alert-text"><%= alert %></span>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+          <%= alert %>
+          <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close">
+            <i class="material-icons-round">close</i>
           </button>
         </div>
       <% end %>

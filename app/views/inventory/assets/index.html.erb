@@ -20,7 +20,11 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="importModalLabel">Import Assets</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">
+              <i class="material-icons-round">close</i>
+            </span>
+          </button>
         </div>
         <div class="modal-body">
           <div class="row align-items-center mb-4">
@@ -55,45 +59,117 @@
           </div>
 
           <div class="table-responsive">
-            <table class="table table-sm">
+            <table class="table">
               <thead>
                 <tr>
-                  <th class="text-xs text-uppercase">Column</th>
-                  <th class="text-xs text-uppercase">Required</th>
-                  <th class="text-xs text-uppercase">Example</th>
-                  <th class="text-xs text-uppercase">Notes</th>
+                  <th>COLUMN</th>
+                  <th>REQUIRED</th>
+                  <th>EXAMPLE</th>
+                  <th>NOTES</th>
                 </tr>
               </thead>
-              <tbody class="text-sm">
+              <tbody>
                 <tr>
                   <td>name</td>
-                  <td><span class="badge bg-danger">Required</span></td>
+                  <td><span class="badge bg-danger">REQUIRED</span></td>
                   <td>Dell Laptop XPS 15</td>
                   <td>Asset name/title</td>
                 </tr>
                 <tr>
                   <td>asset_code</td>
-                  <td><span class="badge bg-danger">Required</span></td>
+                  <td><span class="badge bg-danger">REQUIRED</span></td>
                   <td>AST-001</td>
-                  <td>Unique identifier</td>
+                  <td>Unique identifier on Product or Asset</td>
                 </tr>
                 <tr>
-                  <td>category_id</td>
-                  <td><span class="badge bg-danger">Required</span></td>
-                  <td>1</td>
-                  <td>ID from categories table</td>
+                  <td>category</td>
+                  <td><span class="badge bg-danger">REQUIRED</span></td>
+                  <td>Laptops</td>
+                  <td>Category name</td>
                 </tr>
                 <tr>
-                  <td>location_id</td>
-                  <td><span class="badge bg-danger">Required</span></td>
-                  <td>1</td>
-                  <td>ID from locations table</td>
+                  <td>location</td>
+                  <td><span class="badge bg-danger">REQUIRED</span></td>
+                  <td>Main Office</td>
+                  <td>Location name</td>
                 </tr>
                 <tr>
                   <td>status</td>
-                  <td><span class="badge bg-warning">Optional</span></td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
                   <td>available</td>
-                  <td>One of: available, in_use, maintenance, retired</td>
+                  <td>One of: available, in_use, in_maintenance, retired</td>
+                </tr>
+                <tr>
+                  <td>description</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>High-performance laptop</td>
+                  <td>Asset description</td>
+                </tr>
+                <tr>
+                  <td>purchase_date</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>2024-03-20</td>
+                  <td>Date format: YYYY-MM-DD</td>
+                </tr>
+                <tr>
+                  <td>purchase_price</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>1299.99</td>
+                  <td>Naira (NGN) Decimal number</td>
+                </tr>
+                <tr>
+                  <td>quantity</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>1</td>
+                  <td>Integer (defaults to 1)</td>
+                </tr>
+                <tr>
+                  <td>minimum_quantity</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>1</td>
+                  <td>Integer (defaults to 1)</td>
+                </tr>
+                <tr>
+                  <td>useful_life_years</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>5</td>
+                  <td>Integer</td>
+                </tr>
+                <tr>
+                  <td>salvage_value</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>299.99</td>
+                  <td>Naira (NGN) Decimal number</td>
+                </tr>
+                <tr>
+                  <td>warranty_expiry_date</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>2026-03-20</td>
+                  <td>Date format: YYYY-MM-DD</td>
+                </tr>
+                <tr>
+                  <td>maintenance_cost_yearly</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>99.99</td>
+                  <td>Naira (NGN) Decimal number</td>
+                </tr>
+                <tr>
+                  <td>insurance_value</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>1500.00</td>
+                  <td>Naira (NGN) Decimal number</td>
+                </tr>
+                <tr>
+                  <td>depreciation_rate</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>20</td>
+                  <td>Decimal number (percentage)</td>
+                </tr>
+                <tr>
+                  <td>rfid_enabled</td>
+                  <td><span class="badge bg-warning">OPTIONAL</span></td>
+                  <td>false</td>
+                  <td>true/false</td>
                 </tr>
               </tbody>
             </table>
@@ -106,7 +182,7 @@
                   class: 'd-none', 
                   id: 'fileInput' %>
               <div id="dropZone" class="p-4 text-center">
-                <i class="material-icons text-secondary mb-2" style="font-size: 48px;">cloud_upload</i>
+                <i class="material-icons-round text-secondary mb-2" style="font-size: 48px;">cloud_upload</i>
                 <p class="mb-0">Drag and drop your file here or</p>
                 <button type="button" class="btn btn-secondary btn-sm mt-2" id="importButton">
                   Choose File
@@ -245,14 +321,14 @@
                     <i class="material-icons-round">edit</i>
                   <% end %>
 
-                  <%= link_to inventory_asset_path(asset), 
-                      method: :delete, 
-                      data: { 
-                        turbo_confirm: 'Are you sure?',
-                        bs_toggle: "tooltip"
-                      }, 
-                      title: "Delete Asset",
-                      class: 'btn btn-link text-danger mb-0' do %>
+                  <%= button_to inventory_asset_path(asset), 
+                      method: :delete,
+                      form: { 
+                        data: { turbo_confirm: 'Are you sure?' }
+                      },
+                      class: 'btn btn-link text-danger mb-0',
+                      data: { bs_toggle: "tooltip" },
+                      title: "Delete Asset" do %>
                     <i class="material-icons-round">delete</i>
                   <% end %>
                 </div>
@@ -278,6 +354,10 @@
 
 
 <script>
+  document.addEventListener('turbo:load', function() {
+    var importModal = new bootstrap.Modal(document.getElementById('importModal'));
+  });
+
   document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('fileInput');
     const importButton = document.getElementById('importButton');
@@ -285,7 +365,6 @@
     const submitImport = document.getElementById('submitImport');
     const selectedFileName = document.getElementById('selectedFileName');
     const dropZone = document.getElementById('dropZone');
-    const importModal = new bootstrap.Modal(document.getElementById('importModal'));
 
     const allowedTypes = [
       'text/csv',
@@ -381,4 +460,29 @@
   .modal-lg {
     max-width: 900px;
   }
-</style> 
+
+  .modal-backdrop {
+    display: none;
+  }
+  
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-dialog {
+    margin: 1.75rem auto;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const importModal = new bootstrap.Modal(document.getElementById('importModal'), {
+      backdrop: false
+    });
+    
+    // Clean up modal on hide
+    document.getElementById('importModal').addEventListener('hidden.bs.modal', function() {
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    });
+  });
+</script> 

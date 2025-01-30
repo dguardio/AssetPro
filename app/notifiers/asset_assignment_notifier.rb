@@ -24,7 +24,7 @@ class AssetAssignmentNotifier < ApplicationNotifier
   end
 
   def url
-    Rails.application.routes.url_helpers.asset_path(params[:asset_assignment].asset)
+    Rails.application.routes.url_helpers.inventory_asset_path(params[:asset_assignment].asset)
   end
 
   def self.assignment_created(asset_assignment)

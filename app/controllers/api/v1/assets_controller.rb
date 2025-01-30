@@ -7,7 +7,7 @@ module Api
 
       def index
         @assets = policy_scope(Asset)
-        @assets = params[:show_deleted] ? @assets.with_deleted : @assets
+        @assets = params[:show_deleted] ? @assets.only_deleted : @assets
         @assets = @assets.includes(:location, :category, :rfid_tag)
                         .order(updated_at: :desc)
                         .page(params[:page]).per(25)

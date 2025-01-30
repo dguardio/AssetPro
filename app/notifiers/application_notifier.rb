@@ -18,6 +18,13 @@ class ApplicationNotifier < Noticed::Event
     }
   end
 
+  def to_notification
+    OpenStruct.new(
+      message: message,
+      url: url
+    )
+  end
+
   def url
     raise NotImplementedError, "Subclass must implement #url"
   end
