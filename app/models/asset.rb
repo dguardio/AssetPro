@@ -150,12 +150,54 @@ class Asset < ApplicationRecord
     available_quantity <= minimum_quantity
   end
 
+  def self.find_or_create_category(name)
+    return nil if name.blank?
+    
+    # First try to find including soft-deleted categories
+    category = Category.with_deleted.find_by(name: name)
+    
+    if category&.deleted?
+      # If category exists but is soft-deleted, restore it
+      category.restore
+      category
+    elsif category
+      # If category exists and is not deleted, use it
+      category
+    else
+      # If category doesn't exist, create it
+      Category.create!(name: name)
+    end
+  rescue ActiveRecord::RecordInvalid => e
+    raise ImportError, "Invalid category: #{e.message}"
+  end
+
+  def self.find_or_create_location(name)
+    return nil if name.blank?
+    
+    # First try to find including soft-deleted locations
+    location = Location.with_deleted.find_by(name: name)
+    
+    if location&.deleted?
+      # If location exists but is soft-deleted, restore it
+      location.restore
+      location
+    elsif location
+      # If location exists and is not deleted, use it
+      location
+    else
+      # If location doesn't exist, create it
+      Location.create!(name: name, address: 'Address pending')
+    end
+  rescue ActiveRecord::RecordInvalid => e
+    raise ImportError, "Invalid location: #{e.message}"
+  end
+
   def self.import(file)
     spreadsheet = open_spreadsheet(file)
     header = spreadsheet.row(1)
     existing_assets = []
     
-    ActiveRecord::Base.transaction do
+    transaction do
       (2..spreadsheet.last_row).each do |i|
         row = Hash[[header, spreadsheet.row(i)].transpose]
         
@@ -165,9 +207,23 @@ class Asset < ApplicationRecord
           next
         end
         
-        # Find category and location
-        category = Category.find_by!(name: row['category'])
-        location = Location.find_by!(name: row['location'])
+        # Find or create category
+        category_name = row['category']
+        category = find_or_create_category(category_name)
+        
+        unless category
+          existing_assets << "Invalid or missing category for asset '#{row['name']}'"
+          next
+        end
+        
+        # Find location
+        location_name = row['location']
+        location = find_or_create_location(location_name)
+        
+        unless location
+          existing_assets << "Invalid or missing location for asset '#{row['name']}'"
+          next
+        end
         
         Asset.create!(
           name: row['name'],
@@ -182,7 +238,6 @@ class Asset < ApplicationRecord
       end
     end
     
-    # Return result with existing assets
     { 
       success: true, 
       existing_assets: existing_assets,

@@ -16,6 +16,7 @@ class AssetAssignment < ApplicationRecord
 
   before_destroy :check_if_ended
   before_destroy :check_if_checked_out
+  before_destroy :unassign_asset
 
   after_create :create_assignment_event
   after_update :create_unassignment_event, if: :ended?
@@ -100,5 +101,11 @@ class AssetAssignment < ApplicationRecord
 
   def ended?
     saved_change_to_ended_at? && ended_at.present?
+  end
+
+  def unassign_asset
+    if checked_in_at.nil?
+      asset.update!(status: :available)
+    end
   end
 end
