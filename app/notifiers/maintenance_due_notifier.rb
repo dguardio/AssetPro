@@ -26,7 +26,7 @@ class MaintenanceDueNotifier < ApplicationNotifier
 
   def self.maintenance_due(maintenance_schedule)
     recipients = [
-      maintenance_schedule.asset.assigned_to,
+      maintenance_schedule.asset.current_assignment.user,
       maintenance_schedule.assigned_to
     ].compact + User.with_role(:manager)
 
@@ -38,7 +38,7 @@ class MaintenanceDueNotifier < ApplicationNotifier
 
   def self.maintenance_completed(maintenance_schedule)
     recipients = [
-      maintenance_schedule.asset.assigned_to,
+      maintenance_schedule.asset.current_assignment.user,
       maintenance_schedule.assigned_to
     ].compact + User.with_role(:manager)
 

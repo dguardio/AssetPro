@@ -27,17 +27,17 @@ class AssetNotifier < ApplicationNotifier
 
   def self.maintenance_due(asset)
     with(asset: asset, notification_type: :maintenance_due)
-      .deliver_later([asset.assigned_to] + User.with_role(:manager))
+      .deliver_later([asset.current_assignment.user] + User.with_role(:manager))
   end
 
   def self.location_changed(asset)
     with(asset: asset, notification_type: :location_changed)
-      .deliver_later(asset.assigned_to)
+      .deliver_later(asset.current_assignment.user)
   end
 
   def self.assignment_created(asset)
     with(asset: asset, notification_type: :assignment_created)
-      .deliver_later(asset.assigned_to)
+      .deliver_later(asset.current_assignment.user)
   end
 
   def self.assignment_removed(asset, previous_assignee)

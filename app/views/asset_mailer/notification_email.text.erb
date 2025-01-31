@@ -1,0 +1,11 @@
+Asset Status Update
+
+<%= @notification.message %>
+
+Current Status: <%= @asset.status %>
+
+<% if @notification.params[:changed_by] %>
+Changed by: <%= @notification.params[:changed_by].name %>
+<% end %>
+
+View Asset Details: <%= @notification.url %> 

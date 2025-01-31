@@ -6,7 +6,7 @@
           <div class="d-flex justify-content-between">
             <h6>Notifications</h6>
             <% if @notifications.unread.any? %>
-              <%= button_to mark_as_read_notifications_path,
+              <%= button_to mark_all_as_read_notifications_path,
                   class: 'btn btn-sm btn-secondary',
                   data: { turbo: true } do %>
                 Mark all as read

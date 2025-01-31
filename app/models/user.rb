@@ -17,6 +17,7 @@ class User < ApplicationRecord
   # Associations
   has_many :asset_assignments
   has_many :assigned_assets, through: :asset_assignments, source: :asset
+  has_many :asset_requests
   has_many :account_status_logs
   has_many :audit_logs
   has_many :notifications, as: :recipient, dependent: :destroy, class_name: 'Noticed::Notification'

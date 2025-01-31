@@ -36,7 +36,7 @@ class AssetsController < ApplicationController
   end
 
   def update
-    previous_assignee = @asset.assigned_to
+    previous_assignee = @asset.current_assignment.user
     
     authorize @asset
     if @asset.update(asset_params)
@@ -118,10 +118,10 @@ class AssetsController < ApplicationController
     end
 
     if @asset.saved_change_to_assigned_to_id?
-      if @asset.assigned_to
+      if @asset.current_assignment.user
         AssetAssignmentNotification.with(
           asset_assignment: @asset.current_assignment
-        ).deliver_later(@asset.assigned_to)
+        ).deliver_later(@asset.current_assignment.user)
       end
 
       if previous_assignee

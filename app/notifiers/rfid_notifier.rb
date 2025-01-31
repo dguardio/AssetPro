@@ -52,6 +52,6 @@ class RfidNotifier < ApplicationNotifier
     with(
       notification_type: :tag_deactivated,
       asset: asset
-    ).deliver_later([asset.assigned_to] + User.with_role(:security))
+    ).deliver_later([asset.current_assignment.user] + User.with_role(:security))
   end
 end

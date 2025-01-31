@@ -5,7 +5,15 @@
       <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importModal">
         Import Assets
       </button>
-      <%= link_to 'Export CSV', export_inventory_assets_path(format: :csv), class: 'btn btn-secondary' %>
+      <%= link_to 'Export CSV', 
+          inventory_assets_path(
+            format: :csv, 
+            q: ransack_params, 
+            show_deleted: params[:show_deleted], 
+            sort: params[:sort]
+          ), 
+          class: 'btn btn-secondary' 
+      %>
       <% if policy(Asset.new).create? %>
         <%= link_to new_inventory_asset_path, class: 'btn bg-gradient-dark' do %>
           <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New Asset

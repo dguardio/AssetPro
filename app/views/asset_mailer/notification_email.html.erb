@@ -1,0 +1,13 @@
+<h1>Asset Status Update</h1>
+
+<p><%= @notification.message %></p>
+
+<p>Current Status: <%= @asset.status %></p>
+
+<% if @notification.params[:changed_by] %>
+  <p>Changed by: <%= @notification.params[:changed_by].name %></p>
+<% end %>
+
+<p>
+  <%= link_to "View Asset Details", @notification.url %>
+</p> 

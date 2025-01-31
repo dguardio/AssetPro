@@ -13,7 +13,22 @@ module Inventory
       @q = @q.ransack(params[:q])
       @assets = @q.result.includes(:category, :location)
                   .order(params[:sort] || 'created_at DESC')
-                  .page(params[:page]).per(10)
+
+      respond_to do |format|
+        format.html do
+          @assets = @assets.page(params[:page]).per(10)
+        end
+        format.csv do
+          send_data @assets.to_csv, 
+                    filename: "assets-#{Date.current}.csv",
+                    type: 'text/csv'
+        end
+        format.xlsx do
+          response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          response.headers['Content-Disposition'] = "attachment; filename=assets-#{Date.current}.xlsx"
+          render xlsx: 'export', template: 'inventory/assets/export'
+        end
+      end
     end
   
     def show
@@ -62,10 +77,10 @@ module Inventory
     end
   
     def restore
-      @asset = Asset.with_deleted.find(params[:id])
+      @asset = Asset.only_deleted.find(params[:id])
       authorize @asset
       
-      if @asset.restore
+      if @asset.recover
         redirect_to inventory_assets_url, notice: 'Asset was successfully restored.'
       else
         redirect_to inventory_assets_url, alert: 'Failed to restore asset.'
@@ -93,25 +108,6 @@ module Inventory
       end
     end
   
-    def export
-      authorize([:inventory, Asset], :export?)
-      
-      @assets = policy_scope(Asset).includes(:location, :category)
-      
-      respond_to do |format|
-        format.csv do
-          send_data @assets.to_csv, 
-                    filename: "assets-#{Date.current}.csv",
-                    type: 'text/csv'
-        end
-        format.xlsx do
-          response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          response.headers['Content-Disposition'] = "attachment; filename=assets-#{Date.current}.xlsx"
-          render xlsx: 'export', template: 'inventory/assets/export'
-        end
-      end
-    end
-
     def download_template
       authorize([:inventory, Asset], :download_template?)
       headers = [
@@ -180,6 +176,7 @@ module Inventory
         end
       end
     end    
+
   
     private
   
