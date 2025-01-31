@@ -63,10 +63,17 @@
                   class: 'btn btn-sm btn-info' if policy(record).show? %>
               <%= link_to 'Edit', edit_asset_maintenance_record_path(@asset, record), 
                   class: 'btn btn-sm btn-primary' if policy(record).update? %>
-              <%= link_to 'Delete', asset_maintenance_record_path(@asset, record), 
-                  method: :delete, 
-                  data: { confirm: 'Are you sure?' }, 
-                  class: 'btn btn-sm btn-danger' if policy(record).destroy? %>
+              <%= button_to 'Delete', asset_maintenance_record_path(@asset, record),
+                  method: :delete,
+                  class: 'btn btn-sm btn-danger',
+                  data: { 
+                    confirm: 'Are you sure?',
+                    bs_toggle: "tooltip"
+                  },
+                  title: "Delete Maintenance Record" do %>
+                <i class="material-icons-round">delete</i>
+              <% end %>
+              
             </td>
           </tr>
         <% end %>

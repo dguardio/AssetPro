@@ -55,13 +55,13 @@
                     <i class="material-icons-round">edit</i>
                   <% end %>
 
-                  <%= button_to inventory_asset_path(asset), 
+                  <%= button_to inventory_asset_path(asset),
                       method: :delete,
-                      form: { 
-                        data: { turbo_confirm: 'Are you sure?' }
-                      },
                       class: 'btn btn-link text-danger mb-0',
-                      data: { bs_toggle: "tooltip" },
+                      data: { 
+                        confirm: 'Are you sure?',
+                        bs_toggle: "tooltip"
+                      },
                       title: "Delete Asset" do %>
                     <i class="material-icons-round">delete</i>
                   <% end %>

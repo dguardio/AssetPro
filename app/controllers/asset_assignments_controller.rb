@@ -70,7 +70,8 @@ class AssetAssignmentsController < ApplicationController
   private
 
   def set_asset_assignment
-    @asset_assignment = AssetAssignment.find(params[:id])
+    #Set asset assignment if soft deleted or not
+    @asset_assignment = params[:id].present? ? AssetAssignment.with_deleted.find(params[:id]) : AssetAssignment.new
   end
 
   def asset_assignment_params

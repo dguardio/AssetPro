@@ -61,7 +61,8 @@ class MaintenanceSchedulesController < ApplicationController
   private
 
   def set_maintenance_schedule
-    @maintenance_schedule = MaintenanceSchedule.find(params[:id])
+    #Set maintenance schedule if soft deleted or not
+    @maintenance_schedule = params[:id].present? ? MaintenanceSchedule.with_deleted.find(params[:id]) : MaintenanceSchedule.new
   end
 
   def maintenance_schedule_params

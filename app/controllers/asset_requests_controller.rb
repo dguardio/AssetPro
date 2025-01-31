@@ -81,7 +81,8 @@ class AssetRequestsController < ApplicationController
   private
 
   def set_asset_request
-    @asset_request = AssetRequest.find(params[:id])
+    #Set asset request if soft deleted or not
+    @asset_request = params[:id].present? ? AssetRequest.with_deleted.find(params[:id]) : AssetRequest.new
   end
 
   def asset_request_params

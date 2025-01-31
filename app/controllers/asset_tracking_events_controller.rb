@@ -35,7 +35,8 @@ class AssetTrackingEventsController < ApplicationController
   private
 
   def set_asset_tracking_event
-    @asset_tracking_event = AssetTrackingEvent.find(params[:id])
+    #Set asset tracking event if soft deleted or not
+    @asset_tracking_event = params[:id].present? ? AssetTrackingEvent.with_deleted.find(params[:id]) : AssetTrackingEvent.new
   end
 
   def asset_tracking_event_params

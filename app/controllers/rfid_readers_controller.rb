@@ -49,7 +49,8 @@ class RfidReadersController < ApplicationController
   private
 
   def set_reader
-    @reader = RfidReader.find(params[:id])
+    #Set reader if soft deleted or not
+    @reader = params[:id].present? ? RfidReader.with_deleted.find(params[:id]) : RfidReader.new
   end
 
   def reader_params

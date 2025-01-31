@@ -49,7 +49,8 @@ class MaintenanceRecordsController < ApplicationController
   private
 
   def set_maintenance_record
-    @maintenance_record = MaintenanceRecord.find(params[:id])
+    #Set maintenance record if soft deleted or not
+    @maintenance_record = params[:id].present? ? MaintenanceRecord.with_deleted.find(params[:id]) : MaintenanceRecord.new
   end
 
   def maintenance_record_params

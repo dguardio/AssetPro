@@ -66,7 +66,8 @@ class RfidTagsController < ApplicationController
   private
 
   def set_rfid_tag
-    @rfid_tag = RfidTag.find(params[:id])
+    #Set rfid tag if soft deleted or not
+    @rfid_tag = params[:id].present? ? RfidTag.with_deleted.find(params[:id]) : RfidTag.new
   end
 
   def rfid_tag_params

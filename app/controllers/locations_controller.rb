@@ -59,7 +59,8 @@ class LocationsController < ApplicationController
   private
 
   def set_location
-    @location = Location.find(params[:id])
+    #Set location if soft deleted or not
+    @location = params[:id].present? ? Location.with_deleted.find(params[:id]) : Location.new
   end
 
   def location_params

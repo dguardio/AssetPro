@@ -100,14 +100,14 @@
                     <i class="material-icons-round">edit</i>
                   <% end %>
 
-                  <%= link_to location_path(location), 
+                  <%= button_to location_path(location),
                       method: :delete,
+                      class: 'btn btn-link text-danger mb-0',
                       data: { 
                         confirm: 'Are you sure?',
                         bs_toggle: "tooltip"
-                      }, 
-                      title: "Delete Location",
-                      class: 'btn btn-link text-danger mb-0' do %>
+                      },
+                      title: "Delete Location" do %>
                     <i class="material-icons-round">delete</i>
                   <% end %>
                 </div>

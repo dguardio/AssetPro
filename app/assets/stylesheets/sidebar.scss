@@ -6,8 +6,8 @@
   -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
   scrollbar-width: none;  /* Hide scrollbar for Firefox */
   overflow-x: hidden; /* Prevent horizontal scrolling */
-  max-width: 250px !important;
-  width: 250px !important;
+  // max-width: 250px !important;
+  // width: 250px !important;
 }
 
 .sidenav-close {
@@ -37,7 +37,7 @@
   border-radius: 0.75rem;
   margin: 1rem 1rem 1rem 1rem;
   padding: 0.5rem;
-  width: 250px !important;
+  // width: 250px !important;
   max-width: 250px !important;
 
   .navbar-brand {
@@ -108,9 +108,9 @@
 }
 
 // Navbar adjustments
-.navbar-vertical.navbar-expand-xs {
-  max-width: 250px !important;
-}
+// .navbar-vertical.navbar-expand-xs {
+//   max-width: 250px !important;
+// }
 
 // Active state for nav items
 .nav-link.active {

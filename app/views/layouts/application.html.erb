@@ -37,21 +37,22 @@
 
     <div class="collapse navbar-collapse h-auto" id="sidenav-collapse-main">
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <%= link_to dashboard_path, class: "nav-link #{current_page?(dashboard_path) ? 'active' : ''}" do %>
-            <span class="material-icons-round">dashboard</span>
-            <span>Dashboard</span>
-          <% end %>
-        </li>
-
-        <li class="nav-item">
-          <%= link_to inventory_assets_path, class: "nav-link #{current_page?(inventory_assets_path) ? 'active' : ''}" do %>
-            <span class="material-icons-round">inventory_2</span>
-            <span>Assets</span>
-          <% end %>
-        </li>
 
         <% if current_user&.admin? || current_user&.manager? || current_user&.security? %>
+          <li class="nav-item">
+            <%= link_to dashboard_path, class: "nav-link #{current_page?(dashboard_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">dashboard</span>
+              <span>Dashboard</span>
+            <% end %>
+          </li>
+
+          <li class="nav-item">
+            <%= link_to inventory_assets_path, class: "nav-link #{current_page?(inventory_assets_path) ? 'active' : ''}" do %>
+              <span class="material-icons-round">inventory_2</span>
+              <span>Assets</span>
+            <% end %>
+          </li>
+
           <li class="nav-item">
             <%= link_to timeline_admin_asset_tracking_events_path, class: "nav-link #{current_page?(timeline_admin_asset_tracking_events_path) ? 'active' : ''}" do %>
               <span class="material-icons-round">view_timeline</span>
@@ -60,6 +61,23 @@
           </li>
         <% end %>
 
+        <!-- Asset Assignments -->
+        <li class="nav-item">
+          <%= link_to asset_assignments_path, class: "nav-link #{current_page?(asset_assignments_path) ? 'active' : ''}" do %>
+            <span class="material-icons-round">assignment</span>
+            <span class="nav-link-text ms-1">Asset Assignments</span>
+          <% end %>
+        </li>
+
+        <li class="nav-item">
+          <%= link_to asset_requests_path, class: "nav-link #{current_page?(asset_requests_path) ? 'active' : ''}" do %>
+            <span class="material-icons-round">send</span>
+            <span class="nav-link-text ms-1">Asset Requests</span>
+          <% end %>
+        </li>          
+
+        <%# Comment out the below code for now using begin and end comment%>
+        
         <% if current_user&.security? || current_user&.admin? %>
           <li class="nav-item">
             <%= link_to scanner_path, class: "nav-link #{current_page?(scanner_path) ? 'active' : ''}" do %>
@@ -86,23 +104,7 @@
               <span class="material-icons-round">place</span>
               <span>Locations</span>
             <% end %>
-          </li>         
-
-
-          <!-- Asset Assignments -->
-          <li class="nav-item">
-            <%= link_to asset_assignments_path, class: "nav-link #{current_page?(asset_assignments_path) ? 'active' : ''}" do %>
-              <span class="material-icons-round">assignment</span>
-              <span class="nav-link-text ms-1">Asset Assignments</span>
-            <% end %>
-          </li>
-
-          <li class="nav-item">
-            <%= link_to asset_requests_path, class: "nav-link #{current_page?(asset_requests_path) ? 'active' : ''}" do %>
-              <span class="material-icons-round">send</span>
-              <span class="nav-link-text ms-1">Asset Requests</span>
-            <% end %>
-          </li>          
+          </li>        
 
           <li class="nav-item">
             <%= link_to rfid_readers_path, class: "nav-link #{current_page?(rfid_readers_path) ? 'active' : ''}" do %>

@@ -49,7 +49,8 @@ class LicensesController < ApplicationController
   private
 
   def set_license
-    @license = License.find(params[:id])
+    #Set license if soft deleted or not
+    @license = params[:id].present? ? License.with_deleted.find(params[:id]) : License.new
   end
 
   def license_params

@@ -53,11 +53,15 @@
                         <%= link_to notification.event.url, class: 'btn btn-link text-secondary mb-0' do %>
                           <i class="material-icons">visibility</i>
                         <% end %>
-                        <%= button_to notification_path(notification), 
+                        <%= button_to notification_path(notification),
                             method: :delete,
                             class: 'btn btn-link text-danger mb-0',
-                            data: { turbo: true, confirm: 'Are you sure?' } do %>
-                          <i class="material-icons">delete</i>
+                            data: { 
+                              confirm: 'Are you sure?',
+                              bs_toggle: "tooltip"
+                            },
+                            title: "Delete Notification" do %>
+                          <i class="material-icons-round">delete</i>
                         <% end %>
                       </td>
                     </tr>

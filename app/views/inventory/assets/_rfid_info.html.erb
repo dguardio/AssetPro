@@ -26,11 +26,16 @@
         </dd>
       </dl>
 
-      <%= link_to 'Remove RFID Tag', 
-          inventory_asset_rfid_tag_path(@asset), 
+      <%= button_to inventory_asset_rfid_tag_path(@asset),
           method: :delete,
-          data: { confirm: 'Are you sure?' },
-          class: 'btn btn-danger' if policy(@asset.rfid_tag).destroy? %>
+          class: 'btn btn-danger',
+          data: { 
+            confirm: 'Are you sure?',
+            bs_toggle: "tooltip"
+          },
+          title: "Remove RFID Tag" do %>
+        <i class="material-icons-round">link_off</i> Remove RFID Tag
+      <% end if policy(@asset.rfid_tag).destroy? %>
     <% else %>
       <p>No RFID tag assigned.</p>
       <%= link_to 'Assign RFID Tag', 

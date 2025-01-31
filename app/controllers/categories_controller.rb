@@ -60,14 +60,15 @@ class CategoriesController < ApplicationController
       @category.destroy
       redirect_to categories_url, notice: 'Category was successfully deleted.'
     else
-      redirect_to categories_url, alert: 'Cannot delete category with associated assets.'
+      redirect_to categories_url, alert: 'Edit action only allowed. Cannot delete category with associated assets.'
     end
   end
 
   private
 
   def set_category
-    @category = Category.find(params[:id])
+    #Set category if soft deleted or not
+    @category = params[:id].present? ? Category.with_deleted.find(params[:id]) : Category.new
   end
 
   def category_params
