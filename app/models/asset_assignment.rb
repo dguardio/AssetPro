@@ -14,6 +14,8 @@ class AssetAssignment < ApplicationRecord
   before_update :handle_check_in, if: :checking_in?
   #validate :asset_available_for_checkout, on: :create
 
+  before_destroy :check_if_ended
+  before_destroy :check_if_checked_out
 
   after_create :create_assignment_event
   after_update :create_unassignment_event, if: :ended?

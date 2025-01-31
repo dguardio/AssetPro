@@ -17,7 +17,7 @@ class LowStockNotifier < ApplicationNotifier
   end
 
   def url
-    Rails.application.routes.url_helpers.asset_path(params[:asset])
+    Rails.application.routes.url_helpers.inventory_asset_path(params[:asset])
   end
 
   def self.minimum_reached(asset)

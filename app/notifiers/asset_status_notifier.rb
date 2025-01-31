@@ -7,7 +7,7 @@ class AssetStatusNotifier < ApplicationNotifier
 
   required_param :asset
   required_param :notification_type
-  param :changed_by, optional: true
+  required_param :changed_by
 
   def message
     "Asset #{params[:asset].name} status changed to #{params[:asset].status}" +
@@ -15,7 +15,7 @@ class AssetStatusNotifier < ApplicationNotifier
   end
 
   def url
-    Rails.application.routes.url_helpers.asset_path(params[:asset])
+    Rails.application.routes.url_helpers.inventory_asset_path(params[:asset])
   end
 
   def self.status_changed(asset, changed_by = nil)

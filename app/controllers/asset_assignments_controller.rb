@@ -49,7 +49,7 @@ class AssetAssignmentsController < ApplicationController
 
   def destroy
     authorize @asset_assignment
-    if @asset_assignment.destroy
+    if @asset_assignment.destroy_fully
       redirect_to asset_assignments_url, notice: 'Asset assignment was successfully archived.'
     else
       redirect_to asset_assignments_url, alert: 'Failed to archive asset assignment.'
