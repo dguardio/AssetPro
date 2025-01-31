@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Asset Request Update</h1>
+    
+    <p><%= @notification.message %></p>
+    
+    <div style="background: #f8f9fa; padding: 16px; margin: 16px 0;">
+      <p><strong>Asset:</strong> <%= @asset_request.asset.name %></p>
+      <p><strong>Status:</strong> <%= @asset_request.status %></p>
+      <p><strong>Requested by:</strong> <%= @asset_request.user.full_name %></p>
+      <p><strong>Period:</strong> <%= @asset_request.requested_from.strftime("%B %d, %Y") %> - <%= @asset_request.requested_until.strftime("%B %d, %Y") %></p>
+    </div>
+
+    <%= link_to "View Request Details", @notification.url %>
+  </body>
+</html> 

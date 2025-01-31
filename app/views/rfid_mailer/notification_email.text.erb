@@ -1,0 +1,14 @@
+RFID Notification
+
+<%= @notification.message %>
+
+<% case @notification.params[:notification_type] %>
+<% when :unauthorized_scan_attempt %>
+Location: <%= @notification.params[:location] %>
+<% when :reader_offline %>
+Reader: <%= @notification.params[:reader].name %>
+<% when :tag_deactivated %>
+Asset: <%= @notification.params[:asset].name %>
+<% end %>
+
+View Details: <%= @notification.url %> 

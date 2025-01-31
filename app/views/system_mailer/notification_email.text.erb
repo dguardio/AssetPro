@@ -1,0 +1,9 @@
+System Notification
+
+<%= @notification.message %>
+
+<% if @notification.params[:details].present? %>
+Details: <%= @notification.params[:details] %>
+<% end %>
+
+Go to Dashboard: <%= @notification.url %> 

@@ -1,0 +1,10 @@
+Asset Request Update
+
+<%= @notification.message %>
+
+Asset: <%= @asset_request.asset.name %>
+Status: <%= @asset_request.status %>
+Requested by: <%= @asset_request.user.full_name %>
+Period: <%= @asset_request.requested_from.strftime("%B %d, %Y") %> - <%= @asset_request.requested_until.strftime("%B %d, %Y") %>
+
+View Request Details: <%= @notification.url %> 

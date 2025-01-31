@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>RFID Notification</h1>
+    
+    <p><%= @notification.message %></p>
+    
+    <% case @notification.params[:notification_type] %>
+    <% when :unauthorized_scan_attempt %>
+      <p><strong>Location:</strong> <%= @notification.params[:location] %></p>
+    <% when :reader_offline %>
+      <p><strong>Reader:</strong> <%= @notification.params[:reader].name %></p>
+    <% when :tag_deactivated %>
+      <p><strong>Asset:</strong> <%= @notification.params[:asset].name %></p>
+    <% end %>
+
+    <%= link_to "View Details", @notification.url %>
+  </body>
+</html> 

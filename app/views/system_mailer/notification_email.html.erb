@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>System Notification</h1>
+    
+    <p><%= @notification.message %></p>
+    
+    <% if @notification.params[:details].present? %>
+      <div style="background: #f8f9fa; padding: 16px; margin: 16px 0;">
+        <p><strong>Details:</strong> <%= @notification.params[:details] %></p>
+      </div>
+    <% end %>
+
+    <%= link_to "Go to Dashboard", @notification.url %>
+  </body>
+</html> 
