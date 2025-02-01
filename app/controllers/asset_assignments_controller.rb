@@ -31,9 +31,24 @@ class AssetAssignmentsController < ApplicationController
     @asset_assignment.assigned_by = current_user
     authorize @asset_assignment
 
-    if @asset_assignment.save
-      redirect_to asset_assignments_path, notice: 'Asset assignment was successfully created.'
-    else
+    begin
+      if @asset_assignment.save
+        redirect_to asset_assignments_path, notice: 'Asset assignment was successfully created.'
+      else
+        error_messages = @asset_assignment.errors.full_messages
+        flash.now[:alert] = "Failed to create assignment: #{error_messages.join(', ')}"
+        render :new, status: :unprocessable_entity
+      end
+    rescue StandardError => e
+      # Log the full error for debugging
+      Rails.logger.error "Asset Assignment Creation Error: #{e.message}\n#{e.backtrace.join("\n")}"
+      
+      # Check for nested errors from callbacks
+      if e.cause
+        flash.now[:alert] = "Error in assignment: #{e.cause.message}"
+      else
+        flash.now[:alert] = "Error creating assignment: #{e.message}"
+      end
       render :new, status: :unprocessable_entity
     end
   end

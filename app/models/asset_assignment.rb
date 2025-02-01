@@ -54,6 +54,9 @@ class AssetAssignment < ApplicationRecord
 
   def update_asset_status
     asset.update!(status: 'in_use') if checked_in_at.nil?
+  rescue StandardError => e
+    errors.add(:base, "Failed to update asset status: #{e.message}")
+    raise e
   end
 
   def checking_in?
@@ -78,23 +81,26 @@ class AssetAssignment < ApplicationRecord
   end
 
   def create_assignment_event
-    asset.asset_tracking_events.create!(
+    asset.asset_tracking_events.create!({
       event_type: :assigned,
-      location: asset.current_location,
+      location: asset&.location || asset&.current_location,
       scanned_by: assigned_by,
       asset_assignment: self,
-      rfid_number: asset.rfid_tag.rfid_number,
+      rfid_number: asset&.rfid_tag&.rfid_number,
       scanned_at: DateTime.now
-    )
+    })
+  rescue StandardError => e
+    errors.add(:base, "Failed to create tracking event: #{e.message}")
+    raise e
   end
 
   def create_unassignment_event
     asset.asset_tracking_events.create!(
       event_type: :unassigned,
-      location: asset.current_location,
+      location: asset&.current_location,
       scanned_by: assigned_by,
       asset_assignment: self,
-      rfid_number: asset.rfid_tag.rfid_number,
+      rfid_number: asset&.rfid_tag&.rfid_number,
       scanned_at: DateTime.now
     )
   end

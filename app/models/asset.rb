@@ -282,6 +282,7 @@ class Asset < ApplicationRecord
   end
 
   def display_name
+    return '' if name.blank?
     name.split.map(&:capitalize).join(' ')
   end
 

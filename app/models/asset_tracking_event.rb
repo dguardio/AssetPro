@@ -41,7 +41,7 @@ class AssetTrackingEvent < ApplicationRecord
 
   # Validations
   validates :event_type, presence: true
-  validates :rfid_number, presence: true
+  validates :rfid_number, presence: true, unless: :manual_assignment?
   validates :scanned_at, presence: true
   #  validate presence of scanned_by or scanned_by_device
   # validates :scanned_by, presence: true, if: :scanned_by_device.blank?
@@ -102,6 +102,10 @@ class AssetTrackingEvent < ApplicationRecord
       self.organization_name = oauth_application.organization_name
       self.sub_organization_name = oauth_application.sub_organization_name
     end
+  end
+
+  def manual_assignment?
+    ['assigned', 'unassigned'].include?(event_type)
   end
 
   def validate_scanner_presence
