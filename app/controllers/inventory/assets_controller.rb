@@ -96,7 +96,7 @@ module Inventory
           if result[:success]
             redirect_to inventory_assets_path, 
               notice: result[:message],
-              alert: result[:existing_assets].any? ? "Some assets were skipped because they already exist." : nil
+              alert: result[:skipped_assets].any? ? "Some assets were skipped during import." : nil
           else
             redirect_to inventory_assets_path, alert: "Import failed: #{result[:message]}"
           end

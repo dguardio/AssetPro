@@ -23,7 +23,8 @@
 
     <div class="col-md-6">
       <div class="input-group input-group-dynamic mb-4">
-        <%= f.collection_select :user_id, User.all, :id, :email, 
+        <%= f.collection_select :user_id, User.all, :id, 
+            ->(user) { "#{user.full_name} (#{user.email})" },
             { prompt: 'Select a user' }, 
             { class: 'form-select' } %>
       </div>

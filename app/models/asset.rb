@@ -255,7 +255,7 @@ class Asset < ApplicationRecord
             purchase_price: row['purchase_price']
           )
           
-          imported_assets << "#{asset.name} (#{asset.asset_code})"
+          imported_assets << "#{asset.display_name} (#{asset.asset_code})"
         rescue StandardError => e
           error_message = case e
           when ActiveRecord::RecordNotUnique
@@ -279,6 +279,10 @@ class Asset < ApplicationRecord
       skipped_assets: skipped_assets,
       message: generate_import_message(imported_assets, skipped_assets)
     }
+  end
+
+  def display_name
+    name.split.map(&:capitalize).join(' ')
   end
 
   private
