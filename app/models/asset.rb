@@ -192,61 +192,93 @@ class Asset < ApplicationRecord
     raise ImportError, "Invalid location: #{e.message}"
   end
 
+  def self.generate_import_message(imported_assets, skipped_assets)
+    message = []
+    
+    if imported_assets.any?
+      message << "Successfully imported #{imported_assets.count} assets:"
+      message << imported_assets.join("\n")
+    end
+    
+    if skipped_assets.any?
+      message << "\nSkipped #{skipped_assets.count} assets:"
+      message << skipped_assets.map { |msg| "• #{msg}" }.join("\n")
+    end
+    
+    message.join("\n")
+  end
+
   def self.import(file)
     spreadsheet = open_spreadsheet(file)
     header = spreadsheet.row(1)
-    existing_assets = []
+    skipped_assets = []
+    imported_assets = []
     
     transaction do
       (2..spreadsheet.last_row).each do |i|
-        row = Hash[[header, spreadsheet.row(i)].transpose]
-        
-        # Check if asset already exists
-        if Asset.exists?(['asset_code = ? OR name = ?', row['asset_code'], row['name']])
-          existing_assets << "Asset with code '#{row['asset_code']}' or name '#{row['name']}' already exists"
-          next
+        begin
+          row = Hash[[header, spreadsheet.row(i)].transpose]
+          
+          # Check for existing asset before trying to create
+          if Asset.exists?(asset_code: row['asset_code'])
+            skipped_assets << "Asset code '#{row['asset_code']}' already exists (Row #{i})"
+            next
+          end
+          
+          if Asset.exists?(name: row['name'])
+            skipped_assets << "Asset name '#{row['name']}' already exists (Row #{i})"
+            next
+          end
+
+          # Find or create category and location
+          category = find_or_create_category(row['category'])
+          location = find_or_create_location(row['location'])
+
+          unless category
+            skipped_assets << "Invalid or missing category '#{row['category']}' (Row #{i})"
+            next
+          end
+
+          unless location
+            skipped_assets << "Invalid or missing location '#{row['location']}' (Row #{i})"
+            next
+          end
+
+          asset = Asset.create!(
+            name: row['name'],
+            asset_code: row['asset_code'],
+            category_id: category.id,
+            location_id: location.id,
+            status: row['status'].presence || 'available',
+            description: row['description'],
+            purchase_date: row['purchase_date'],
+            purchase_price: row['purchase_price']
+          )
+          
+          imported_assets << "#{asset.name} (#{asset.asset_code})"
+        rescue StandardError => e
+          error_message = case e
+          when ActiveRecord::RecordNotUnique
+            "Duplicate asset code or name (Row #{i})"
+          when ActiveRecord::RecordInvalid
+            e.record.errors.full_messages.join(', ') + " (Row #{i})"
+          when PG::Error
+            "Database error: Please try again (Row #{i})"
+          else
+            "Error: #{e.message.gsub(/PG::.*?ERROR:/, '').strip} (Row #{i})"
+          end
+          skipped_assets << error_message
+          raise ActiveRecord::Rollback
         end
-        
-        # Find or create category
-        category_name = row['category']
-        category = find_or_create_category(category_name)
-        
-        unless category
-          existing_assets << "Invalid or missing category for asset '#{row['name']}'"
-          next
-        end
-        
-        # Find location
-        location_name = row['location']
-        location = find_or_create_location(location_name)
-        
-        unless location
-          existing_assets << "Invalid or missing location for asset '#{row['name']}'"
-          next
-        end
-        
-        Asset.create!(
-          name: row['name'],
-          asset_code: row['asset_code'],
-          category_id: category.id,
-          location_id: location.id,
-          status: row['status'].presence || 'available',
-          description: row['description'],
-          purchase_date: row['purchase_date'],
-          purchase_price: row['purchase_price']
-        )
       end
     end
-    
-    { 
-      success: true, 
-      existing_assets: existing_assets,
-      message: existing_assets.any? ? 
-        "Import completed. Skipped existing assets: #{existing_assets.join(', ')}" :
-        "Import completed successfully."
+
+    {
+      success: imported_assets.any?,
+      imported_assets: imported_assets,
+      skipped_assets: skipped_assets,
+      message: generate_import_message(imported_assets, skipped_assets)
     }
-  rescue StandardError => e
-    { success: false, message: e.message }
   end
 
   private
