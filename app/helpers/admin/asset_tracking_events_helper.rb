@@ -23,9 +23,9 @@ module Admin::AssetTrackingEventsHelper
     when 'movement'
       'swap_horiz'
     when 'check_out'
-      'logout'
+      'sensor_door'
     when 'check_in'
-      'login'
+      'sensor_door'
     when 'assigned'
       'person_add'
     when 'unassigned'
@@ -40,11 +40,11 @@ module Admin::AssetTrackingEventsHelper
   def timeline_event_description(event)
     case event.event_type
     when 'movement'
-      "Detected at #{event.location.name}"
+      "Asset Detected at #{event.location.name}"
     when 'check_out'
-      "Checked out from #{event.location.name}"
+      "Exit detected at #{event.location.name}"
     when 'check_in'
-      "Checked in to #{event.location.name}"
+      "Entry detected at #{event.location.name}"
     when 'assigned'
       "Assigned to #{event.asset_assignment.user.full_name} at #{event.location.name}"
     when 'unassigned'
@@ -52,7 +52,7 @@ module Admin::AssetTrackingEventsHelper
     when 'inventory'
       "Inventoried at #{event.location.name}"
     else
-      "Event at #{event.location.name}"
+      "Unknown Event at #{event.location.name}"
     end
   end
 end

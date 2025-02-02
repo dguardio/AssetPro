@@ -1,0 +1,86 @@
+<div class="modal fade" id="assignModal<%= asset.id %>" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="assignModalLabel">
+          <%= asset.current_assignment ? 'Check In Asset' : 'Check Out Asset' %>
+        </h5>
+        <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+          <i class="material-icons-round">close</i>
+        </button>
+      </div>
+      
+      <% if asset.current_assignment %>
+        <%= form_tag check_in_asset_assignment_path(asset.current_assignment), method: :patch do %>
+          <div class="modal-body">
+            <p>Are you sure you want to check in <%= asset.name %>?</p>
+            <p class="text-sm text-secondary mb-3">Currently assigned to: <%= asset.current_assignment.user.name %></p>
+            
+            <div class="mb-3">
+              <%= label_tag :notes, "Check-in Notes", class: "form-label" %>
+              <%= text_area_tag :notes, nil, class: "form-control" %>
+            </div>
+            <%= hidden_field_tag :checked_in_at, Time.now %>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <%= submit_tag "Check In Asset", class: "btn bg-gradient-primary" %>
+          </div>
+        <% end %>
+      <% else %>
+        <%= form_for AssetAssignment.new do |f| %>
+          <div class="modal-body">
+            <%= f.hidden_field :asset_id, value: asset.id %>
+            <%= f.hidden_field :checked_out_at, value: Time.now %>
+            
+            <div class="mb-3">
+              <%= f.label :user_id, "Assign to User", class: "form-label" %>
+              <%= f.collection_select :user_id, User.all, :id, 
+                  ->(user) { "#{user&.full_name&.titleize} (#{user.email})" },
+                  { prompt: "Select a user" }, 
+                  { class: "form-select" } %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :notes, "Notes", class: "form-label" %>
+              <%= f.text_area :notes, class: "form-control" %>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <%= f.submit "Check Out Asset", class: "btn bg-gradient-success" %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-backdrop {
+    display: none;
+  }
+  
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-dialog {
+    margin: 1.75rem auto;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const assignModal = new bootstrap.Modal(document.getElementById('assignModal<%= asset.id %>'), {
+      backdrop: false
+    });
+    
+    // Clean up modal on hide
+    document.getElementById('assignModal<%= asset.id %>').addEventListener('hidden.bs.modal', function() {
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    });
+  });
+</script>

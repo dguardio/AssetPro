@@ -52,6 +52,7 @@ class AssetRequest < ApplicationRecord
 
   def asset_availability
     return unless asset && requested_from && requested_until
+    return if status_changed? && status == 'approved'  # Skip validation when approving
 
     # Check if asset is available for requests
     unless asset.available?
@@ -79,7 +80,7 @@ class AssetRequest < ApplicationRecord
       .exists?
 
     if conflicting_request
-      errors.add(:base, "Asset is already approved for another request during this period")
+      errors.add(:base, "Asset is already requested during this period")
     end
   end
 

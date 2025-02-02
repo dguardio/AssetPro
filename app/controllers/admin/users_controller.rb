@@ -17,7 +17,7 @@ class Admin::UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params_without_role)
+    @user = User.new(user_params)
     authorize @user
 
     User.transaction do

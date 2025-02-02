@@ -7,6 +7,19 @@
           <i class="material-icons-round text-sm">restore</i>&nbsp;Restore Asset
         </button>
       <% end %>
+      
+      <% if policy(AssetAssignment.new).create? %>
+        <% if @asset.in_use? %>
+          <button type="button" class="btn bg-gradient-primary mb-0" data-bs-toggle="modal" data-bs-target="#assignModal<%= @asset.id %>">
+            <i class="material-icons-round text-sm">assignment_return</i>&nbsp;Check In Asset
+          </button>
+        <% elsif @asset.available? %>
+          <button type="button" class="btn bg-gradient-success mb-0" data-bs-toggle="modal" data-bs-target="#assignModal<%= @asset.id %>">
+            <i class="material-icons-round text-sm">assignment_ind</i>&nbsp;Check Out Asset
+          </button>
+        <% end %>
+      <% end %>
+
       <%= link_to edit_inventory_asset_path(@asset), class: 'btn bg-gradient-dark mb-0' do %>
         <i class="material-icons-round text-sm">edit</i>&nbsp;Edit Asset
       <% end %>
@@ -133,11 +146,11 @@
             <table class="table align-items-center mb-0">
               <tr>
                 <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Current Quantity</td>
-                <td><%= @asset.quantity %></td>
+                <td><%=# @asset.quantity %></td>
               </tr>
               <tr>
                 <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Minimum Quantity</td>
-                <td><%= @asset.minimum_quantity %></td>
+                <td><%=# @asset.minimum_quantity %></td>
               </tr>
               <tr>
                 <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">RFID Enabled</td>
@@ -268,4 +281,7 @@
       });
     </script>
   <% end %>
-</div> 
+</div>
+
+<!-- Add the assign modal at the bottom of the file -->
+<%= render 'inventory/assets/assign_modal', asset: @asset if policy(AssetAssignment.new).create? %> 

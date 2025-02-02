@@ -9,6 +9,7 @@ class AssetAssignment < ApplicationRecord
   validates :checked_out_at, presence: true
   validate :check_in_after_check_out
   validate :asset_available, on: :create
+  validate :no_duplicate_active_assignments, on: :create
 
   before_create :update_asset_status
   before_update :handle_check_in, if: :checking_in?
@@ -25,15 +26,75 @@ class AssetAssignment < ApplicationRecord
   # after_commit :update_asset_status
 
   def self.ransackable_attributes(auth_object = nil)
-    ["asset_id", "checked_in_at", "checked_out_at", "created_at", "id", "notes", "updated_at", "user_id"]
+    ["asset_id", "checked_in_at", "checked_out_at", "created_at", "id", "notes", 
+     "updated_at", "user_id", "assigned_by_id", "deleted_at"]
   end
 
   def self.ransackable_associations(auth_object = nil)
     ["asset", "user", "assigned_by"]
   end
 
+
+
   def self.ransortable_attributes(auth_object = nil)
-    ransackable_attributes(auth_object) + ['asset_name', 'user_email']
+    ransackable_attributes(auth_object) + [
+      'asset_name',
+      'user_email',
+      'user_full_name',
+      'assigned_by_email',
+      'assigned_by_full_name'
+    ]
+  end
+
+  def asset_name
+    asset&.name
+  end
+
+  def user_email
+    user&.email
+  end
+
+  def user_full_name
+    user&.full_name
+  end
+
+  def assigned_by_email
+    assigned_by&.email
+  end
+
+  def assigned_by_full_name
+    assigned_by&.full_name
+  end
+
+  # Add ransacker for asset name
+  ransacker :asset_name do |parent|
+    Arel::Nodes::InfixOperation.new('ILIKE', 
+      Arel::Nodes::NamedFunction.new('COALESCE', [
+        parent.table.join(Asset.arel_table)
+          .on(Asset.arel_table[:id].eq(parent.table[:asset_id]))
+          .project(Asset.arel_table[:name])
+      ]),
+      Arel::Nodes::SqlLiteral.new("'%' || ? || '%'"))
+  end
+
+  # Add ransacker for user email
+  ransacker :user_email do |parent|
+    Arel::Nodes::InfixOperation.new('ILIKE',
+      Arel::Nodes::NamedFunction.new('COALESCE', [
+        parent.table.join(User.arel_table)
+          .on(User.arel_table[:id].eq(parent.table[:user_id]))
+          .project(User.arel_table[:email])
+      ]),
+      Arel::Nodes::SqlLiteral.new("'%' || ? || '%'"))
+  end
+
+  # Status helper method
+  def status
+    if checked_in_at.present?
+      'checked_in'
+    else
+      'checked_out'
+    end
   end
 
   private
@@ -135,6 +196,15 @@ class AssetAssignment < ApplicationRecord
   def unassign_asset
     if checked_in_at.nil?
       asset.update!(status: :available)
+    end
+  end
+
+  def no_duplicate_active_assignments
+    if AssetAssignment.where(asset_id: asset_id)
+                     .where(checked_in_at: nil)
+                     .where.not(id: id)
+                     .exists?
+      errors.add(:base, "This asset already has an active assignment")
     end
   end
 end

@@ -3,13 +3,10 @@ class AssetAssignmentsController < ApplicationController
 
   def index
     @q = policy_scope(AssetAssignment)
-    @q = params[:show_deleted] ? @q.only_deleted : @q
-    @q = @q.ransack(params[:q])
+    @q = @q.includes(:asset, :user, :assigned_by).ransack(params[:q])
     @q.sorts = ['created_at desc'] if @q.sorts.empty?
     
-    @asset_assignments = @q.result
-      .includes(:asset, :user, :assigned_by)
-      .references(:asset, :user)
+    @asset_assignments = @q.result(distinct: true)
       .page(params[:page])
   end
 
