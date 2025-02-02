@@ -5,9 +5,18 @@
   </head>
   <body>
     <div class="content">
-      <h2><%= @notification.message %></h2>
+      <h1>Asset Assignment Update</h1>
       
-      <p>Hello <%= @recipient.full_name %>,</p>
+      <p>Hello <%= @recipient&.first_name&.titleize %>,</p>
+      
+      <% case @notification.params[:notification_type] %>
+      <% when :created %>
+        <p>A new asset assignment has been created for <%= @asset_assignment.asset.name %>.</p>
+      <% when :checked_out %>
+        <p>Asset <%= @asset_assignment.asset.name %> has been checked out.</p>
+      <% when :checked_in %>
+        <p>Asset <%= @asset_assignment.asset.name %> has been checked in.</p>
+      <% end %>
       
       <div class="card" style="background: var(--light); padding: 16px; margin: 16px 0;">
         <p><strong>Asset:</strong> <%= @asset_assignment.asset.name %></p>
@@ -16,7 +25,7 @@
         <% end %>
       </div>
 
-      <%= link_to "View Asset Details", @notification.url, class: "btn" %>
+      <%= link_to "View Assignment", asset_assignment_url(@asset_assignment), class: "btn" %>
       
       <p style="color: var(--secondary); font-size: 0.875rem; margin-top: 24px;">
         If you have any questions, please contact your system administrator.

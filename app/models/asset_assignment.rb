@@ -22,7 +22,7 @@ class AssetAssignment < ApplicationRecord
   after_update :create_unassignment_event, if: :ended?
 
   after_commit :notify_assignment
-  after_commit :update_asset_status
+  # after_commit :update_asset_status
 
   def self.ransackable_attributes(auth_object = nil)
     ["asset_id", "checked_in_at", "checked_out_at", "created_at", "id", "notes", "updated_at", "user_id"]
@@ -60,11 +60,23 @@ class AssetAssignment < ApplicationRecord
   end
 
   def checking_in?
-    checked_in_at_changed? && checked_in_at.present?
+    will_save_change_to_checked_in_at? && 
+    checked_in_at.present? && 
+    checked_in_at_was.nil?
   end
 
   def handle_check_in
-    asset.update(status: :available)
+    return unless checking_in?
+    Rails.logger.info "Handling check-in for asset #{asset.id}"
+    
+    begin
+      asset.update!(status: :available)
+      AssetAssignmentNotifier.checked_in(self)
+    rescue StandardError => e
+      Rails.logger.error "Check-in failed: #{e.message}\n#{e.backtrace.join("\n")}"
+      errors.add(:base, "Failed to check in asset: #{e.message}")
+      raise e
+    end
   end
 
   def notify_assignment
@@ -95,18 +107,29 @@ class AssetAssignment < ApplicationRecord
   end
 
   def create_unassignment_event
-    asset.asset_tracking_events.create!(
-      event_type: :unassigned,
-      location: asset&.current_location,
-      scanned_by: assigned_by,
-      asset_assignment: self,
-      rfid_number: asset&.rfid_tag&.rfid_number,
-      scanned_at: DateTime.now
-    )
+    return unless checking_in?
+    Rails.logger.info "Creating unassignment event for asset #{asset.id}"
+    
+    begin
+      asset.asset_tracking_events.create!(
+        event_type: :unassigned,
+        location: asset&.current_location,
+        scanned_by: assigned_by,
+        asset_assignment: self,
+        rfid_number: asset&.rfid_tag&.rfid_number,
+        scanned_at: DateTime.now
+      )
+    rescue StandardError => e
+      Rails.logger.error "Unassignment event creation failed: #{e.message}\n#{e.backtrace.join("\n")}"
+      errors.add(:base, "Failed to create unassignment event: #{e.message}")
+      raise e
+    end
   end
 
   def ended?
-    saved_change_to_ended_at? && ended_at.present?
+    saved_change_to_checked_in_at? && 
+    checked_in_at.present? && 
+    checked_in_at_previously_was.nil?
   end
 
   def unassign_asset

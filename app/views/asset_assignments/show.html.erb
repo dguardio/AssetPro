@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container-fluid">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">Asset Assignment Details</h4>
     <div class="d-flex gap-3">
@@ -17,13 +17,17 @@
         <div class="col-md-6">
           <div class="mb-4">
             <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset</h6>
-            <p class="text-lg mb-0"><%= @asset_assignment.asset&.name %></p>
+            <p class="text-lg mb-0"><%= @asset_assignment.asset&.name&.titleize %></p>
           </div>
           
           <div class="mb-4">
             <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Assigned To</h6>
-            <p class="text-lg mb-0"><%= @asset_assignment.assigned_to&.email %></p>
-            <p class="text-lg mb-0"><%= @asset_assignment.assigned_by&.email %></p>
+            <p class="text-lg mb-0"><%= @asset_assignment.user&.full_name&.titleize %></p>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Assigned By</h6>
+            <p class="text-lg mb-0"><%= @asset_assignment.assigned_by&.full_name&.titleize %></p>
           </div>
         </div>
 
@@ -48,6 +52,35 @@
           </div>
         </div>
       </div>
+
+      <div class="d-flex justify-content-end mb-3">
+        <% if @asset_assignment.checked_in_at.nil? %>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#checkInModal<%= @asset_assignment.id %>">
+            Check In
+          </button>
+        <% else %>
+          <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#checkOutModal<%= @asset_assignment.id %>">
+            Check Out
+          </button>
+        <% end %>
+      </div>
     </div>
   </div>
-</div> 
+</div>
+
+<%= render 'check_in_modal', assignment: @asset_assignment %>
+<%= render 'check_out_modal', assignment: @asset_assignment %>
+
+<style>
+  .modal-backdrop {
+    display: none;
+  }
+  
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-dialog {
+    margin: 1.75rem auto;
+  }
+</style> 

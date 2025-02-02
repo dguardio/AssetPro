@@ -113,6 +113,8 @@ Rails.application.routes.draw do
   resources :asset_assignments do
     member do
       patch :restore
+      patch :check_in
+      patch :check_out
     end
   end
   resources :locations

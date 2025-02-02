@@ -63,4 +63,26 @@ class AssetAssignmentPolicy < ApplicationPolicy
     return false if user.is_a?(Doorkeeper::Application)
     user.admin?
   end
+
+  def check_in?
+    case user
+    when Doorkeeper::Application
+      true  # Allow mobile app to check in
+    when User
+      user.admin? || user.manager?
+    else
+      false
+    end
+  end
+
+  def check_out?
+    case user
+    when Doorkeeper::Application
+      true  # Allow mobile app to check out
+    when User
+      user.admin? || user.manager?
+    else
+      false
+    end
+  end
 end 

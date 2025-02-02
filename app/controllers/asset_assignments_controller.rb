@@ -1,5 +1,5 @@
 class AssetAssignmentsController < ApplicationController
-  before_action :set_asset_assignment, only: [:show, :edit, :update, :destroy]
+  before_action :set_asset_assignment, only: [:show, :edit, :update, :destroy, :check_in, :check_out]
 
   def index
     @q = policy_scope(AssetAssignment)
@@ -58,8 +58,13 @@ class AssetAssignmentsController < ApplicationController
     if @asset_assignment.update(asset_assignment_params)
       redirect_to @asset_assignment, notice: 'Asset assignment was successfully updated.'
     else
+      error_messages = @asset_assignment.errors.full_messages
+      flash.now[:alert] = "Failed to update assignment: #{error_messages.join(', ')}"
       render :edit, status: :unprocessable_entity
     end
+  rescue StandardError => e
+    flash.now[:alert] = "Error updating assignment: #{e.message}"
+    render :edit, status: :unprocessable_entity
   end
 
   def destroy
@@ -79,6 +84,28 @@ class AssetAssignmentsController < ApplicationController
       redirect_to asset_assignments_url, notice: 'Asset assignment was successfully restored.'
     else
       redirect_to asset_assignments_url, alert: 'Failed to restore asset assignment.'
+    end
+  end
+
+  def check_in
+    authorize @asset_assignment
+    @asset_assignment.checked_in_at = Time.current
+    
+    if @asset_assignment.save
+      redirect_to @asset_assignment, notice: 'Asset has been checked in successfully.'
+    else
+      redirect_to @asset_assignment, alert: @asset_assignment.errors.full_messages.join(', ')
+    end
+  end
+
+  def check_out
+    authorize @asset_assignment
+    @asset_assignment.checked_out_at = Time.current
+    
+    if @asset_assignment.save
+      redirect_to @asset_assignment, notice: 'Asset has been checked out successfully.'
+    else
+      redirect_to @asset_assignment, alert: @asset_assignment.errors.full_messages.join(', ')
     end
   end
 
