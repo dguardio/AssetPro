@@ -16,22 +16,22 @@
         <div class="row g-4">
           <div class="col-md-3">
             <div class="input-group input-group-dynamic">
-              <%= f.search_field :user_email_cont, placeholder: 'Search by Email', class: 'form-control' %>
+              <%= f.search_field :asset_name_cont, class: 'form-control', value: params.dig(:q, :asset_name_cont), placeholder: 'Search by Asset Name' %>
             </div>
-          </div>
+          </div>          
           <div class="col-md-3">
             <div class="input-group input-group-dynamic">
-              <%= f.search_field :asset_name_cont, placeholder: 'Search by Asset Name', class: 'form-control' %>
+              <%= f.search_field :user_email_cont, class: 'form-control', value: params.dig(:q, :user_email_cont), placeholder: 'Search by Email' %>
             </div>
           </div>
           <div class="col-md-3">
             <div class="input-group input-group-static">
-              <%= f.date_field :checked_out_at_gteq, class: 'form-control' %>
+              <%= f.date_field :checked_out_at_gteq, class: 'form-control', value: params.dig(:q, :checked_out_at_gteq), label: false %>
             </div>
           </div>
           <div class="col-md-3">
             <div class="input-group input-group-static">
-              <%= f.date_field :checked_in_at_lteq, class: 'form-control' %>
+              <%= f.date_field :checked_in_at_lteq, class: 'form-control', value: params.dig(:q, :checked_in_at_lteq), label: false %>
             </div>
           </div>
         </div>

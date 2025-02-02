@@ -8,6 +8,7 @@ class AssetAssignmentsController < ApplicationController
     
     @asset_assignments = @q.result(distinct: true)
       .page(params[:page])
+      .per(10)
   end
 
   def show

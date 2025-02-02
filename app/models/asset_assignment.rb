@@ -26,24 +26,27 @@ class AssetAssignment < ApplicationRecord
   # after_commit :update_asset_status
 
   def self.ransackable_attributes(auth_object = nil)
-    ["asset_id", "checked_in_at", "checked_out_at", "created_at", "id", "notes", 
-     "updated_at", "user_id", "assigned_by_id", "deleted_at"]
+    %w[asset_id user_id assigned_by_id checked_out_at checked_in_at]
   end
 
   def self.ransackable_associations(auth_object = nil)
-    ["asset", "user", "assigned_by"]
+    %w[asset user assigned_by]
   end
 
+  ransacker :asset_name do
+    Arel.sql("assets.name")
+  end
 
+  ransacker :user_email do
+    Arel.sql("users.email")
+  end
 
-  def self.ransortable_attributes(auth_object = nil)
-    ransackable_attributes(auth_object) + [
-      'asset_name',
-      'user_email',
-      'user_full_name',
-      'assigned_by_email',
-      'assigned_by_full_name'
-    ]
+  ransacker :asset_name do
+    Arel.sql("assets.name")
+  end
+
+  ransacker :user_email do
+    Arel.sql("users.email")
   end
 
   def asset_name
@@ -66,27 +69,7 @@ class AssetAssignment < ApplicationRecord
     assigned_by&.full_name
   end
 
-  # Add ransacker for asset name
-  ransacker :asset_name do |parent|
-    Arel::Nodes::InfixOperation.new('ILIKE', 
-      Arel::Nodes::NamedFunction.new('COALESCE', [
-        parent.table.join(Asset.arel_table)
-          .on(Asset.arel_table[:id].eq(parent.table[:asset_id]))
-          .project(Asset.arel_table[:name])
-      ]),
-      Arel::Nodes::SqlLiteral.new("'%' || ? || '%'"))
-  end
 
-  # Add ransacker for user email
-  ransacker :user_email do |parent|
-    Arel::Nodes::InfixOperation.new('ILIKE',
-      Arel::Nodes::NamedFunction.new('COALESCE', [
-        parent.table.join(User.arel_table)
-          .on(User.arel_table[:id].eq(parent.table[:user_id]))
-          .project(User.arel_table[:email])
-      ]),
-      Arel::Nodes::SqlLiteral.new("'%' || ? || '%'"))
-  end
 
   # Status helper method
   def status
