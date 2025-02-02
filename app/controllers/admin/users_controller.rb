@@ -41,7 +41,7 @@ class Admin::UsersController < ApplicationController
     authorize @user
 
     User.transaction do
-      if @user.update(user_params_without_role)
+      if @user.update(user_params)
         # Handle role assignment
         new_role = params[:user][:role]
         if new_role.present? && User.available_roles.include?(new_role)
