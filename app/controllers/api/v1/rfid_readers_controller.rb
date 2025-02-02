@@ -22,19 +22,14 @@ module Api
 
       # Handle reader heartbeat/status updates
       def ping
-        @reader = RfidReader.find_by(
-          oauth_application_id: current_application.id
-        )
+        @reader = RfidReader.find_by(oauth_application_id: current_application.id)
         
         if @reader.nil?
           render json: { error: 'Reader not found' }, status: :not_found
           return
         end
 
-        @reader.update!(
-          last_ping_at: Time.current,
-          active: true
-        )
+        @reader.update!(last_ping_at: Time.current)
 
         render json: {
           status: 'ok',

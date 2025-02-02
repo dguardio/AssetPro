@@ -2,7 +2,8 @@ class RfidReadersController < ApplicationController
   before_action :set_reader, only: [:show, :edit, :update, :destroy, :toggle_active]
 
   def index
-    @readers = policy_scope(RfidReader).includes(:oauth_application).order(last_ping_at: :desc)
+    @q = policy_scope(RfidReader).includes(:oauth_application).ransack(params[:q])
+    @readers = @q.result
     authorize @readers
   end
 
@@ -50,7 +51,7 @@ class RfidReadersController < ApplicationController
 
   def set_reader
     #Set reader if soft deleted or not
-    @reader = params[:id].present? ? RfidReader.with_deleted.find(params[:id]) : RfidReader.new
+    @reader = params[:id].present? ? RfidReader.find(params[:id]) : RfidReader.new
   end
 
   def reader_params

@@ -16,9 +16,9 @@
         <table class="table table-striped align-items-center mb-0">
           <thead>
             <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Reader ID</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Name</th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Position</th>
+              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                <%= sort_link(@q, :position, "Position") %>
+              </th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Application</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Last Active</th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
@@ -28,8 +28,6 @@
           <tbody>
             <% @readers.each do |reader| %>
               <tr>
-                <td><%= reader.reader_id %></td>
-                <td><%= reader.name %></td>
                 <td><%= reader.position %></td>
                 <td><%= reader.oauth_application&.name %></td>
                 <td><%= time_ago_in_words(reader.last_ping_at) if reader.last_ping_at %> ago</td>
@@ -51,10 +49,10 @@
                     <% end %>
 
                     <% if policy(reader).toggle_active? %>
-                      <%= link_to toggle_active_rfid_reader_path(reader), 
+                      <%= button_to toggle_active_rfid_reader_path(reader), 
                           method: :patch,
-                          class: "btn btn-link mb-0 text-#{reader.active? ? 'warning' : 'success'}" do %>
-                        <i class="material-icons-round"><%= reader.active? ? 'toggle_off' : 'toggle_on' %></i>
+                          class: "btn btn-link mb-0 text-#{reader.active? ? 'success' : 'warning'}" do %>
+                        <i class="material-icons-round"><%= reader.active? ? 'toggle_on' : 'toggle_off' %></i>
                       <% end %>
                     <% end %>
                   </div>
