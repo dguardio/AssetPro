@@ -44,9 +44,11 @@
           </div>
           <div class="ms-options border rounded mt-1" style="max-height: 200px; overflow-y: auto; display: none;">
             <% Asset.all.each do |asset| %>
-              <div class="ms-option p-2 cursor-pointer hover-bg-light" data-value="<%= asset.id %>">
-                <%= asset.name %>
-              </div>
+              <% unless @license.asset_ids.include?(asset.id) %>
+                <div class="ms-option p-2 cursor-pointer hover-bg-light" data-value="<%= asset.id %>">
+                  <%= asset.name %>
+                </div>
+              <% end %>
             <% end %>
           </div>
         </div>
@@ -141,7 +143,7 @@
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('.ms-select-container');
     const select = document.querySelector('select[name="license[asset_ids][]"]');
     const search = document.querySelector('#assetSearch');
@@ -149,46 +151,29 @@
     const selectedTags = document.querySelector('.ms-selected-tags');
     const optionElements = document.querySelectorAll('.ms-option');
 
-    // Initialize selected values
-    updateSelectedTags();
-
-    // Show options on container click
+    // Show options when clicking the container
     container.addEventListener('click', () => {
-      options.style.display = 'block';
-      search.focus();
+      options.style.display = options.style.display === 'none' ? 'block' : 'none';
     });
 
-    // Hide options when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!container.contains(e.target)) {
-        options.style.display = 'none';
-      }
-    });
-
-    // Filter options on search
+    // Filter options based on search
     search.addEventListener('input', (e) => {
-      const value = e.target.value.toLowerCase();
-      optionElements.forEach(option => {
-        const text = option.textContent.toLowerCase();
-        option.style.display = text.includes(value) ? 'block' : 'none';
+      const searchTerm = e.target.value.toLowerCase();
+      optionElements.forEach(opt => {
+        if (!select.querySelector(`option[value="${opt.dataset.value}"]`).selected) {
+          opt.style.display = opt.textContent.toLowerCase().includes(searchTerm) ? 'block' : 'none';
+        }
       });
     });
 
     // Handle option selection
     optionElements.forEach(option => {
-      option.addEventListener('click', () => {
-        const value = option.dataset.value;
-        const selected = Array.from(select.selectedOptions).map(opt => opt.value);
-        
-        if (selected.includes(value)) {
-          select.querySelector(`option[value="${value}"]`).selected = false;
-        } else {
-          select.querySelector(`option[value="${value}"]`).selected = true;
-        }
-        
+      option.addEventListener('click', (e) => {
+        const value = e.target.dataset.value;
+        const selectOption = select.querySelector(`option[value="${value}"]`);
+        selectOption.selected = true;
+        option.style.display = 'none'; // Hide the selected option
         updateSelectedTags();
-        search.value = '';
-        optionElements.forEach(opt => opt.style.display = 'block');
       });
     });
 
@@ -196,10 +181,11 @@
       selectedTags.innerHTML = '';
       Array.from(select.selectedOptions).forEach(option => {
         const tag = document.createElement('div');
-        tag.className = 'ms-tag';
+        tag.className = 'badge badge-sm bg-gradient-light text-dark d-flex align-items-center gap-1 mb-1 me-1';
         tag.innerHTML = `
+          <i class="material-icons-round text-sm">computer</i>
           ${option.text}
-          <span class="ms-tag-remove" data-value="${option.value}">×</span>
+          <i class="material-icons-round text-sm ms-1 cursor-pointer ms-tag-remove" data-value="${option.value}">close</i>
         `;
         selectedTags.appendChild(tag);
       });
@@ -209,10 +195,17 @@
         remove.addEventListener('click', (e) => {
           e.stopPropagation();
           const value = e.target.dataset.value;
-          select.querySelector(`option[value="${value}"]`).selected = false;
+          const selectOption = select.querySelector(`option[value="${value}"]`);
+          selectOption.selected = false;
+          // Show the option again in the dropdown
+          const option = document.querySelector(`.ms-option[data-value="${value}"]`);
+          if (option) option.style.display = 'block';
           updateSelectedTags();
         });
       });
     }
+
+    // Initial update of selected tags
+    updateSelectedTags();
   });
 </script> 

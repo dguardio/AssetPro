@@ -59,6 +59,16 @@ class License < ApplicationRecord
     (seats_used.to_f / seats * 100).round(2)
   end
 
+  def expires_soon?
+    return false if expiration_date.nil?
+    expiration_date > Time.current && expiration_date < 30.days.from_now
+  end
+
+  def seats_used_percentage
+    return 0 if seats.nil? || seats.zero?
+    (seats_used.to_f / seats * 100).round(2)
+  end
+
   private
 
   def valid_dates?
