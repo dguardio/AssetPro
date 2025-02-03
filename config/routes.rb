@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     resources :users do
       member do
         get :status_history
+        post :lock
+        post :unlock
       end
     end
     resources :asset_tracking_events, only: [:index] do
@@ -215,4 +217,12 @@ Rails.application.routes.draw do
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
+
+  # # Add Devise URL helpers
+  # devise_scope :user do
+  #   get '/users/unlock', to: 'devise/unlocks#new', as: :new_user_unlock
+  #   post '/users/unlock', to: 'devise/unlocks#create', as: :user_unlock
+  #   get '/users/lock', to: 'devise/locks#new', as: :new_user_lock
+  #   post '/users/lock', to: 'devise/locks#create', as: :user_lock
+  # end
 end

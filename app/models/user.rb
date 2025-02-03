@@ -1,12 +1,14 @@
 class User < ApplicationRecord
+  # acts_as_paranoid
   rolify
+
   include Auditable
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
-         :trackable
+         :trackable, :confirmable, :lockable
 
   # Validations
   validates :email, presence: true, uniqueness: true
@@ -53,7 +55,7 @@ class User < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    %w[email first_name last_name name role active created_at updated_at]
+    %w[email first_name last_name name role active created_at updated_at locked_at]
   end
 
   def self.ransackable_associations(auth_object = nil)
@@ -70,6 +72,10 @@ class User < ApplicationRecord
 
   def profile_reset?
     false  # Default to false since this is for the regular password reset flow
+  end
+
+  def send_lock_notification(reason)
+    send_devise_notification(:lock, reason)
   end
 
   private

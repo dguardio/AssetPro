@@ -30,6 +30,16 @@ class UserPolicy < ApplicationPolicy
     edit? || user.admin?
   end
 
+  def lock?
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin? && !record.access_locked?
+  end
+
+  def unlock?
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin? && record.access_locked?
+  end
+
   class Scope < Scope
     def resolve
       if user.admin?

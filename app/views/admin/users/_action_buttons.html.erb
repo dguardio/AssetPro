@@ -1,0 +1,61 @@
+<div class="d-flex gap-2">
+  <% if policy(user).lock? %>
+    <button type="button" 
+            class="btn btn-warning" 
+            data-bs-toggle="modal" 
+            data-bs-target="#lockReasonModal"
+            data-user-id="<%= user.id %>">
+      <i class="material-icons-round">lock</i>&nbsp;Lock Account
+    </button>
+  <% end %>
+
+  <% if policy(user).unlock? %>
+    <button type="button" 
+            class="btn btn-success" 
+            data-bs-toggle="modal" 
+            data-bs-target="#unlockReasonModal"
+            data-user-id="<%= user.id %>">
+      <i class="material-icons-round">lock_open</i>&nbsp;Unlock Account
+    </button>
+  <% end %>
+  <%= link_to edit_admin_user_path(@user), class: 'btn bg-gradient-info' do %>
+    <i class="material-icons-round text-sm">edit</i>&nbsp;Edit User
+  <% end %>  
+  <%= link_to admin_users_path, class: 'btn bg-gradient-dark' do %>
+    <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Users
+  <% end %>
+</div>
+
+<style>
+  .modal-backdrop {
+    display: none;
+  }
+  
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-dialog {
+    margin: 1.75rem auto;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const lockModal = new bootstrap.Modal(document.getElementById('lockReasonModal'), {
+      backdrop: false
+    });
+    const unlockModal = new bootstrap.Modal(document.getElementById('unlockReasonModal'), {
+      backdrop: false
+    });
+    
+    // Clean up modals on hide
+    document.getElementById('lockReasonModal').addEventListener('hidden.bs.modal', function() {
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    });
+    
+    document.getElementById('unlockReasonModal').addEventListener('hidden.bs.modal', function() {
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    });
+  });
+</script> 

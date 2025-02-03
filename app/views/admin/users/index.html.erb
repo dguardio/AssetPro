@@ -31,10 +31,14 @@
                 class: 'form-select' %>
           </div>
           <div class="col-md-3">
-            <%= f.select :active_eq, 
-                [['Active', true], ['Inactive', false]],
+            <%= f.select :locked_at_present, 
+                options_for_select([
+                  ['All Users', ''],
+                  ['Locked Users', 'true'],
+                  ['Active Users', 'false']
+                ], selected: params.dig(:q, :locked_at_present)),
                 { include_blank: 'Filter by Status' },
-                class: 'form-select' %>
+                { class: 'form-select' } %>
           </div>
         </div>
         <div class="mt-4">
@@ -81,9 +85,11 @@
                   <p class="text-xs font-weight-bold mb-0"><%= user.role&.titleize %></p>
                 </td>
                 <td>
-                  <span class="badge badge-sm bg-gradient-<%= user.active? ? 'success' : 'danger' %>">
-                    <%= user.active? ? 'Active' : 'Inactive' %>
-                  </span>
+                  <% if user.access_locked? %>
+                    <span class="badge badge-sm bg-gradient-danger">Locked</span>
+                  <% else %>
+                    <span class="badge badge-sm bg-gradient-success">Active</span>
+                  <% end %>
                 </td>
                 <td>
                   <div class="btn-group">
@@ -115,6 +121,28 @@
                         <i class="material-icons-round">delete</i>
                       <% end %>
                     <% end %>
+
+                    <% if policy(user).lock? %>
+                      <% if user.access_locked? %>
+                        <button type="button"
+                            class="btn btn-link text-success mb-0"
+                            data-bs-toggle="modal"
+                            data-bs-target="#unlockReasonModal"
+                            data-user-id="<%= user.id %>"
+                            title="Unlock User">
+                          <i class="material-icons-round">lock_open</i>
+                        </button>
+                      <% else %>
+                        <button type="button"
+                            class="btn btn-link text-warning mb-0"
+                            data-bs-toggle="modal"
+                            data-bs-target="#lockReasonModal"
+                            data-user-id="<%= user.id %>"
+                            title="Lock User">
+                          <i class="material-icons-round">lock</i>
+                        </button>
+                      <% end %>
+                    <% end %>
                   </div>
                 </td>
               </tr>
@@ -129,7 +157,24 @@
       </div>
     </div>
   </div>
+
+  <%= render 'lock_reason_modal' %>
+  <%= render 'unlock_reason_modal' %>
 </div>
+
+<style>
+  .modal-backdrop {
+    display: none;
+  }
+  
+  .modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-dialog {
+    margin: 1.75rem auto;
+  }
+</style>
 
 <% content_for :page_scripts do %>
   <script>

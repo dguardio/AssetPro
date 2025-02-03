@@ -1,0 +1,66 @@
+<div class="modal fade" id="unlockReasonModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Unlock User Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <%= form_with(url: unlock_admin_user_path(0), method: :post, class: 'js-unlock-form') do |f| %>
+        <div class="modal-body">
+          <div class="form-group">
+            <%= f.label :reason, 'Reason for Unlocking Account', class: 'form-label' %>
+            <%= f.text_area :reason, class: 'form-control', required: true %>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <%= f.submit 'Unlock Account', class: 'btn btn-success' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('unlockReasonModal')
+    const unlockModal = new bootstrap.Modal(modal)
+    
+    modal.addEventListener('show.bs.modal', function(event) {
+      const button = event.relatedTarget
+      const userId = button.dataset.userId
+      const form = modal.querySelector('.js-unlock-form')
+      form.action = form.action.replace(/\/users\/\d+\//, `/users/${userId}/`)
+    })
+
+    modal.querySelector('.js-unlock-form').addEventListener('submit', function(event) {
+      event.preventDefault()
+      
+      fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this),
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        },
+        credentials: 'same-origin'
+      }).then(response => {
+        if (response.ok) {
+          unlockModal.hide()
+          window.location.reload()
+        } else {
+          response.json().then(data => {
+            alert(data.errors || 'An error occurred while unlocking the account.')
+          })
+        }
+      }).catch(error => {
+        console.error('Error:', error)
+        alert('An error occurred while unlocking the account.')
+      })
+    })
+
+    // Clean up modal on hide
+    modal.addEventListener('hidden.bs.modal', function() {
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove())
+    })
+  })
+</script> 

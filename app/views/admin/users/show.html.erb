@@ -2,12 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">User Details</h4>
     <div class="d-flex gap-3">
-      <%= link_to admin_users_path, class: 'btn bg-gradient-dark mb-0' do %>
-        <i class="material-icons-round text-sm">arrow_back</i>&nbsp;Back to Users
-      <% end %>
-      <%= link_to edit_admin_user_path(@user), class: 'btn bg-gradient-info mb-0' do %>
-        <i class="material-icons-round text-sm">edit</i>&nbsp;Edit User
-      <% end %>
+      <%= render 'action_buttons', user: @user %>
     </div>
   </div>
 
@@ -52,4 +47,7 @@
       </div>
     </div>
   </div>
+
+  <%= render 'lock_reason_modal' if policy(@user).lock? %>
+  <%= render 'unlock_reason_modal' if policy(@user).unlock? %>
 </div> 

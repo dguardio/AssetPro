@@ -1,8 +1,9 @@
 class Admin::UsersController < ApplicationController
-  before_action :set_user, only: [:edit, :update, :destroy, :status_history]
+  before_action :set_user, only: [:edit, :update, :destroy, :status_history, :lock, :unlock]
 
   def index
     @q = policy_scope(User).ransack(params[:q])
+    @q.sorts = 'email asc' if @q.sorts.empty?
     @users = @q.result(distinct: true).page(params[:page])
   end
 
@@ -58,14 +59,48 @@ class Admin::UsersController < ApplicationController
 
   def destroy
     authorize @user
-    @user.destroy
-    redirect_to admin_users_path, notice: 'User was successfully deleted.'
+    if @user.deactivate!
+      redirect_to admin_users_path, notice: 'User account was successfully deactivated.'
+    else
+      redirect_to admin_users_path, alert: 'Failed to deactivate user account.'
+    end
+  end
+
+  def reactivate
+    authorize @user
+    if @user.reactivate!
+      redirect_to admin_users_path, notice: 'User account was successfully reactivated.'
+    else
+      redirect_to admin_users_path, alert: 'Failed to reactivate user account.'
+    end
   end
 
   def status_history
     authorize @user
     @status_logs = @user.status_logs.includes(:changed_by).order(created_at: :desc)
   end
+
+  def lock
+    authorize @user
+    if @user.lock_access!(send_instructions: true)
+      @user.send_lock_notification(params[:reason])  # Add this line
+      log_account_status_change('locked', params[:reason])
+      redirect_to admin_users_path, notice: 'User account was successfully locked.'
+    else
+      redirect_to admin_users_path, alert: 'Failed to lock user account.'
+    end
+  end
+  
+  def unlock
+    authorize @user
+    if @user.unlock_access!
+      @user.send_unlock_instructions  # Add this line
+      log_account_status_change('unlocked', params[:reason])
+      redirect_to admin_users_path, notice: 'User account was successfully unlocked.'
+    else
+      redirect_to admin_users_path, alert: 'Failed to unlock user account.'
+    end
+  end  
 
   private
 
@@ -93,6 +128,15 @@ class Admin::UsersController < ApplicationController
       :first_name,
       :last_name,
       :active
+    )
+  end
+
+  def log_account_status_change(action, reason)
+    @user.account_status_logs.create!(
+      changed_by: current_user,
+      status_from: action == 'locked' ? true : false,
+      status_to: action == 'locked' ? false : true,
+      reason: reason || "Account #{action} by administrator"
     )
   end
 end 
