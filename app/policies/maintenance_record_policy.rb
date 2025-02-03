@@ -49,4 +49,9 @@ class MaintenanceRecordPolicy < ApplicationPolicy
     return false if user.is_a?(Doorkeeper::Application)
     user.admin?
   end
+
+  def restore?
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin?
+  end
 end 

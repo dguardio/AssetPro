@@ -3,6 +3,11 @@
     <h4 class="mb-0">Maintenance Schedule Details</h4>
     <div class="d-flex gap-3">
       <% if current_user.admin? %>
+        <% if @maintenance_schedule.deleted? %>
+          <button type="button" class="btn bg-gradient-success mb-0" data-bs-toggle="modal" data-bs-target="#restoreModal">
+            <i class="material-icons-round text-sm">restore</i>&nbsp;Restore Schedule
+          </button>
+        <% end %>
         <%= link_to edit_maintenance_schedule_path(@maintenance_schedule), class: 'btn bg-gradient-dark mb-0' do %>
           <i class="material-icons-round text-sm">edit</i>&nbsp;Edit Schedule
         <% end %>
@@ -85,4 +90,64 @@
       </div>
     </div>
   </div>
-</div> 
+</div>
+
+<% if @maintenance_schedule.deleted? %>
+  <!-- Restore Modal -->
+  <div class="modal fade" id="restoreModal" tabindex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="restoreModalLabel">Restore Maintenance Schedule</h5>
+          <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">
+              <i class="material-icons-round">close</i>
+            </span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to restore this maintenance schedule?</p>
+          <p class="text-sm text-secondary mb-0">
+            Schedule: <strong><%= @maintenance_schedule.title %></strong><br>
+            Asset: <strong><%= @maintenance_schedule.asset.name %></strong>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <%= button_to restore_maintenance_schedule_path(@maintenance_schedule), 
+              method: :patch, 
+              class: 'btn bg-gradient-success' do %>
+            <i class="material-icons-round text-sm">restore</i>&nbsp;Restore Schedule
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .modal-backdrop {
+      display: none;
+    }
+    
+    .modal {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-dialog {
+      margin: 1.75rem auto;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const restoreModal = new bootstrap.Modal(document.getElementById('restoreModal'), {
+        backdrop: false
+      });
+      
+      // Clean up modal on hide
+      document.getElementById('restoreModal').addEventListener('hidden.bs.modal', function() {
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+      });
+    });
+  </script>
+<% end %> 

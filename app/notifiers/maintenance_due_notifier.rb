@@ -37,11 +37,22 @@ class MaintenanceDueNotifier < ApplicationNotifier
   end
 
   def self.maintenance_completed(maintenance_schedule)
-    recipients = [
-      maintenance_schedule.asset.current_assignment.user,
-      maintenance_schedule.assigned_to
-    ].compact + User.with_role(:manager)
-
+    recipients = []
+    
+    # Add current asset assignment user if exists
+    if maintenance_schedule.asset&.current_assignment&.user
+      recipients << maintenance_schedule.asset.current_assignment.user
+    end
+    
+    # Add assigned maintenance user if exists
+    recipients << maintenance_schedule.assigned_to if maintenance_schedule.assigned_to
+    
+    # Add all managers
+    recipients += User.with_role(:manager)
+    
+    # Remove duplicates and nil values
+    recipients = recipients.compact.uniq
+    
     with(
       maintenance_schedule: maintenance_schedule,
       notification_type: :maintenance_completed

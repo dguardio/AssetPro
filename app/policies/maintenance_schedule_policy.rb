@@ -52,4 +52,9 @@ class MaintenanceSchedulePolicy < ApplicationPolicy
     (user.security? && record.asset&.location_id == user.location_id) ||
     record.assigned_to_id == user.id
   end
+
+  def restore?
+    return false if user.is_a?(Doorkeeper::Application)
+    user.admin?
+  end
 end 

@@ -1,7 +1,8 @@
 <div class="container-fluid py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">Maintenance Schedules</h4>
-    <div class="d-flex gap-2">  
+    <div class="d-flex gap-3">
+
       <% if policy(MaintenanceSchedule.new).create? %>
         <%= link_to new_maintenance_schedule_path, class: 'btn bg-gradient-dark' do %>
           <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New Maintenance Schedule
@@ -25,17 +26,26 @@
             </div>
           </div>
           <div class="col-md-3">
-            <%= f.label "From", class: 'form-label' %>
-            <%= f.date_field :next_due_at_gteq, class: 'form-control', placeholder: 'Next Due From' %>
+            <div class="input-group input-group-static">
+              <%= f.date_field :next_due_at_gteq, class: 'form-control', placeholder: 'Next Due From' %>
+            </div>
           </div>
           <div class="col-md-3">
-            <%= f.label "To", class: 'form-label' %>
-            <%= f.date_field :next_due_at_lteq, class: 'form-control', placeholder: 'Next Due To' %>
+            <div class="input-group input-group-static">
+              <%= f.date_field :next_due_at_lteq, class: 'form-control', placeholder: 'Next Due To' %>
+            </div>
           </div>
         </div>
         <div class="mt-4">
           <%= f.submit "Search", class: 'btn bg-gradient-info' %>
           <%= link_to "Clear", maintenance_schedules_path, class: 'btn bg-gradient-secondary' %>
+          <% if current_user.admin? %>
+            <% if params[:show_deleted] %>
+              <%= link_to "Hide Deleted", maintenance_schedules_path, class: "btn btn-outline-secondary" %>
+            <% else %>
+              <%= link_to "Show Deleted", maintenance_schedules_path(show_deleted: true), class: "btn btn-outline-secondary" %>
+            <% end %>
+          <% end %>
         </div>
       <% end %>
     </div>
@@ -47,20 +57,14 @@
         <table class="table table-striped align-items-center mb-0">
           <thead>
             <tr>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                <%= sort_link(@q, :asset_name, "Asset") %>
-              </th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                 <%= sort_link(@q, :title, "Title") %>
               </th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                <%= sort_link(@q, :frequency, "Frequency") %>
+                <%= sort_link(@q, :last_performed_at, "Last Performed") %>
               </th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                 <%= sort_link(@q, :next_due_at, "Next Due") %>
-              </th>
-              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                <%= sort_link(@q, :last_performed_at, "Last Performed") %>
               </th>
               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                 <%= sort_link(@q, :status, "Status") %>
@@ -72,32 +76,22 @@
             <% @maintenance_schedules.each do |schedule| %>
               <tr>
                 <td>
-                  <div class="d-flex px-2 py-1">
-                    <div class="d-flex flex-column justify-content-center">
-                      <h6 class="mb-0 text-sm"><%= schedule.asset.name %></h6>
-                      <p class="text-xs text-secondary mb-0"><%= schedule.asset.asset_code %></p>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <p class="text-xs font-weight-bold mb-0"><%= schedule.title %></p>
+                  <p class="text-xs font-weight-bold mb-0"><%= schedule.title.titleize %></p>
                   <p class="text-xs text-secondary mb-0">
                     <%= truncate(schedule.description, length: 50) %>
                   </p>
                 </td>
                 <td>
                   <p class="text-xs font-weight-bold mb-0">
-                    <%= schedule.frequency&.titleize || 'Not Set' %>
+                    <%= schedule.last_performed_at&.strftime("%Y-%m-%d") || 'Not Set' %>
                   </p>
                 </td>
                 <td>
                   <p class="text-xs font-weight-bold mb-0">
-                    <%= schedule.next_due_at&.strftime("%Y-%m-%d") || 'Not Set' %>
+                    <%= format_next_due_date(schedule) %>
                   </p>
-                </td>
-                <td>
-                  <p class="text-xs font-weight-bold mb-0">
-                    <%= schedule.last_performed_at&.strftime("%Y-%m-%d") || 'Never' %>
+                  <p class="text-xs text-secondary mb-0">
+                    <%= format_frequency(schedule.frequency) %>
                   </p>
                 </td>
                 <td>

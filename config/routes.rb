@@ -44,6 +44,11 @@ Rails.application.routes.draw do
         collection do
           get :search
         end
+        resources :maintenance_records do
+          member do
+            patch :restore
+          end
+        end
       end
 
       # Asset Assignments
@@ -161,10 +166,15 @@ Rails.application.routes.draw do
     end
   end
   resources :maintenance_schedules do
-    resources :maintenance_records
     member do
+      patch :restore
       post :complete
     end
+    resources :maintenance_records do
+      member do
+        patch :restore
+      end
+    end    
   end
   resources :licenses
   resources :asset_tracking_events, only: [:index, :show]

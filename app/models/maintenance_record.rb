@@ -18,6 +18,8 @@ class MaintenanceRecord < ApplicationRecord
     inspection: 'inspection'
   }
 
+  scope :without_deleted, -> { where(deleted_at: nil) }
+
   def self.ransackable_attributes(auth_object = nil)
     ["asset_id", "cost", "created_at", "description", "id", "maintenance_date", 
      "maintenance_schedule_id", "performed_by_id", "updated_at"]

@@ -3,6 +3,21 @@
     <h1>Maintenance Records for <%= @asset.name %></h1>
     <%= link_to 'Back to Asset', asset_path(@asset), class: 'btn btn-secondary' %>
   </div>
+  <div class="d-flex gap-3">
+    <% if current_user.admin? %>
+      <% if params[:show_deleted] %>
+        <%= link_to "Hide Deleted", asset_maintenance_records_path(@asset), class: "btn btn-outline-secondary" %>
+      <% else %>
+        <%= link_to "Show Deleted", asset_maintenance_records_path(@asset, show_deleted: true), class: "btn btn-outline-secondary" %>
+      <% end %>
+    <% end %>
+    <% if policy(MaintenanceRecord.new(asset: @asset)).create? %>
+      <%= link_to new_asset_maintenance_record_path(@asset), class: 'btn bg-gradient-dark' do %>
+        <i class="material-icons-round text-sm">add</i>&nbsp;&nbsp;New Maintenance Record
+      <% end %>
+    <% end %>
+  </div>
+  
 
   <%= search_form_for @q, url: asset_maintenance_records_path(@asset), class: 'mb-4' do |f| %>
     <div class="row">

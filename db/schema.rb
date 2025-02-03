@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_01_22_221354) do
+ActiveRecord::Schema[7.0].define(version: 2025_02_03_045746) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -182,8 +182,10 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_22_221354) do
     t.datetime "updated_at", null: false
     t.bigint "performed_by_id"
     t.datetime "deleted_at"
+    t.bigint "maintenance_schedule_id"
     t.index ["asset_id"], name: "index_maintenance_records_on_asset_id"
     t.index ["deleted_at"], name: "index_maintenance_records_on_deleted_at"
+    t.index ["maintenance_schedule_id"], name: "index_maintenance_records_on_maintenance_schedule_id"
     t.index ["performed_by_id"], name: "index_maintenance_records_on_performed_by_id"
   end
 
@@ -200,9 +202,11 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_22_221354) do
     t.string "frequency"
     t.datetime "next_due_at"
     t.datetime "last_performed_at"
+    t.datetime "deleted_at"
     t.index ["asset_id", "next_due_at"], name: "index_maintenance_schedules_on_asset_id_and_next_due_at"
     t.index ["asset_id"], name: "index_maintenance_schedules_on_asset_id"
     t.index ["assigned_to_id"], name: "index_maintenance_schedules_on_assigned_to_id"
+    t.index ["deleted_at"], name: "index_maintenance_schedules_on_deleted_at"
     t.index ["next_due_at"], name: "index_maintenance_schedules_on_next_due_at"
     t.index ["status"], name: "index_maintenance_schedules_on_status"
   end
@@ -380,6 +384,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_01_22_221354) do
   add_foreign_key "licenses", "assets"
   add_foreign_key "licenses", "users", column: "assigned_to_id"
   add_foreign_key "maintenance_records", "assets"
+  add_foreign_key "maintenance_records", "maintenance_schedules"
   add_foreign_key "maintenance_records", "users", column: "performed_by_id"
   add_foreign_key "maintenance_schedules", "assets"
   add_foreign_key "maintenance_schedules", "users", column: "assigned_to_id"

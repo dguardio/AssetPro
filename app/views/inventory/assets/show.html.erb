@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">Asset Details</h4>
     <div class="d-flex gap-3">
-      <% if @asset.deleted? %>
+      <% if @asset.deleted? && policy(@asset).restore? %>
         <button type="button" class="btn bg-gradient-success mb-0" data-bs-toggle="modal" data-bs-target="#restoreModal">
           <i class="material-icons-round text-sm">restore</i>&nbsp;Restore Asset
         </button>

@@ -1,11 +1,13 @@
 class MaintenanceSchedulesController < ApplicationController
-  before_action :set_maintenance_schedule, only: [:show, :edit, :update, :destroy, :complete]
+  before_action :set_maintenance_schedule, only: [:show, :edit, :update, :destroy, :complete, :restore]
 
   def index
     @q = policy_scope(MaintenanceSchedule).ransack(params[:q])
     @maintenance_schedules = @q.result.includes(:asset, :assigned_to)
-    .order(params[:sort] || 'created_at DESC')
-    .page(params[:page]).per(10)
+    @maintenance_schedules = @maintenance_schedules.only_deleted if params[:show_deleted]
+    @maintenance_schedules = @maintenance_schedules
+      .order(params[:sort] || 'created_at DESC')
+      .page(params[:page]).per(10)
   end
 
   def show
@@ -44,17 +46,48 @@ class MaintenanceSchedulesController < ApplicationController
 
   def destroy
     authorize @maintenance_schedule
-    @maintenance_schedule.destroy
-    redirect_to maintenance_schedules_url, notice: 'Maintenance schedule was successfully deleted.'
+    if @maintenance_schedule.destroy
+      redirect_to maintenance_schedules_url, notice: 'Maintenance schedule was successfully archived.'
+    else
+      redirect_to maintenance_schedules_url, alert: 'Failed to archive maintenance schedule.'
+    end
+  end
+
+  def restore
+    @maintenance_schedule = MaintenanceSchedule.only_deleted.find(params[:id])
+    authorize @maintenance_schedule
+    
+    if @maintenance_schedule.recover
+      redirect_to maintenance_schedules_url, notice: 'Maintenance schedule was successfully restored.'
+    else
+      redirect_to maintenance_schedules_url, alert: 'Failed to restore maintenance schedule.'
+    end
   end
 
   def complete
     authorize @maintenance_schedule
     
-    if @maintenance_schedule.update(completed_date: Time.current, status: 'completed')
-      redirect_to maintenance_schedules_path, notice: 'Maintenance schedule marked as completed.'
-    else
-      redirect_to maintenance_schedules_path, alert: 'Unable to complete maintenance schedule.'
+    MaintenanceSchedule.transaction do
+      # First update the status to completed
+      if @maintenance_schedule.update(status: 'completed', completed_date: Time.current)
+        # Then update the next due date which will set a new pending status
+        @maintenance_schedule.update_next_due_date
+        
+        # Create maintenance record
+        MaintenanceRecord.create!(
+          asset: @maintenance_schedule.asset,
+          maintenance_type: 'preventive',
+          description: "Completed scheduled maintenance: #{@maintenance_schedule.title}",
+          scheduled_date: Time.current,
+          completed_date: Time.current,
+          performed_by: current_user,
+          maintenance_schedule_id: @maintenance_schedule.id
+        )
+        
+        redirect_to maintenance_schedules_path, notice: 'Maintenance schedule marked as completed.'
+      else
+        redirect_to maintenance_schedules_path, alert: 'Unable to complete maintenance schedule.'
+      end
     end
   end
 
@@ -74,7 +107,7 @@ class MaintenanceSchedulesController < ApplicationController
       @maintenance_schedule.notify_completion
     end
 
-    if @maintenance_schedule.due_date <= 7.days.from_now
+    if @maintenance_schedule.next_due_at && @maintenance_schedule.next_due_at <= 7.days.from_now
       AssetNotifier.with(
         asset: @maintenance_schedule.asset
       ).maintenance_due

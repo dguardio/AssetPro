@@ -1,9 +1,15 @@
 class MaintenanceRecordsController < ApplicationController
-  before_action :set_maintenance_record, only: [:show, :edit, :update, :destroy]
+  before_action :set_maintenance_record, only: [:show, :edit, :update, :destroy, :restore]
 
   def index
-    @q = policy_scope(MaintenanceRecord).ransack(params[:q])
-    @maintenance_records = @q.result.includes(:asset, :performed_by).page(params[:page])
+    @asset = Asset.find(params[:asset_id])
+    @q = policy_scope(@asset.maintenance_records).ransack(params[:q])
+    @maintenance_records = @q.result
+    @maintenance_records = @maintenance_records.only_deleted if params[:show_deleted]
+    @maintenance_records = @maintenance_records.includes(:performed_by)
+      .order(maintenance_date: :desc)
+      .page(params[:page])
+      .per(10)
   end
 
   def show
@@ -42,8 +48,22 @@ class MaintenanceRecordsController < ApplicationController
 
   def destroy
     authorize @maintenance_record
-    @maintenance_record.destroy
-    redirect_to maintenance_records_url, notice: 'Maintenance record was successfully deleted.'
+    if @maintenance_record.destroy
+      redirect_to asset_maintenance_records_url(@maintenance_record.asset), notice: 'Maintenance record was successfully archived.'
+    else
+      redirect_to asset_maintenance_records_url(@maintenance_record.asset), alert: 'Failed to archive maintenance record.'
+    end
+  end
+
+  def restore
+    @maintenance_record = MaintenanceRecord.only_deleted.find(params[:id])
+    authorize @maintenance_record
+    
+    if @maintenance_record.restore
+      redirect_to asset_maintenance_records_url(@maintenance_record.asset), notice: 'Maintenance record was successfully restored.'
+    else
+      redirect_to asset_maintenance_records_url(@maintenance_record.asset), alert: 'Failed to restore maintenance record.'
+    end
   end
 
   private

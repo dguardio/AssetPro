@@ -89,7 +89,7 @@ class AssetsController < ApplicationController
     @asset = Asset.with_deleted.find(params[:id])
     authorize @asset
     
-    if @asset.restore
+    if @asset.recover
       respond_to do |format|
         format.html { redirect_to assets_url, notice: 'Asset was successfully restored.' }
         format.json { head :no_content }
