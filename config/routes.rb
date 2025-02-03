@@ -155,7 +155,11 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
-  resources :rfid_tags
+  resources :rfid_tags do
+    member do
+      patch :restore
+    end
+  end
   resources :maintenance_schedules do
     resources :maintenance_records
     member do

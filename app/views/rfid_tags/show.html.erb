@@ -2,7 +2,11 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="mb-0">RFID Tag Details</h4>
     <div class="d-flex gap-3">
-      <% if current_user.admin? %>
+      <% if @rfid_tag.deleted? && current_user.admin? %>
+        <button type="button" class="btn bg-gradient-success mb-0" data-bs-toggle="modal" data-bs-target="#restoreModal">
+          <i class="material-icons-round text-sm">restore</i>&nbsp;Restore Tag
+        </button>
+
         <%= link_to edit_rfid_tag_path(@rfid_tag), class: 'btn bg-gradient-dark mb-0' do %>
           <i class="material-icons-round text-sm">edit</i>&nbsp;Edit Tag
         <% end %>
@@ -12,6 +16,66 @@
       <% end %>
     </div>
   </div>
+
+  <!-- Restore Modal -->
+  <% if @rfid_tag.deleted? %>
+    <div class="modal fade" id="restoreModal" tabindex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="restoreModalLabel">Restore RFID Tag</h5>
+            <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">
+                <i class="material-icons-round">close</i>
+              </span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to restore this RFID tag?</p>
+            <p class="text-sm text-secondary mb-0">
+              RFID Number: <strong><%= @rfid_tag.rfid_number %></strong><br>
+              Asset: <strong><%= @rfid_tag.asset&.name || 'None' %></strong>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <%= button_to restore_rfid_tag_path(@rfid_tag), 
+                method: :patch, 
+                class: 'btn bg-gradient-success' do %>
+              <i class="material-icons-round text-sm">restore</i>&nbsp;Restore Tag
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      .modal-backdrop {
+        display: none;
+      }
+      
+      .modal {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      
+      .modal-dialog {
+        margin: 1.75rem auto;
+      }
+    </style>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const restoreModal = new bootstrap.Modal(document.getElementById('restoreModal'), {
+          backdrop: false
+        });
+        
+        // Clean up modal on hide
+        document.getElementById('restoreModal').addEventListener('hidden.bs.modal', function() {
+          document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        });
+      });
+    </script>
+  <% end %>
 
   <div class="card">
     <div class="card-body">

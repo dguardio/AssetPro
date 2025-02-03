@@ -77,10 +77,11 @@ class RfidTagPolicy < ApplicationPolicy
   end
 
   def restore?
-    if user.is_a?(Doorkeeper::Application)
+    case user
+    when Doorkeeper::Application
       true
-    elsif user.admin?
-      true
+    when User
+      user.admin?
     else
       false
     end

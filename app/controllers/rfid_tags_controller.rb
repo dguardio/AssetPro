@@ -3,11 +3,12 @@ class RfidTagsController < ApplicationController
 
   def index
     @q = policy_scope(RfidTag)
-    @q = params[:show_deleted] ? @q.with_deleted : @q
-    @q = @q.ransack(params[:q])
-    @rfid_tags = @q.result.includes(asset: :location)
-                   .order(params[:sort] || 'created_at DESC')
-                   .page(params[:page]).per(10)
+    @q = params[:show_deleted] ? @q.only_deleted : @q.without_deleted
+    @q = @q.includes(asset: :location).ransack(params[:q])
+    @rfid_tags = @q.result
+                   .order(created_at: :desc)
+                   .page(params[:page])
+                   .per(10)
   end
 
   def show
@@ -56,7 +57,7 @@ class RfidTagsController < ApplicationController
     @rfid_tag = RfidTag.with_deleted.find(params[:id])
     authorize @rfid_tag
     
-    if @rfid_tag.restore
+    if @rfid_tag.recover
       redirect_to rfid_tags_url, notice: 'RFID tag was successfully restored.'
     else
       redirect_to rfid_tags_url, alert: 'Failed to restore RFID tag.'
