@@ -27,16 +27,6 @@
             <p class="text-lg mb-0"><%= @license.license_key %></p>
           </div>
 
-          <div class="mb-4">
-            <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Asset</h6>
-            <p class="text-lg mb-0">
-              <% if @license.asset %>
-                <%= link_to @license.asset.name, inventory_asset_path(@license.asset), class: 'text-primary' %>
-              <% else %>
-                Not assigned
-              <% end %>
-            </p>
-          </div>
 
           <div class="mb-4">
             <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Seats</h6>
@@ -75,6 +65,24 @@
           <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Notes</h6>
           <p class="text-lg mb-0"><%= @license.notes %></p>
         </div>
+
+        <div class="col-12">
+          <h6 class="text-uppercase text-secondary text-xxs font-weight-bolder">Assets</h6>
+          <div class="text-lg mb-0">
+            <% if @license.assets.any? %>
+              <div class="d-flex flex-wrap gap-2">
+                <% @license.assets.each do |asset| %>
+                  <%= link_to inventory_asset_path(asset), class: 'badge badge-sm bg-gradient-light text-dark d-flex align-items-center gap-1' do %>
+                    <i class="material-icons-round text-sm">computer</i>
+                    <%= asset.name %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% else %>
+              <span class="text-secondary">Not assigned</span>
+            <% end %>
+          </div>
+        </div>      
       </div>
     </div>
   </div>

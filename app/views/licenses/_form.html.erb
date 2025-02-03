@@ -27,12 +27,35 @@
   <div class="row">
     <div class="col-md-6">
       <div class="input-group input-group-static mb-4">
-        <%= form.collection_select :asset_id, 
-            Asset.order(:name), 
-            :id, 
-            :name, 
-            { prompt: 'Select Asset' }, 
-            { class: 'form-select' } %>
+        <%= form.label :asset_ids, "Assign to Assets", class: "ms-0" %>
+        <%= form.collection_select :asset_ids,
+            Asset.all,
+            :id,
+            :name,
+            { selected: @license.asset_ids },
+            { multiple: true, 
+              class: "form-select", 
+              style: "display: none;" } %>
+        
+        <div class="ms-select-container">
+          <div class="form-control p-2 min-height-auto" style="min-height: 100px; height: auto;">
+            <div class="ms-selected-tags d-flex flex-wrap gap-2 mb-2"></div>
+            <input type="text" class="border-0 p-0 w-100" placeholder="Search assets..." id="assetSearch">
+          </div>
+          <div class="ms-options border rounded mt-1" style="max-height: 200px; overflow-y: auto; display: none;">
+            <% Asset.all.each do |asset| %>
+              <div class="ms-option p-2 cursor-pointer hover-bg-light" data-value="<%= asset.id %>">
+                <%= asset.name %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <% if @license.seats.present? %>
+          <small class="form-text text-muted">
+            Available seats: <%= @license.seats_available %>
+          </small>
+        <% end %>
       </div>
     </div>
 
@@ -46,14 +69,12 @@
   <div class="row">
     <div class="col-md-6">
       <div class="input-group input-group-static mb-4">
-        <%= form.label :purchase_date, class: 'form-label' %>
         <%= form.date_field :purchase_date, class: 'form-control', placeholder: 'Purchase Date' %>
       </div>
     </div>
 
     <div class="col-md-6">
       <div class="input-group input-group-static mb-4">
-        <%= form.label :expiration_date, class: 'form-label' %>
         <%= form.date_field :expiration_date, class: 'form-control', placeholder: 'Expiration Date' %>
       </div>
     </div>
@@ -81,4 +102,117 @@
     <%= link_to 'Cancel', licenses_path, class: 'btn btn-dark-gray' %>
     <%= form.submit class: 'btn btn-dark' %>
   </div>  
-<% end %> 
+<% end %>
+
+<style>
+  .ms-select-container {
+    position: relative;
+    width: 100%;
+  }
+  .ms-options {
+    position: absolute;
+    width: 100%;
+    background: white;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .ms-option {
+    cursor: pointer;
+  }
+  .ms-option:hover {
+    background-color: #f8f9fa;
+  }
+  .ms-tag {
+    background-color: #e9ecef;
+    border-radius: 4px;
+    padding: 2px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.875rem;
+  }
+  .ms-tag-remove {
+    cursor: pointer;
+    color: #666;
+  }
+  #assetSearch:focus {
+    outline: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.ms-select-container');
+    const select = document.querySelector('select[name="license[asset_ids][]"]');
+    const search = document.querySelector('#assetSearch');
+    const options = document.querySelector('.ms-options');
+    const selectedTags = document.querySelector('.ms-selected-tags');
+    const optionElements = document.querySelectorAll('.ms-option');
+
+    // Initialize selected values
+    updateSelectedTags();
+
+    // Show options on container click
+    container.addEventListener('click', () => {
+      options.style.display = 'block';
+      search.focus();
+    });
+
+    // Hide options when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!container.contains(e.target)) {
+        options.style.display = 'none';
+      }
+    });
+
+    // Filter options on search
+    search.addEventListener('input', (e) => {
+      const value = e.target.value.toLowerCase();
+      optionElements.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        option.style.display = text.includes(value) ? 'block' : 'none';
+      });
+    });
+
+    // Handle option selection
+    optionElements.forEach(option => {
+      option.addEventListener('click', () => {
+        const value = option.dataset.value;
+        const selected = Array.from(select.selectedOptions).map(opt => opt.value);
+        
+        if (selected.includes(value)) {
+          select.querySelector(`option[value="${value}"]`).selected = false;
+        } else {
+          select.querySelector(`option[value="${value}"]`).selected = true;
+        }
+        
+        updateSelectedTags();
+        search.value = '';
+        optionElements.forEach(opt => opt.style.display = 'block');
+      });
+    });
+
+    function updateSelectedTags() {
+      selectedTags.innerHTML = '';
+      Array.from(select.selectedOptions).forEach(option => {
+        const tag = document.createElement('div');
+        tag.className = 'ms-tag';
+        tag.innerHTML = `
+          ${option.text}
+          <span class="ms-tag-remove" data-value="${option.value}">×</span>
+        `;
+        selectedTags.appendChild(tag);
+      });
+
+      // Add remove event listeners
+      document.querySelectorAll('.ms-tag-remove').forEach(remove => {
+        remove.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const value = e.target.dataset.value;
+          select.querySelector(`option[value="${value}"]`).selected = false;
+          updateSelectedTags();
+        });
+      });
+    }
+  });
+</script> 

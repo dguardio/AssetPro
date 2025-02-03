@@ -3,7 +3,7 @@ class LicensesController < ApplicationController
 
   def index
     @q = policy_scope(License).ransack(params[:q])
-    @licenses = @q.result.includes(:asset).page(params[:page])
+    @licenses = @q.result.includes(:assets).page(params[:page])
   end
 
   def show
@@ -54,7 +54,12 @@ class LicensesController < ApplicationController
   end
 
   def license_params
-    params.require(:license).permit(:name, :license_key, :seats, :expiration_date, :supplier, :cost, :notes, :asset_id)
+    params.require(:license).permit(
+      :name, :description, :license_key, :seats,
+      :cost, :purchase_date, :expiration_date,
+      :supplier, :notes, :assigned_to_id,
+      asset_ids: []
+    )
   end
 
   def check_license_thresholds

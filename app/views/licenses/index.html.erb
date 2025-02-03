@@ -72,8 +72,18 @@
                   </div>
                 </td>
                 <td>
-                  <p class="text-xs font-weight-bold mb-0"><%= license.asset&.name %></p>
-                  <p class="text-xs text-secondary mb-0"><%= license.asset&.asset_code %></p>
+                  <% if license.assets.any? %>
+                    <div class="d-flex flex-wrap gap-1">
+                      <% license.assets.each do |asset| %>
+                        <span class="badge badge-sm bg-gradient-light text-dark">
+                          <i class="material-icons-round text-sm">computer</i>
+                          <%= asset.name %>
+                        </span>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <p class="text-xs text-secondary mb-0">Not assigned</p>
+                  <% end %>
                 </td>
                 <td>
                   <p class="text-xs font-weight-bold mb-0"><%= license.seats || 'Unlimited' %></p>

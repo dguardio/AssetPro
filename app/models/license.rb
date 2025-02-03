@@ -1,5 +1,8 @@
 class License < ApplicationRecord
-  belongs_to :asset, optional: true
+  acts_as_paranoid
+  
+  has_many :asset_licenses, dependent: :destroy
+  has_many :assets, through: :asset_licenses
   belongs_to :assigned_to, class_name: 'User', optional: true
   
   validates :name, presence: true
@@ -36,6 +39,19 @@ class License < ApplicationRecord
   def total_value
     return 0 unless cost.present?
     cost * seats
+  end
+
+  def seats_used
+    asset_licenses.count
+  end
+
+  def seats_available
+    return 0 if seats.nil?
+    seats - seats_used
+  end
+
+  def available_for_assignment?
+    !expired? && seats_available > 0
   end
 
   def utilization_rate

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_02_03_045746) do
+ActiveRecord::Schema[7.0].define(version: 2025_02_03_131726) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,19 @@ ActiveRecord::Schema[7.0].define(version: 2025_02_03_045746) do
     t.index ["assigned_by_id"], name: "index_asset_assignments_on_assigned_by_id"
     t.index ["deleted_at"], name: "index_asset_assignments_on_deleted_at"
     t.index ["user_id"], name: "index_asset_assignments_on_user_id"
+  end
+
+  create_table "asset_licenses", force: :cascade do |t|
+    t.bigint "asset_id", null: false
+    t.bigint "license_id", null: false
+    t.datetime "assigned_at"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["asset_id", "license_id"], name: "index_asset_licenses_on_asset_id_and_license_id", unique: true
+    t.index ["asset_id"], name: "index_asset_licenses_on_asset_id"
+    t.index ["deleted_at"], name: "index_asset_licenses_on_deleted_at"
+    t.index ["license_id"], name: "index_asset_licenses_on_license_id"
   end
 
   create_table "asset_requests", force: :cascade do |t|
@@ -154,8 +167,10 @@ ActiveRecord::Schema[7.0].define(version: 2025_02_03_045746) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
     t.index ["asset_id"], name: "index_licenses_on_asset_id"
     t.index ["assigned_to_id"], name: "index_licenses_on_assigned_to_id"
+    t.index ["deleted_at"], name: "index_licenses_on_deleted_at"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -368,6 +383,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_02_03_045746) do
   add_foreign_key "asset_assignments", "assets"
   add_foreign_key "asset_assignments", "users"
   add_foreign_key "asset_assignments", "users", column: "assigned_by_id"
+  add_foreign_key "asset_licenses", "assets"
+  add_foreign_key "asset_licenses", "licenses"
   add_foreign_key "asset_requests", "assets"
   add_foreign_key "asset_requests", "users"
   add_foreign_key "asset_requests", "users", column: "reviewed_by_id"
