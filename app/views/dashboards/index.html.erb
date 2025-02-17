@@ -306,21 +306,21 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <% @upcoming_maintenance.each do |maintenance| %>
+                  <% @maintenance_schedules.each do |maintenance| %>
                     <tr>
                       <td><%= maintenance.asset.name %></td>
-                      <td><%= maintenance.scheduled_date.strftime("%B %d, %Y") %></td>
+                      <td><%= maintenance.next_due_at.strftime("%B %d, %Y") %></td>
                       <td><%= maintenance.assigned_to&.name || "Unassigned" %></td>
                       <td>
                         <span class="badge badge-sm bg-gradient-<%= maintenance_status_color(maintenance.status) %>">
-                          <%= maintenance.status.titleize %>
+                          <%= maintenance.status&.titleize %>
                         </span>
                       </td>
                     </tr>
                   <% end %>
                 </tbody>
               </table>
-              <% if @upcoming_maintenance.empty? %>
+              <% if @maintenance_schedules.empty? %>
                 <p class="text-secondary text-center mb-0">No upcoming maintenance</p>
               <% end %>
             </div>
@@ -347,7 +347,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <% @expiring_licenses.each do |license| %>
+                  <% @licenses.each do |license| %>
                     <tr>
                       <td><%= license.name %></td>
                       <td><%= license.expiration_date.strftime("%B %d, %Y") %></td>
@@ -361,7 +361,7 @@
                   <% end %>
                 </tbody>
               </table>
-              <% if @expiring_licenses.empty? %>
+              <% if @licenses.empty? %>
                 <p class="text-secondary text-center mb-0">No expiring licenses</p>
               <% end %>
             </div>

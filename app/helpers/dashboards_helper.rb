@@ -11,10 +11,18 @@ module DashboardsHelper
   
   def maintenance_status_color(status)
     case status
-    when 'scheduled' then 'info'
-    when 'in_progress' then 'warning'
-    when 'completed' then 'success'
-    when 'overdue' then 'danger'
+    when 'pending'
+      'secondary'
+    when 'in_progress'
+      'warning'
+    when 'completed'
+      'success'
+    when 'overdue'
+      'danger'
+    when 'cancelled'
+      'info'
+    else
+      'info'
     end
   end
   

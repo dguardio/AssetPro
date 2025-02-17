@@ -19,9 +19,21 @@ class DashboardsController < ApplicationController
                                                   .count
     })
     
-    @upcoming_maintenance = MaintenanceSchedule.upcoming.includes(:asset, :assigned_to).limit(5)
-    @expiring_licenses = License.expiring_soon.includes(:asset).limit(5)
-    
+  # Get both types of licenses together
+  @licenses = License.expired
+                    .or(License.expiring_soon)
+                    .includes(:assets, :assigned_to)
+                    .order(expiration_date: :asc)
+                    .limit(5)
+  
+  # Get both types of maintenance together
+  @maintenance_schedules = MaintenanceSchedule.overdue
+                                            .or(MaintenanceSchedule.upcoming)
+                                            .includes(:asset, :assigned_to)
+                                            .order(next_due_at: :asc)
+                                            .limit(5)
+  
+
     @depreciation_data = {
       labels: 6.months.ago.to_date.upto(Date.current).map(&:to_s),
       values: @filtered_assets.map { |asset| asset.current_value }

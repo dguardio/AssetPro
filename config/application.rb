@@ -21,6 +21,11 @@ module AssetPro
 
     config.assets.initialize_on_precompile = false
 
+    config.action_mailer.delivery_method = :postmark
+
+    config.action_mailer.postmark_settings = { :api_token => ENV['postmark_api_token'] } 
+ 
+
     # Add this line to ensure concerns are autoloaded
     config.autoload_paths += %W(#{config.root}/app/models/concerns)
     config.eager_load_paths += %W(#{config.root}/app/models/concerns)
